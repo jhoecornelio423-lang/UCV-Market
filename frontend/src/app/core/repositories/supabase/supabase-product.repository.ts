@@ -145,14 +145,19 @@ export class SupabaseProductRepository implements ProductRepository {
 
               // Insertar registro en la tabla product_images
               const imageInsert = this.supabaseService.client
-                .from('product-images')
+                .from('product_images')
                 .insert({
                   product_id: createdProduct.id,
                   image_url: publicUrl,
                   is_featured: index === 0 // La primera es destacada
                 });
 
-              return from(imageInsert);
+              return from(imageInsert).pipe(
+                map((res: any) => {
+                  if (res.error) throw new Error(res.error.message);
+                  return res.data;
+                })
+              );
             })
           );
         });

@@ -33,7 +33,7 @@ export class SupabaseOrderRepository implements OrderRepository {
   getBuyerOrders(buyerId: string): Observable<Order[]> {
     const query = this.supabaseService.client
       .from('orders')
-      .select('*, order_items(*, product:products(*, product_images(*))), seller:profiles(*)')
+      .select('*, order_items(*, product:products(*, product_images(*))), seller:profiles!seller_id(*)')
       .eq('buyer_id', buyerId)
       .order('created_at', { ascending: false });
 
@@ -48,7 +48,7 @@ export class SupabaseOrderRepository implements OrderRepository {
   getSellerOrders(sellerId: string): Observable<Order[]> {
     const query = this.supabaseService.client
       .from('orders')
-      .select('*, order_items(*, product:products(*, product_images(*))), buyer:profiles(*)')
+      .select('*, order_items(*, product:products(*, product_images(*))), buyer:profiles!buyer_id(*)')
       .eq('seller_id', sellerId)
       .order('created_at', { ascending: false });
 
@@ -63,7 +63,7 @@ export class SupabaseOrderRepository implements OrderRepository {
   getOrderById(id: string): Observable<Order> {
     const query = this.supabaseService.client
       .from('orders')
-      .select('*, order_items(*, product:products(*, product_images(*))), buyer:profiles(*), seller:profiles(*)')
+      .select('*, order_items(*, product:products(*, product_images(*))), buyer:profiles!buyer_id(*), seller:profiles!seller_id(*)')
       .eq('id', id)
       .single();
 
