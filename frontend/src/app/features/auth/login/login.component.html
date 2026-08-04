@@ -1,81 +1,150 @@
 <ion-content [fullscreen]="true" class="login-content">
-  <div class="login-wrapper">
-    <div class="login-card-container">
-      
-      <!-- Logo o Cabecera Visual -->
-      <div class="logo-header">
-        <div class="logo-icon-container">
-          <ion-icon name="cart-outline" class="logo-icon"></ion-icon>
+  <main class="login-shell">
+    <section class="login-panel">
+      <header class="brand-header" aria-label="UCV Market">
+        <div class="brand-mark">
+          <img src="assets/icon/favicon.png" alt="Logo de UCV Market" />
         </div>
-        <h1 class="app-title">UCV <span>Market</span></h1>
-        <p class="app-subtitle">El marketplace oficial de tu campus</p>
+        <div class="brand-copy">
+          <p class="brand-name">UCV Market</p>
+          <p class="brand-tagline">El marketplace universitario</p>
+        </div>
+      </header>
+
+      <div class="welcome-copy">
+        <h1>Hola,<br />bienvenido <span aria-hidden="true">👋</span></h1>
+        <p>Inicia sesión para continuar</p>
       </div>
 
-      <!-- Card Glassmorphic -->
-      <div class="glass-card">
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          
-          <!-- Input Correo -->
-          <div class="input-group" [class.has-error]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
-            <label for="email">Correo Institucional</label>
-            <div class="input-wrapper">
-              <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-              <input 
-                id="email" 
-                type="email" 
-                placeholder="ejemplo@ucvvirtual.edu.pe" 
-                formControlName="email"
-                autocomplete="username"
-              />
-            </div>
-            <span class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">
-              El correo es requerido.
-            </span>
-            <span class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')">
-              Ingresa un correo electrónico válido.
-            </span>
-          </div>
-
-          <!-- Input Contraseña -->
-          <div class="input-group" [class.has-error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
-            <div class="password-label-wrapper">
-              <label for="password">Contraseña</label>
-              <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
-            </div>
-            <div class="input-wrapper">
-              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-              <input 
-                id="password" 
-                [type]="showPassword ? 'text' : 'password'" 
-                placeholder="Mínimo 6 caracteres" 
-                formControlName="password"
-                autocomplete="current-password"
-              />
-              <ion-icon 
-                [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
-                class="eye-icon"
-                (click)="togglePasswordVisibility()"
-              ></ion-icon>
-            </div>
-            <span class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
-              La contraseña es requerida.
-            </span>
-            <span class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')">
-              Debe tener al menos 6 caracteres.
-            </span>
-          </div>
-
-          <!-- Botón de Envío -->
-          <button type="submit" class="submit-btn">
-            Iniciar Sesión
-          </button>
-        </form>
-
-        <div class="footer-links">
-          <p>¿Aún no tienes cuenta? <a routerLink="/login/register">Regístrate aquí</a></p>
+      <section class="campus-banner" aria-label="Marketplace del Campus UCV Trujillo">
+        <img
+          src="assets/images/login-food-banner.jpg"
+          alt="Variedad de comida disponible en UCV Market"
+        />
+        <div class="banner-shade"></div>
+        <div class="desktop-banner-copy">
+          <span>Marketplace universitario</span>
+          <h2>Todo tu campus,<br />en un solo lugar.</h2>
+          <p>Descubre productos, comida y emprendimientos creados por la comunidad UCV.</p>
         </div>
-      </div>
-      
-    </div>
-  </div>
+        <span class="campus-badge"><i></i> Campus UCV · Trujillo</span>
+        <span class="buyer-badge"><i></i> Comprador</span>
+        <div class="banner-pages" aria-hidden="true">
+          <span></span><span class="active"></span><span></span>
+        </div>
+      </section>
+
+      <fieldset class="role-selector">
+        <legend>¿Cómo deseas ingresar?</legend>
+        <div class="role-options">
+          <label class="role-option" for="role-buyer">
+            <input id="role-buyer" type="radio" name="account-role" value="comprador" checked />
+            <span class="role-option-content">
+              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
+              <span>
+                <strong>Comprador</strong>
+                <small>Quiero comprar</small>
+              </span>
+              <ion-icon class="role-check" name="checkmark-circle" aria-hidden="true"></ion-icon>
+            </span>
+          </label>
+
+          <label class="role-option" for="role-seller">
+            <input id="role-seller" type="radio" name="account-role" value="emprendedor" />
+            <span class="role-option-content">
+              <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
+              <span>
+                <strong>Emprendedor</strong>
+                <small>Quiero vender</small>
+              </span>
+              <ion-icon class="role-check" name="checkmark-circle" aria-hidden="true"></ion-icon>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div
+          class="input-group"
+          [class.has-error]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+        >
+          <label for="email">Correo universitario</label>
+          <div class="input-wrapper">
+            <input
+              id="email"
+              type="email"
+              placeholder="Ingresa tu correo electrónico"
+              formControlName="email"
+              autocomplete="username"
+            />
+          </div>
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')"
+          >
+            El correo es requerido.
+          </span>
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')"
+          >
+            Ingresa un correo electrónico válido.
+          </span>
+        </div>
+
+        <div
+          class="input-group password-group"
+          [class.has-error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+        >
+          <label for="password">Contraseña</label>
+          <div class="input-wrapper">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              placeholder="Ingresa tu contraseña"
+              formControlName="password"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')"
+          >
+            La contraseña es requerida.
+          </span>
+          <span
+            class="error-msg"
+            *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')"
+          >
+            Debe tener al menos 6 caracteres.
+          </span>
+        </div>
+
+        <div class="forgot-row">
+          <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <button type="submit" class="submit-btn">Iniciar sesión</button>
+      </form>
+
+      <div class="divider"><span>o continúa con</span></div>
+
+      <button type="button" class="ucv-code-btn">
+        <span aria-hidden="true">🎓</span>
+        Código UCV
+      </button>
+
+      <footer class="footer-links">
+        <p>¿Primera vez aquí? <a routerLink="/login/register">Regístrate gratis</a></p>
+      </footer>
+    </section>
+  </main>
 </ion-content>
