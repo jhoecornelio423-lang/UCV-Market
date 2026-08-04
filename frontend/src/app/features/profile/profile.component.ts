@@ -148,19 +148,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   async confirmSignOut() {
     const alert = await this.alertCtrl.create({
-      header: 'Cerrar sesión',
-      message: '¿Deseas salir de tu cuenta de UCV Market?',
+      header: '¿Cerrar sesión?',
+      subHeader: 'UCV Market',
+      message: 'Tendrás que ingresar nuevamente para acceder a tu cuenta.',
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Cancelar', role: 'cancel', cssClass: 'market-signout-cancel' },
         {
           text: 'Cerrar sesión',
           role: 'destructive',
+          cssClass: 'market-signout-confirm',
           handler: () => {
             void this.signOut();
           }
         }
       ],
-      cssClass: 'custom-alert'
+      cssClass: ['custom-alert', 'market-signout-alert']
     });
 
     await alert.present();
