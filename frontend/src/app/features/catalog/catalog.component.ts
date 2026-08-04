@@ -14,7 +14,6 @@ import { Profile } from '../../core/models/profile.model';
 @Component({
   selector: 'app-catalog',
   templateUrl: './catalog.component.html',
-  styleUrls: ['./catalog.component.scss'],
   standalone: false
 })
 export class CatalogComponent implements OnInit, OnDestroy {
@@ -26,6 +25,37 @@ export class CatalogComponent implements OnInit, OnDestroy {
   loading = false;
   userProfile: Profile | null = null;
   cartCount = 0;
+
+  get greeting(): string {
+    const currentHour = new Date().getHours();
+
+    if (currentHour >= 5 && currentHour < 12) return 'Buenos días';
+    if (currentHour >= 12 && currentHour < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  }
+
+  get displayName(): string {
+    const parts = (this.userProfile?.full_name || '')
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (parts.length === 0) return 'Estudiante UCV';
+    if (parts.length === 1) return parts[0];
+    return `${parts[0]} ${parts[parts.length - 1]}`;
+  }
+
+  get featuredProduct(): Product | null {
+    return this.products.length > 0 ? this.products[0] : null;
+  }
+
+  get popularProducts(): Product[] {
+    return this.products.slice(0, 8);
+  }
+
+  get nearbyProducts(): Product[] {
+    return this.products.slice(0, 4);
+  }
 
   // Reactividad para la barra de búsqueda
   private searchSubject = new Subject<string>();
@@ -131,6 +161,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.searchSubject.next(this.searchQuery);
   }
 
+  getProductImage(product: Product): string {
+    return product.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg';
+  }
+
   /**
    * Agrega el artículo seleccionado al carrito de compras local.
    */
@@ -192,6 +226,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
    */
   goToCart() {
     this.router.navigate(['/cart']);
+  }
+
+  goToOrders() {
+    this.router.navigate(['/orders']);
   }
 
   /**

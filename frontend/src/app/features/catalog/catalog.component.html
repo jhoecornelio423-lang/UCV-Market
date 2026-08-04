@@ -1,139 +1,182 @@
-<ion-header class="catalog-header ion-no-border">
-  <ion-toolbar class="header-toolbar">
-    <div class="user-greeting-wrapper" slot="start">
-      <p class="greeting-text">Hola, <span>{{ userProfile?.full_name || 'Estudiante UCV' }}</span></p>
-      <div class="campus-badge">
-        <ion-icon name="location-outline"></ion-icon>
-        <span>{{ userProfile?.campus || 'Cargando campus...' }}</span>
+<ion-content [fullscreen]="true" class="catalog-content">
+  <main class="catalog-shell">
+    <header class="home-header">
+      <div class="identity-block">
+        <p class="welcome-line">{{ greeting }} <span aria-hidden="true">👋</span></p>
+        <h1>{{ displayName }}</h1>
+        <p class="campus-line">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+          UCV · Campus Lima Norte
+        </p>
       </div>
-    </div>
-    
-    <ion-buttons slot="end">
-      <ion-button (click)="goToCart()" class="cart-btn">
-        <ion-icon name="cart-outline"></ion-icon>
-        <ion-badge *ngIf="cartCount > 0" class="cart-badge">{{ cartCount }}</ion-badge>
-      </ion-button>
-      <ion-button (click)="signOut()" class="logout-btn">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
 
-  <!-- Filtros y Buscador Integrados en Header -->
-  <div class="search-filter-section">
-    <div class="search-bar-wrapper">
-      <ion-icon name="search-outline" class="search-icon"></ion-icon>
-      <input 
-        type="search" 
-        placeholder="Buscar almuerzos, postres, apuntes..." 
+      <div class="header-actions">
+        <button type="button" class="header-icon" aria-label="Notificaciones">
+          <ion-icon name="notifications-outline"></ion-icon>
+        </button>
+        <button type="button" class="header-icon" (click)="goToCart()" aria-label="Abrir carrito">
+          <ion-icon name="cart-outline"></ion-icon>
+          <span *ngIf="cartCount > 0" class="action-badge">{{ cartCount }}</span>
+        </button>
+      </div>
+    </header>
+
+    <div class="search-box">
+      <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      <input
+        type="search"
+        placeholder="Busca comida, postres, bebidas..."
+        aria-label="Buscar productos"
         (input)="onSearchChange($event)"
         [value]="searchQuery"
       />
     </div>
 
-    <!-- Scroll Horizontal de Categorías (Chips) -->
-    <div class="categories-scroll-wrapper">
-      <button 
-        class="category-chip" 
-        [class.active]="selectedCategoryId === ''"
-        (click)="selectCategory('')"
-      >
-        Todos
-      </button>
-      <button 
-        *ngFor="let category of categories"
-        class="category-chip" 
-        [class.active]="selectedCategoryId === category.id"
-        (click)="selectCategory(category.id)"
-      >
-        <span class="chip-icon">{{ category.icon }}</span>
-        <span>{{ category.name }}</span>
-      </button>
-    </div>
-  </div>
-</ion-header>
+    <section *ngIf="featuredProduct as featured" class="featured-banner">
+      <div class="featured-copy">
+        <span class="offer-label">🔥 Producto destacado</span>
+        <h2>{{ featured.name }}</h2>
+        <p>Disponible hoy por <strong>S/ {{ featured.price.toFixed(2) }}</strong></p>
+        <button type="button" (click)="addToCart(featured)">
+          Agregar
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="featured-image">
+        <img [src]="getProductImage(featured)" [alt]="featured.name" />
+      </div>
+    </section>
 
-<ion-content [fullscreen]="true" class="catalog-content">
-  
-  <!-- Skeleton Loader mientras carga -->
-  <div *ngIf="loading" class="products-grid-skeleton">
-    <div *ngFor="let item of [1,2,3,4]" class="skeleton-card">
-      <div class="skeleton-img"></div>
-      <div class="skeleton-title"></div>
-      <div class="skeleton-price"></div>
-    </div>
-  </div>
+    <section class="categories-section" aria-labelledby="categories-title">
+      <div class="section-heading">
+        <h2 id="categories-title">Categorías</h2>
+      </div>
 
-  <!-- Estado Vacío (Sin productos) -->
-  <div *ngIf="!loading && products.length === 0" class="empty-state">
-    <div class="empty-state-icon-container">
-      <ion-icon name="alert-circle-outline"></ion-icon>
-    </div>
-    <h2>No se encontraron productos</h2>
-    <p>Prueba buscando otro término o cambiando de categoría.</p>
-    <button (click)="selectCategory(''); searchQuery = ''" class="reset-filters-btn">
-      Ver todos los productos
-    </button>
-  </div>
+      <div class="categories-scroll">
+        <button
+          type="button"
+          class="category-chip"
+          [class.active]="selectedCategoryId === ''"
+          (click)="selectCategory('')"
+        >
+          <span aria-hidden="true">🛍️</span>
+          Todo
+        </button>
+        <button
+          type="button"
+          *ngFor="let category of categories"
+          class="category-chip"
+          [class.active]="selectedCategoryId === category.id"
+          (click)="selectCategory(category.id)"
+        >
+          <span aria-hidden="true">{{ category.icon }}</span>
+          {{ category.name }}
+        </button>
+      </div>
+    </section>
 
-  <!-- Grid de Productos Principal -->
-  <div *ngIf="!loading && products.length > 0" class="products-container">
-    <div class="products-grid">
-      <div *ngFor="let product of products" class="product-card">
-        
-        <!-- Imagen del Producto -->
-        <div class="product-img-wrapper">
-          <img 
-            [src]="(product.product_images && product.product_images.length > 0) ? product.product_images[0].image_url : 'assets/placeholder-product.png'" 
-            [alt]="product.name"
-            loading="lazy"
-          />
-          <span class="stock-badge" [class.low-stock]="product.stock <= 2">
-            {{ product.stock }} {{ product.stock === 1 ? 'disponible' : 'disponibles' }}
-          </span>
-        </div>
-
-        <!-- Info del Producto -->
-        <div class="product-info-wrapper">
-          <h3 class="product-title">{{ product.name }}</h3>
-          <p class="product-description">{{ product.description }}</p>
-          
-          <div class="product-seller-rating">
-            <span class="seller-name">Por: {{ product.seller?.full_name || 'Emprendedor UCV' }}</span>
-            <span class="seller-rating">
-              <ion-icon name="star" class="star-icon"></ion-icon> 
-              {{ product.seller?.rating_average || '5.00' }}
-            </span>
-          </div>
-
-          <!-- Precio e Interacciones -->
-          <div class="product-footer-wrapper">
-            <div class="price-container">
-              <span class="currency">S/.</span>
-              <span class="amount">{{ product.price.toFixed(2) }}</span>
-            </div>
-            
-            <div class="actions-container">
-              <button 
-                class="btn-action btn-wa" 
-                (click)="contactSellerViaWhatsApp(product)"
-                title="Consultar por WhatsApp"
-              >
-                <ion-icon name="logo-whatsapp"></ion-icon>
-              </button>
-              <button 
-                class="btn-action btn-cart" 
-                (click)="addToCart(product)"
-                title="Agregar al Carrito"
-              >
-                <ion-icon name="cart"></ion-icon>
-              </button>
-            </div>
-          </div>
-        </div>
-
+    <div *ngIf="loading" class="catalog-skeleton" aria-label="Cargando productos">
+      <div *ngFor="let item of [1, 2, 3]" class="skeleton-card">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line short"></div>
       </div>
     </div>
-  </div>
 
+    <section *ngIf="!loading && products.length === 0" class="empty-state">
+      <div class="empty-icon"><ion-icon name="search-outline"></ion-icon></div>
+      <h2>No encontramos productos</h2>
+      <p>Prueba con otra búsqueda o selecciona una categoría diferente.</p>
+      <button type="button" (click)="selectCategory(''); searchQuery = ''">Ver todos</button>
+    </section>
+
+    <ng-container *ngIf="!loading && products.length > 0">
+      <section class="products-section" aria-labelledby="popular-title">
+        <div class="section-heading">
+          <h2 id="popular-title">Popular ahora <span aria-hidden="true">🔥</span></h2>
+          <button type="button" (click)="selectCategory('')">Ver todo</button>
+        </div>
+
+        <div class="product-scroller">
+          <article *ngFor="let product of popularProducts" class="product-card">
+            <div class="product-image">
+              <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
+              <button type="button" class="favorite-button" [attr.aria-label]="'Marcar ' + product.name + ' como favorito'">
+                <ion-icon name="heart-outline"></ion-icon>
+              </button>
+              <span *ngIf="product.stock <= 2" class="last-units">¡Últimos {{ product.stock }}!</span>
+            </div>
+
+            <div class="product-details">
+              <h3>{{ product.name }}</h3>
+              <p class="product-location">{{ product.pickup_location }}</p>
+              <div class="product-meta">
+                <span *ngIf="product.seller?.rating_average as rating">
+                  <ion-icon name="star"></ion-icon> {{ rating }}
+                </span>
+                <span>{{ product.stock }} disponibles</span>
+              </div>
+              <div class="product-bottom">
+                <strong>S/ {{ product.price.toFixed(2) }}</strong>
+                <div class="card-actions">
+                  <button type="button" class="whatsapp-action" (click)="contactSellerViaWhatsApp(product)" aria-label="Consultar por WhatsApp">
+                    <ion-icon name="logo-whatsapp"></ion-icon>
+                  </button>
+                  <button type="button" class="cart-action" (click)="addToCart(product)" aria-label="Agregar al carrito">
+                    <ion-icon name="add"></ion-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="nearby-section" aria-labelledby="nearby-title">
+        <div class="section-heading">
+          <h2 id="nearby-title">Cerca de ti <span aria-hidden="true">📍</span></h2>
+          <button type="button" (click)="selectCategory('')">Ver todo</button>
+        </div>
+
+        <div class="nearby-list">
+          <article *ngFor="let product of nearbyProducts" class="nearby-card">
+            <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
+            <div class="nearby-info">
+              <h3>{{ product.name }}</h3>
+              <p>{{ product.pickup_location }}</p>
+              <strong>S/ {{ product.price.toFixed(2) }}</strong>
+            </div>
+            <button type="button" (click)="addToCart(product)" [attr.aria-label]="'Agregar ' + product.name + ' al carrito'">
+              <ion-icon name="cart-outline"></ion-icon>
+            </button>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+  </main>
 </ion-content>
+
+<ion-footer class="catalog-footer ion-no-border">
+  <nav class="bottom-navigation" aria-label="Navegación principal">
+    <button type="button" class="nav-item active">
+      <ion-icon name="home-outline"></ion-icon>
+      <span>Inicio</span>
+    </button>
+    <button type="button" class="nav-item">
+      <ion-icon name="compass-outline"></ion-icon>
+      <span>Explorar</span>
+    </button>
+    <button type="button" class="nav-item" (click)="goToOrders()">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <span>Pedidos</span>
+    </button>
+    <button type="button" class="nav-item">
+      <ion-icon name="heart-outline"></ion-icon>
+      <span>Favoritos</span>
+    </button>
+    <button type="button" class="nav-item" (click)="signOut()">
+      <ion-icon name="person-outline"></ion-icon>
+      <span>Salir</span>
+    </button>
+  </nav>
+</ion-footer>
