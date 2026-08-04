@@ -1,0 +1,81 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-wrapper">
+    <div class="login-card-container">
+      
+      <!-- Logo o Cabecera Visual -->
+      <div class="logo-header">
+        <div class="logo-icon-container">
+          <ion-icon name="cart-outline" class="logo-icon"></ion-icon>
+        </div>
+        <h1 class="app-title">UCV <span>Market</span></h1>
+        <p class="app-subtitle">El marketplace oficial de tu campus</p>
+      </div>
+
+      <!-- Card Glassmorphic -->
+      <div class="glass-card">
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Input Correo -->
+          <div class="input-group" [class.has-error]="loginForm.get('email')?.touched && loginForm.get('email')?.invalid">
+            <label for="email">Correo Institucional</label>
+            <div class="input-wrapper">
+              <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+              <input 
+                id="email" 
+                type="email" 
+                placeholder="ejemplo@ucvvirtual.edu.pe" 
+                formControlName="email"
+                autocomplete="username"
+              />
+            </div>
+            <span class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">
+              El correo es requerido.
+            </span>
+            <span class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('email')">
+              Ingresa un correo electrónico válido.
+            </span>
+          </div>
+
+          <!-- Input Contraseña -->
+          <div class="input-group" [class.has-error]="loginForm.get('password')?.touched && loginForm.get('password')?.invalid">
+            <div class="password-label-wrapper">
+              <label for="password">Contraseña</label>
+              <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
+            </div>
+            <div class="input-wrapper">
+              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+              <input 
+                id="password" 
+                [type]="showPassword ? 'text' : 'password'" 
+                placeholder="Mínimo 6 caracteres" 
+                formControlName="password"
+                autocomplete="current-password"
+              />
+              <ion-icon 
+                [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+                class="eye-icon"
+                (click)="togglePasswordVisibility()"
+              ></ion-icon>
+            </div>
+            <span class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('required')">
+              La contraseña es requerida.
+            </span>
+            <span class="error-msg" *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.hasError('minlength')">
+              Debe tener al menos 6 caracteres.
+            </span>
+          </div>
+
+          <!-- Botón de Envío -->
+          <button type="submit" class="submit-btn">
+            Iniciar Sesión
+          </button>
+        </form>
+
+        <div class="footer-links">
+          <p>¿Aún no tienes cuenta? <a routerLink="/login/register">Regístrate aquí</a></p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,154 @@
+<ion-content [fullscreen]="true" class="register-content">
+  <div class="register-wrapper">
+    <div class="register-card-container">
+      
+      <!-- Cabecera Visual -->
+      <div class="logo-header">
+        <h1 class="app-title">Crear <span>Cuenta</span></h1>
+        <p class="app-subtitle">Únete a la comunidad de emprendedores y compradores UCV</p>
+      </div>
+
+      <!-- Card Glassmorphic -->
+      <div class="glass-card">
+        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+          
+          <!-- Input Nombre Completo -->
+          <div class="input-group" [class.has-error]="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid">
+            <label for="fullName">Nombre Completo</label>
+            <div class="input-wrapper">
+              <ion-icon name="person-outline" class="input-icon"></ion-icon>
+              <input 
+                id="fullName" 
+                type="text" 
+                placeholder="Nombres y Apellidos" 
+                formControlName="fullName"
+              />
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')">
+              El nombre completo es requerido.
+            </span>
+            <span class="error-msg" *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')">
+              Debe tener al menos 4 caracteres.
+            </span>
+          </div>
+
+          <!-- Input Correo Institucional -->
+          <div class="input-group" [class.has-error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+            <label for="email">Correo Institucional</label>
+            <div class="input-wrapper">
+              <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+              <input 
+                id="email" 
+                type="email" 
+                placeholder="ejemplo@ucvvirtual.edu.pe" 
+                formControlName="email"
+              />
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')">
+              El correo es requerido.
+            </span>
+            <span class="error-msg" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('pattern')">
+              Debe registrarse con un correo institucional de la UCV (@ucvvirtual.edu.pe o @ucv.edu.pe).
+            </span>
+          </div>
+
+          <!-- Input Celular (WhatsApp) -->
+          <div class="input-group" [class.has-error]="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
+            <label for="phone">Celular (WhatsApp)</label>
+            <div class="input-wrapper">
+              <ion-icon name="logo-whatsapp" class="input-icon"></ion-icon>
+              <input 
+                id="phone" 
+                type="tel" 
+                placeholder="Ej. 999888777" 
+                formControlName="phone"
+                maxlength="9"
+              />
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')">
+              El número de celular es requerido.
+            </span>
+            <span class="error-msg" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('pattern')">
+              El celular debe tener 9 dígitos y empezar con 9.
+            </span>
+          </div>
+
+          <!-- Input Contraseña -->
+          <div class="input-group" [class.has-error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+            <label for="password">Contraseña</label>
+            <div class="input-wrapper">
+              <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+              <input 
+                id="password" 
+                [type]="showPassword ? 'text' : 'password'" 
+                placeholder="Mínimo 6 caracteres" 
+                formControlName="password"
+              />
+              <ion-icon 
+                [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+                class="eye-icon"
+                (click)="togglePasswordVisibility()"
+              ></ion-icon>
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('required')">
+              La contraseña es requerida.
+            </span>
+            <span class="error-msg" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.hasError('minlength')">
+              Debe tener al menos 6 caracteres.
+            </span>
+          </div>
+
+          <!-- Selección de Campus -->
+          <div class="input-group">
+            <label for="campus">Campus Universitario</label>
+            <div class="select-wrapper">
+              <ion-icon name="business-outline" class="input-icon"></ion-icon>
+              <select id="campus" formControlName="campus">
+                <option *ngFor="let item of campuses" [value]="item">{{ item }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Selección de Rol (Segmento Estilizado) -->
+          <div class="role-selector-group">
+            <label>Tipo de Cuenta</label>
+            <div class="segmented-control">
+              <input 
+                type="radio" 
+                id="role-comprador" 
+                value="comprador" 
+                formControlName="role" 
+                checked
+              />
+              <label for="role-comprador" class="role-option">
+                <ion-icon name="bag-handle-outline"></ion-icon>
+                <span>Comprador</span>
+              </label>
+
+              <input 
+                type="radio" 
+                id="role-emprendedor" 
+                value="emprendedor" 
+                formControlName="role"
+              />
+              <label for="role-emprendedor" class="role-option">
+                <ion-icon name="storefront-outline"></ion-icon>
+                <span>Emprendedor</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Botón de Registro -->
+          <button type="submit" class="submit-btn">
+            Registrar Cuenta
+          </button>
+        </form>
+
+        <div class="footer-links">
+          <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia Sesión aquí</a></p>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</ion-content>

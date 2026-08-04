@@ -1,0 +1,276 @@
+// Variables de diseño compartidas
+$primary-color: #0C4A6E;
+$accent-color: #E11D48;
+$text-light: #F8FAFC;
+$text-muted: #94A3B8;
+$background-dark: #0B0F19;
+$input-bg: rgba(255, 255, 255, 0.05);
+$input-focus-border: #38BDF8;
+
+.register-content {
+  --background: #{$background-dark};
+  --color: #{$text-light};
+}
+
+.register-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  padding: 2rem 1.5rem;
+  background: radial-gradient(circle at 10% 20%, rgba(12, 74, 110, 0.2) 0%, rgba(11, 15, 25, 1) 90%);
+}
+
+.register-card-container {
+  width: 100%;
+  max-width: 440px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+// Cabecera
+.logo-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  .app-title {
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: white;
+    margin: 0;
+
+    span {
+      background: linear-gradient(135deg, #38BDF8 0%, $accent-color 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  }
+
+  .app-subtitle {
+    font-size: 0.9rem;
+    color: $text-muted;
+    margin: 0.25rem 0 0 0;
+  }
+}
+
+// Card Glassmorphic
+.glass-card {
+  background: rgba(30, 41, 59, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+}
+
+// Inputs de Formulario
+.input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.25rem;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #E2E8F0;
+    margin-bottom: 0.4rem;
+  }
+
+  .input-wrapper, .select-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    background: $input-bg;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0.75rem 0.9rem;
+    transition: all 0.3s ease;
+
+    &:focus-within {
+      border-color: $input-focus-border;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .input-icon {
+      font-size: 1.15rem;
+      color: $text-muted;
+      margin-right: 0.65rem;
+    }
+
+    input, select {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      width: 100%;
+      font-size: 0.9rem;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.35);
+      }
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      
+      option {
+        background-color: $background-dark;
+        color: white;
+      }
+    }
+  }
+
+  .eye-icon {
+    font-size: 1.15rem;
+    color: $text-muted;
+    cursor: pointer;
+    position: absolute;
+    right: 0.9rem;
+    z-index: 10;
+
+    &:hover {
+      color: white;
+    }
+  }
+
+  &.has-error {
+    .input-wrapper {
+      border-color: #EF4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+    }
+  }
+
+  .error-msg {
+    font-size: 0.7rem;
+    color: #F87171;
+    margin-top: 0.3rem;
+    animation: fadeIn 0.3s ease;
+  }
+}
+
+// Selector de Rol Segmentado
+.role-selector-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #E2E8F0;
+    margin-bottom: 0.5rem;
+  }
+
+  .segmented-control {
+    display: flex;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 2px;
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    .role-option {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: $text-muted;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      ion-icon {
+        font-size: 1.1rem;
+      }
+
+      &:hover {
+        color: white;
+      }
+    }
+
+    // Efecto cuando el radio está chequeado
+    input[type="radio"]#role-comprador:checked ~ label[for="role-comprador"],
+    input[type="radio"]#role-emprendedor:checked ~ label[for="role-emprendedor"] {
+      background: linear-gradient(135deg, $primary-color 0%, rgba(2, 132, 199, 0.8) 100%);
+      color: white;
+      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
+    }
+  }
+}
+
+// Botón de Registro
+.submit-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #0284C7 0%, $accent-color 100%);
+  border: none;
+  color: white;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  box-shadow: 0 4px 15px rgba(225, 29, 72, 0.25);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// Footer
+.footer-links {
+  text-align: center;
+  margin-top: 1.25rem;
+
+  p {
+    font-size: 0.85rem;
+    color: $text-muted;
+    margin: 0;
+
+    a {
+      color: #38BDF8;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #7DD3FC;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

@@ -1,0 +1,196 @@
+// Variables locales de diseño
+$primary-color: #0C4A6E;
+$accent-color: #E11D48;
+$text-light: #F8FAFC;
+$text-muted: #94A3B8;
+$background-dark: #0B0F19;
+$card-bg: rgba(30, 41, 59, 0.45);
+$input-bg: rgba(255, 255, 255, 0.05);
+
+.admin-content {
+  --background: #{$background-dark};
+  --color: #{$text-light};
+}
+
+.admin-header {
+  background: radial-gradient(circle at 10% 20%, rgba(12, 74, 110, 0.15) 0%, rgba(11, 15, 25, 1) 90%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  .header-toolbar {
+    --background: transparent;
+    --color: white;
+    --title-font-weight: 700;
+  }
+}
+
+.back-btn {
+  --color: white;
+}
+
+.logout-btn {
+  --color: $text-muted;
+}
+
+.admin-dashboard-container {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease;
+}
+
+// Tarjeta Introductoria
+.admin-intro-card {
+  border-left: 4px solid #E11D48; // Borde UCV Accent
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .shield-icon {
+      font-size: 2.25rem;
+      color: #E11D48;
+      background: rgba(225, 29, 72, 0.1);
+      padding: 0.6rem;
+      border-radius: 12px;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: white;
+      margin: 0 0 0.2rem 0;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: $text-muted;
+      margin: 0;
+      line-height: 1.4;
+
+      strong {
+        color: white;
+      }
+    }
+  }
+}
+
+// Sección de Gestión
+.categories-management-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 750;
+    margin: 0;
+    color: white;
+  }
+
+  .btn-add-category {
+    background: linear-gradient(135deg, #0284C7 0%, $accent-color 100%);
+    border: none;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 15px rgba(225, 29, 72, 0.25);
+    }
+  }
+}
+
+// Spinner
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 3rem;
+}
+
+// Lista de Categorías
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+
+  .cat-icon {
+    font-size: 1.75rem;
+    background: rgba(255,255,255,0.03);
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .cat-info {
+    flex: 1;
+
+    .cat-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: white;
+      margin: 0 0 0.15rem 0;
+    }
+
+    .cat-slug {
+      font-size: 0.75rem;
+      color: $text-muted;
+    }
+  }
+
+  .cat-id-badge {
+    font-size: 0.7rem;
+    color: $text-muted;
+    background: rgba(15, 23, 42, 0.4);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+  }
+}
+
+// Estado Vacío
+.empty-state {
+  text-align: center;
+  color: $text-muted;
+  padding: 3rem;
+
+  ion-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

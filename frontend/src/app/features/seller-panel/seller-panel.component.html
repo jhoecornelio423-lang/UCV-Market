@@ -1,0 +1,183 @@
+<ion-header class="seller-header ion-no-border">
+  <ion-toolbar class="header-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/catalog" text="" class="back-btn"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Emprendimiento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="seller-content">
+
+  <!-- Modal/Formulario de Producto Overlay -->
+  <div *ngIf="showForm" class="form-overlay-container">
+    <div class="form-card glass-panel">
+      <h2 class="form-title">{{ formMode === 'create' ? 'Agregar Producto' : 'Editar Producto' }}</h2>
+      
+      <div class="form-body">
+        <!-- Nombre -->
+        <div class="form-group">
+          <label for="p-name">Nombre del Producto *</label>
+          <input id="p-name" type="text" [(ngModel)]="pName" placeholder="Ej. Empanada de Pollo" />
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-group">
+          <label for="p-desc">Descripción</label>
+          <textarea id="p-desc" rows="3" [(ngModel)]="pDescription" placeholder="Ej. Calientita, con ají de cortesía..."></textarea>
+        </div>
+
+        <!-- Precio y Stock Row -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label for="p-price">Precio (S/.) *</label>
+            <input id="p-price" type="number" step="0.1" [(ngModel)]="pPrice" placeholder="0.00" />
+          </div>
+          <div class="form-group flex-1">
+            <label for="p-stock">Stock Inicial *</label>
+            <input id="p-stock" type="number" [(ngModel)]="pStock" placeholder="5" />
+          </div>
+        </div>
+
+        <!-- Categoría -->
+        <div class="form-group">
+          <label for="p-cat">Categoría *</label>
+          <div class="select-wrapper">
+            <select id="p-cat" [(ngModel)]="pCategoryId">
+              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Lugar de Entrega -->
+        <div class="form-group">
+          <label for="p-spot">Punto de Entrega Principal</label>
+          <input id="p-spot" type="text" [(ngModel)]="pPickupLocation" placeholder="Ej. Biblioteca Pabellón A" />
+        </div>
+
+        <!-- Carga de Imagen (Solo al crear) -->
+        <div class="form-group" *ngIf="formMode === 'create'">
+          <label for="p-file">Imagen del Producto</label>
+          <div class="file-input-wrapper">
+            <input id="p-file" type="file" accept="image/*" (change)="onFileChange($event)" />
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>{{ selectedFiles.length > 0 ? selectedFiles[0].name : 'Seleccionar Imagen' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-cancel" (click)="closeForm()">Cancelar</button>
+        <button class="btn-save" (click)="saveProduct()">Guardar Producto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard del Vendedor (Estadísticas) -->
+  <div class="seller-dashboard-container" *ngIf="!showForm">
+    
+    <!-- Tarjetas de Indicadores -->
+    <div class="stats-grid">
+      <div class="stat-card completed glass-panel">
+        <ion-icon name="cash-outline" class="stat-icon"></ion-icon>
+        <div class="stat-info">
+          <span class="val">S/. {{ totalSales.toFixed(2) }}</span>
+          <span class="lbl">Ventas Entregadas</span>
+        </div>
+      </div>
+
+      <div class="stat-card pending glass-panel" (click)="goToOrders()">
+        <ion-icon name="time-outline" class="stat-icon"></ion-icon>
+        <div class="stat-info">
+          <span class="val">{{ pendingOrdersCount }}</span>
+          <span class="lbl">Pedidos Pendientes</span>
+        </div>
+        <ion-badge *ngIf="pendingOrdersCount > 0" color="danger" class="stat-badge">Nuevo</ion-badge>
+      </div>
+
+      <div class="stat-card clicks glass-panel">
+        <ion-icon name="logo-whatsapp" class="stat-icon"></ion-icon>
+        <div class="stat-info">
+          <span class="val">{{ totalClicks }}</span>
+          <span class="lbl">Consultas WhatsApp</span>
+        </div>
+      </div>
+
+      <div class="stat-card active glass-panel">
+        <ion-icon name="cube-outline" class="stat-icon"></ion-icon>
+        <div class="stat-info">
+          <span class="val">{{ activeProductsCount }}</span>
+          <span class="lbl">Productos Activos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gestión de Pedidos Acceso rápido -->
+    <button class="orders-shortcut-btn" (click)="goToOrders()">
+      <ion-icon name="list-outline"></ion-icon>
+      <span>Ver y Gestionar Pedidos Recibidos</span>
+      <ion-icon name="arrow-forward-outline" slot="end" class="arrow-end"></ion-icon>
+    </button>
+
+    <!-- Lista de Productos (Mi Inventario) -->
+    <div class="inventory-section">
+      <div class="section-header">
+        <h3>Mi Inventario</h3>
+        <button class="btn-add-product" (click)="openCreateForm()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>Nuevo Producto</span>
+        </button>
+      </div>
+
+      <!-- Grid de productos del vendedor -->
+      <div *ngIf="products.length === 0" class="empty-inventory">
+        <ion-icon name="cube-outline"></ion-icon>
+        <p>Aún no tienes productos registrados. Crea uno nuevo para empezar a vender.</p>
+      </div>
+
+      <div *ngIf="products.length > 0" class="products-list">
+        <div *ngFor="let product of products" class="product-item glass-panel" [class.paused]="!product.is_active">
+          <div class="item-img-wrapper">
+            <img 
+              [src]="(product.product_images && product.product_images.length > 0) ? product.product_images[0].image_url : 'assets/placeholder-product.png'" 
+              [alt]="product.name"
+            />
+          </div>
+
+          <div class="item-details-wrapper">
+            <h4 class="item-title">{{ product.name }}</h4>
+            <div class="item-price">S/. {{ product.price.toFixed(2) }}</div>
+            <div class="item-stock" [class.no-stock]="product.stock === 0">
+              Stock: {{ product.stock }} uds
+            </div>
+          </div>
+
+          <div class="item-actions-wrapper">
+            <!-- Toggle Visibilidad Rápida -->
+            <button 
+              class="btn-action-icon btn-toggle-active" 
+              [class.active]="product.is_active"
+              (click)="toggleProductActive(product)"
+              [title]="product.is_active ? 'Pausar Anuncio' : 'Activar Anuncio'"
+            >
+              <ion-icon [name]="product.is_active ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
+            </button>
+
+            <!-- Editar -->
+            <button class="btn-action-icon btn-edit" (click)="openEditForm(product)" title="Editar">
+              <ion-icon name="create-outline"></ion-icon>
+            </button>
+
+            <!-- Dar de Baja -->
+            <button class="btn-action-icon btn-delete" (click)="deleteProduct(product)" title="Dar de baja">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>
