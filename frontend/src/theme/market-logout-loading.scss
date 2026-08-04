@@ -1,0 +1,21 @@
+ion-loading.market-login-loading.market-logout-loading .loading-wrapper {
+  min-height: 180px;
+  padding: 28px 30px;
+}
+
+ion-loading.market-login-loading.market-logout-loading .loading-wrapper::before {
+  content: none;
+  display: none;
+  animation: none;
+}
+
+ion-loading.market-login-loading.market-logout-loading .loading-content::after {
+  content: "Finalizando tu sesi\00f3n de forma segura";
+}
+
+@media (max-width: 420px) {
+  ion-loading.market-login-loading.market-logout-loading .loading-wrapper {
+    min-height: 172px;
+    padding: 25px 24px;
+  }
+}

@@ -1,0 +1,98 @@
+<ion-content [fullscreen]="true" class="profile-content">
+  <main class="profile-shell">
+    <h1>Mi perfil</h1>
+
+    <section class="profile-card" aria-label="Información personal">
+      <div class="profile-avatar" aria-hidden="true">
+        <span>{{ initials }}</span>
+        <i><ion-icon name="camera-outline"></ion-icon></i>
+      </div>
+
+      <div class="profile-identity">
+        <h2>{{ profile?.full_name || 'Estudiante UCV' }}</h2>
+        <p>{{ email || 'Correo institucional' }}</p>
+        <p *ngIf="profile?.student_code">Cód: {{ profile?.student_code }}</p>
+        <strong>{{ profile?.campus || 'UCV - Lima Norte' }}</strong>
+      </div>
+    </section>
+
+    <section class="profile-stats" aria-label="Resumen de actividad">
+      <div>
+        <strong>{{ loadingStats ? '—' : ordersCount }}</strong>
+        <span>Pedidos</span>
+      </div>
+      <div>
+        <strong>{{ loadingStats ? '—' : favoritesCount }}</strong>
+        <span>Favoritos</span>
+      </div>
+      <div>
+        <strong>{{ loadingStats ? '—' : reviewsCount }}</strong>
+        <span>Reseñas</span>
+      </div>
+    </section>
+
+    <button type="button" class="seller-banner" (click)="openSellerSection()" [disabled]="updatingRole">
+      <span class="seller-icon"><ion-icon name="storefront-outline"></ion-icon></span>
+      <span class="seller-copy">
+        <strong>{{ profile?.role === 'emprendedor' ? 'Gestionar mi emprendimiento' : 'Quiero vender en UCV Market' }}</strong>
+        <small>{{ profile?.role === 'emprendedor' ? 'Publica productos y revisa tus ventas' : 'Activa tu emprendimiento ahora' }}</small>
+      </span>
+      <span class="role-chip">
+        <small>Modo actual</small>
+        <strong><i></i>{{ roleLabel }}</strong>
+      </span>
+    </button>
+
+    <nav class="profile-menu" aria-label="Opciones del perfil">
+      <button type="button" (click)="goToOrders()">
+        <span class="menu-icon"><ion-icon name="cube-outline"></ion-icon></span>
+        <strong>Mis pedidos</strong>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button type="button" (click)="showPendingSection('Favoritos')">
+        <span class="menu-icon"><ion-icon name="heart-outline"></ion-icon></span>
+        <strong>Favoritos</strong>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button type="button" (click)="showPendingSection('Notificaciones')">
+        <span class="menu-icon"><ion-icon name="notifications-outline"></ion-icon></span>
+        <strong>Notificaciones</strong>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button type="button" (click)="showPendingSection('Configuración')">
+        <span class="menu-icon"><ion-icon name="settings-outline"></ion-icon></span>
+        <strong>Configuración</strong>
+        <ion-icon class="menu-chevron" name="chevron-forward-outline"></ion-icon>
+      </button>
+      <button type="button" class="sign-out-option" (click)="confirmSignOut()">
+        <span class="menu-icon"><ion-icon name="close-outline"></ion-icon></span>
+        <strong>Cerrar sesión</strong>
+      </button>
+    </nav>
+  </main>
+</ion-content>
+
+<ion-footer class="profile-footer ion-no-border">
+  <nav class="bottom-navigation" aria-label="Navegación principal">
+    <button type="button" class="nav-item" (click)="goToCatalog()">
+      <ion-icon name="home-outline"></ion-icon>
+      <span>Inicio</span>
+    </button>
+    <button type="button" class="nav-item" (click)="goToCatalog()">
+      <ion-icon name="compass-outline"></ion-icon>
+      <span>Explorar</span>
+    </button>
+    <button type="button" class="nav-item" (click)="goToOrders()">
+      <ion-icon name="receipt-outline"></ion-icon>
+      <span>Pedidos</span>
+    </button>
+    <button type="button" class="nav-item" (click)="showPendingSection('Favoritos')">
+      <ion-icon name="heart-outline"></ion-icon>
+      <span>Favoritos</span>
+    </button>
+    <button type="button" class="nav-item active">
+      <ion-icon name="person-outline"></ion-icon>
+      <span>Perfil</span>
+    </button>
+  </nav>
+</ion-footer>

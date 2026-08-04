@@ -11,7 +11,6 @@ import { Profile } from '../../core/models/profile.model';
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
-  styleUrls: ['./orders.component.scss'],
   standalone: false
 })
 export class OrdersComponent implements OnInit, OnDestroy {
@@ -19,8 +18,19 @@ export class OrdersComponent implements OnInit, OnDestroy {
   sellerOrders: Order[] = [];
   
   activeTab: 'compras' | 'ventas' = 'compras';
+  orderFilter: 'active' | 'history' = 'active';
+  expandedOrderId: string | null = null;
   userProfile: Profile | null = null;
   loading = false;
+
+  get visibleOrders(): Order[] {
+    const orders = this.activeTab === 'compras' ? this.buyerOrders : this.sellerOrders;
+    const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
+
+    return orders.filter(order => this.orderFilter === 'history'
+      ? historicalStatuses.includes(order.status)
+      : !historicalStatuses.includes(order.status));
+  }
 
   private subscriptions = new Subscription();
 
@@ -87,6 +97,70 @@ export class OrdersComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       event.target.complete();
     }, 1000);
+  }
+
+  selectOrderFilter(filter: 'active' | 'history') {
+    this.orderFilter = filter;
+    this.expandedOrderId = null;
+  }
+
+  selectOrderType(type: 'compras' | 'ventas') {
+    this.activeTab = type;
+    this.expandedOrderId = null;
+  }
+
+  toggleOrderDetails(orderId: string) {
+    this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
+  }
+
+  getStatusLabel(status: OrderStatus): string {
+    const labels: Record<OrderStatus, string> = {
+      pending: 'Pendiente',
+      accepted: 'Aceptado',
+      preparing: 'Preparando',
+      ready: 'Listo',
+      completed: 'Entregado',
+      cancelled: 'Cancelado'
+    };
+
+    return labels[status];
+  }
+
+  getPartnerName(order: Order): string {
+    if (this.activeTab === 'ventas') {
+      return order.buyer?.full_name || 'Comprador UCV';
+    }
+
+    return order.seller?.full_name || 'Emprendedor UCV';
+  }
+
+  getOrderDateLabel(createdAt?: string): string {
+    if (!createdAt) return '';
+
+    const orderDate = new Date(createdAt);
+    if (Number.isNaN(orderDate.getTime())) return '';
+
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const startOfOrderDate = new Date(orderDate.getFullYear(), orderDate.getMonth(), orderDate.getDate());
+    const differenceInDays = Math.round((startOfToday.getTime() - startOfOrderDate.getTime()) / 86400000);
+
+    let dayLabel: string;
+    if (differenceInDays === 0) {
+      dayLabel = 'Hoy';
+    } else if (differenceInDays === 1) {
+      dayLabel = 'Ayer';
+    } else {
+      dayLabel = orderDate.toLocaleDateString('es-PE', { day: '2-digit', month: 'short' });
+    }
+
+    const timeLabel = orderDate
+      .toLocaleTimeString('es-PE', { hour: 'numeric', minute: '2-digit', hour12: true })
+      .replace(/\./g, '')
+      .replace(/\s+/g, ' ')
+      .toLowerCase();
+
+    return `${dayLabel}, ${timeLabel}`;
   }
 
   /**
@@ -281,5 +355,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   goToCatalog() {
     this.router.navigate(['/catalog']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 }

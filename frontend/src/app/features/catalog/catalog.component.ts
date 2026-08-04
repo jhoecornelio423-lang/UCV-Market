@@ -232,12 +232,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.router.navigate(['/orders']);
   }
 
-  /**
-   * Cierra la sesión activa.
-   */
-  signOut() {
-    this.authService.signOut().subscribe(() => {
-      this.router.navigate(['/login']);
-    });
+  goToProfile() {
+    this.router.navigate(['/profile']);
   }
 }

@@ -103,7 +103,7 @@ export class LoginComponent implements OnInit {
     const loading = await this.loadingCtrl.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent',
-      cssClass: 'custom-loading'
+      cssClass: 'market-login-loading'
     });
     await loading.present();
 

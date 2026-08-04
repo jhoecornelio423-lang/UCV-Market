@@ -1,4 +1,8 @@
 @use "./app/features/catalog/catalog.component";
+@use "./app/features/orders/orders.component";
+@use "./app/features/profile/profile.component";
+@use "./theme/market-login-loading";
+@use "./theme/market-logout-loading";
 
 /*
  * App Global CSS
