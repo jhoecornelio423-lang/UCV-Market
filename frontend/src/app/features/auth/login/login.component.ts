@@ -13,6 +13,7 @@ import { AuthService } from '../../../core/auth/auth.service';
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
   showPassword = false;
+  selectedRole: 'comprador' | 'emprendedor' = 'comprador';
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -34,6 +35,10 @@ export class LoginComponent implements OnInit {
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  selectRole(role: 'comprador' | 'emprendedor') {
+    this.selectedRole = role;
   }
 
   async onSubmit() {

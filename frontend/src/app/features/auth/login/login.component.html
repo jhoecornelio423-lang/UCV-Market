@@ -27,8 +27,11 @@
           <h2>Todo tu campus,<br />en un solo lugar.</h2>
           <p>Descubre productos, comida y emprendimientos creados por la comunidad UCV.</p>
         </div>
-        <span class="campus-badge"><i></i> Campus UCV · Trujillo</span>
-        <span class="buyer-badge"><i></i> Comprador</span>
+        <span class="campus-badge"><i></i> UCV · Lima Norte</span>
+        <span class="buyer-badge">
+          <i></i>
+          {{ selectedRole === 'comprador' ? 'Comprador' : 'Emprendedor' }}
+        </span>
         <div class="banner-pages" aria-hidden="true">
           <span></span><span class="active"></span><span></span>
         </div>
@@ -38,7 +41,14 @@
         <legend>¿Cómo deseas ingresar?</legend>
         <div class="role-options">
           <label class="role-option" for="role-buyer">
-            <input id="role-buyer" type="radio" name="account-role" value="comprador" checked />
+            <input
+              id="role-buyer"
+              type="radio"
+              name="account-role"
+              value="comprador"
+              [checked]="selectedRole === 'comprador'"
+              (change)="selectRole('comprador')"
+            />
             <span class="role-option-content">
               <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
               <span>
@@ -50,7 +60,14 @@
           </label>
 
           <label class="role-option" for="role-seller">
-            <input id="role-seller" type="radio" name="account-role" value="emprendedor" />
+            <input
+              id="role-seller"
+              type="radio"
+              name="account-role"
+              value="emprendedor"
+              [checked]="selectedRole === 'emprendedor'"
+              (change)="selectRole('emprendedor')"
+            />
             <span class="role-option-content">
               <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
               <span>
