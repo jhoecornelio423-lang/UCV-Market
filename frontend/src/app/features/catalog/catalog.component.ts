@@ -103,6 +103,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.productRepository.getActiveProducts(this.selectedCategoryId, this.searchQuery).subscribe({
       next: (products) => {
+        console.log('DEBUG: Productos del catálogo:', products);
         this.products = products;
         this.loading = false;
       },
