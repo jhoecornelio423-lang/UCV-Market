@@ -1,115 +1,198 @@
-<ion-header class="orders-header ion-no-border">
-  <ion-toolbar class="header-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/seller" text="" class="back-btn"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Pedidos</ion-title>
-  </ion-toolbar>
-
-  <!-- Figma Tabs para Vendedor -->
-  <div class="orders-tabs-figma" *ngIf="activeTab === 'ventas'">
-    <button class="tab-item" [class.active]="orderFilter === 'new'" (click)="selectOrderFilter('new')">
-      Nuevos
-      <span class="dot-badge" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
-    </button>
-    <button class="tab-item" [class.active]="orderFilter === 'active'" (click)="selectOrderFilter('active')">
-      Activos
-    </button>
-    <button class="tab-item" [class.active]="orderFilter === 'ready'" (click)="selectOrderFilter('ready')">
-      Listos
-    </button>
-  </div>
-</ion-header>
-
 <ion-content [fullscreen]="true" class="orders-content">
-  <ion-refresher slot="fixed" (ionRefresh)="refreshOrders($event)">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
+  <div class="orders-main-shell">
 
-  <div class="orders-shell">
+    <!-- Desktop Sidebar Navigation (Mantenida fija a nivel web) -->
+    <aside class="desktop-sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">U</div>
+        <h2>UCV Market</h2>
+      </div>
+      <nav class="nav-links">
+        <button class="nav-item" (click)="goToCatalog()"><ion-icon name="home-outline"></ion-icon> Inicio</button>
+        <button class="nav-item"><ion-icon name="compass-outline"></ion-icon> Explorar</button>
 
-    <!-- Empty State -->
-    <div *ngIf="!loading && visibleOrders.length === 0" class="empty-state">
-      <ion-icon name="bag-handle-outline"></ion-icon>
-      <p>No hay pedidos en esta sección</p>
-    </div>
+        <!-- Link dinámico según el rol para Pedidos -->
+        <button class="nav-item active" *ngIf="userProfile?.role === 'comprador'"><ion-icon name="receipt"></ion-icon> Mis Compras</button>
+        <button class="nav-item active" *ngIf="userProfile?.role === 'emprendedor'"><ion-icon name="bag-handle"></ion-icon> Ventas</button>
 
-    <!-- Orders List -->
-    <div class="orders-list-figma" *ngIf="!loading">
+        <button class="nav-item" *ngIf="userProfile?.role === 'emprendedor'" (click)="selectOrderType('compras')"><ion-icon name="cart-outline"></ion-icon> Mis Compras</button>
 
-      <article *ngFor="let order of visibleOrders" class="order-card-figma">
-        <div class="card-body">
-          <div class="card-left">
-            <p class="order-id">#{{ order.id.substring(0, 3) }} · {{ getOrderDateLabel(order.created_at) }}</p>
-            <h4 class="product-title">
-              <span *ngFor="let item of order.order_items; let last = last">
-                {{ item.product?.name }} x{{ item.quantity }}{{ !last ? ', ' : '' }}
-              </span>
-            </h4>
-            <p class="customer-name">de {{ order.buyer?.full_name }}</p>
-          </div>
-          <div class="card-right">
-            <p class="price">S/ {{ order.total_price.toFixed(2) }}</p>
-            <span class="status-label" *ngIf="orderFilter !== 'new'" [class]="order.status">
-              {{ getStatusLabel(order.status) }}
-            </span>
-          </div>
-        </div>
+        <button class="nav-item"><ion-icon name="heart-outline"></ion-icon> Favoritos</button>
+        <button class="nav-item" (click)="goToProfile()"><ion-icon name="person-outline"></ion-icon> Perfil</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" (click)="signOut()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          Salir
+        </button>
+      </div>
+    </aside>
 
-        <!-- Acciones Figma: NUEVOS (Pendiente) -->
-        <div class="card-actions-figma" *ngIf="order.status === 'pending'">
-          <button class="btn-accept" (click)="changeStatus(order, getNextStatus(order.status))">
-            <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
-            {{ getNextActionLabel(order.status) }}
+    <div class="main-content-wrapper">
+      <header class="orders-header ion-no-border">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-back-button [defaultHref]="activeTab === 'ventas' ? '/seller' : '/catalog'" text="" class="back-btn"></ion-back-button>
+          </ion-buttons>
+          <ion-title>{{ activeTab === 'ventas' ? 'Pedidos Recibidos' : 'Mis Compras' }}</ion-title>
+        </ion-toolbar>
+
+        <!-- TABS: VENDEDOR (Nuevos, Activos, Listos) -->
+        <div class="orders-tabs-figma" *ngIf="activeTab === 'ventas'">
+          <button class="tab-item" [class.active]="sellerFilter === 'new'" (click)="setSellerFilter('new')">
+            Nuevos
+            <span class="dot-badge" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
           </button>
-          <button class="btn-reject" (click)="changeStatus(order, 'cancelled')">
-            <ion-icon name="close"></ion-icon>
-            Rechazar
+          <button class="tab-item" [class.active]="sellerFilter === 'active'" (click)="setSellerFilter('active')">
+            Activos
           </button>
-        </div>
-
-        <!-- Acciones Figma: ACTIVOS (Aceptado/Preparando) -->
-        <div class="card-actions-figma" *ngIf="['accepted', 'preparing'].includes(order.status)">
-          <button class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
-            {{ getNextActionLabel(order.status) }}
-            <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
+          <button class="tab-item" [class.active]="sellerFilter === 'ready'" (click)="setSellerFilter('ready')">
+            Listos
           </button>
         </div>
 
-        <!-- Acciones Figma: LISTOS (Listo para entregar) -->
-        <div class="card-actions-figma" *ngIf="order.status === 'ready'">
-          <button class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
-            {{ getNextActionLabel(order.status) }}
-            <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
+        <!-- TABS: COMPRADOR (Activos, Historial) -->
+        <div class="orders-tabs-figma buyer-tabs" *ngIf="activeTab === 'compras'">
+          <button class="tab-item" [class.active]="buyerFilter === 'active'" (click)="setBuyerFilter('active')">
+            Activos
+          </button>
+          <button class="tab-item" [class.active]="buyerFilter === 'history'" (click)="setBuyerFilter('history')">
+            Historial
           </button>
         </div>
-      </article>
+      </header>
 
+      <ion-refresher slot="fixed" (ionRefresh)="refreshOrders($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+
+      <div class="orders-shell">
+
+        <!-- Empty State -->
+        <div *ngIf="!loading && visibleOrders.length === 0" class="empty-state">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+          <p>No hay pedidos en esta sección</p>
+          <button *ngIf="activeTab === 'compras' && buyerFilter === 'active'" class="btn-go-catalog" (click)="goToCatalog()">
+            Explorar catálogo
+          </button>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-list-figma" *ngIf="!loading">
+
+          <article *ngFor="let order of visibleOrders" class="order-card-figma" [class.buyer-card]="activeTab === 'compras'">
+            <div class="card-body">
+              <div class="card-left">
+                <p class="order-id">#{{ order.id.substring(0, 4) | uppercase }} · {{ getOrderDateLabel(order.created_at) }}</p>
+                <h4 class="product-title">
+                  <span *ngFor="let item of order.order_items; let last = last">
+                    {{ item.product?.name }} x{{ item.quantity }}{{ !last ? ', ' : '' }}
+                  </span>
+                </h4>
+                <p class="customer-name">
+                  {{ activeTab === 'ventas' ? 'de ' + order.buyer?.full_name : 'Vendido por ' + order.seller?.full_name }}
+                </p>
+              </div>
+              <div class="card-right">
+                <p class="price">S/ {{ order.total_price.toFixed(2) }}</p>
+                <span class="status-label" [class]="order.status">
+                  {{ getStatusLabel(order.status) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- ACCIONES VENDEDOR -->
+            <ng-container *ngIf="activeTab === 'ventas'">
+              <div class="card-actions-figma" *ngIf="order.status === 'pending'">
+                <button class="btn-accept" (click)="changeStatus(order, getNextStatus(order.status))">
+                  <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
+                  {{ getNextActionLabel(order.status) }}
+                </button>
+                <button class="btn-reject" (click)="changeStatus(order, 'cancelled')">
+                  <ion-icon name="close"></ion-icon>
+                  Rechazar
+                </button>
+              </div>
+
+              <div class="card-actions-figma" *ngIf="['accepted', 'preparing'].includes(order.status)">
+                <button class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
+                  {{ getNextActionLabel(order.status) }}
+                  <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
+                </button>
+              </div>
+
+              <div class="card-actions-figma" *ngIf="order.status === 'ready'">
+                <button class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
+                  {{ getNextActionLabel(order.status) }}
+                  <ion-icon [name]="getNextActionIcon(order.status)"></ion-icon>
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- ACCIONES COMPRADOR -->
+            <ng-container *ngIf="activeTab === 'compras'">
+              <div class="card-actions-figma">
+                <button *ngIf="order.status === 'pending'" class="btn-reject" (click)="cancelOrder(order)">
+                  Cancelar compra
+                </button>
+
+                <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-wa" (click)="contactPartnerViaWhatsApp(order, 'compras')">
+                  <ion-icon name="logo-whatsapp"></ion-icon>
+                  Contactar vendedor
+                </button>
+
+                <button *ngIf="order.status === 'completed'" class="btn-rate" (click)="qualifySeller(order)">
+                  <ion-icon name="star-outline"></ion-icon>
+                  Calificar experiencia
+                </button>
+              </div>
+            </ng-container>
+          </article>
+
+        </div>
+      </div>
     </div>
   </div>
 </ion-content>
 
 <ion-footer class="seller-footer ion-no-border ion-hide-lg-up">
-  <nav class="bottom-navigation-figma">
+  <!-- Navegación para Vendedor -->
+  <nav class="bottom-navigation-figma" *ngIf="userProfile?.role === 'emprendedor'">
     <button type="button" class="nav-item-figma" (click)="goToSellerDashboard()">
       <ion-icon name="stats-chart-outline"></ion-icon>
       <span>Dashboard</span>
     </button>
-    <button type="button" class="nav-item-figma active">
-      <ion-icon name="bag-handle"></ion-icon>
-      <span>Pedidos</span>
-    </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="pricetag-outline"></ion-icon>
-      <span>Productos</span>
-    </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="trending-up-outline"></ion-icon>
+    <button type="button" class="nav-item-figma" [class.active]="activeTab === 'ventas'" (click)="selectOrderType('ventas')">
+      <ion-icon [name]="activeTab === 'ventas' ? 'bag-handle' : 'bag-handle-outline'"></ion-icon>
       <span>Ventas</span>
     </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="business-outline"></ion-icon>
-      <span>Negocio</span>
+    <button type="button" class="nav-item-figma" [class.active]="activeTab === 'compras'" (click)="selectOrderType('compras')">
+      <ion-icon [name]="activeTab === 'compras' ? 'cart' : 'cart-outline'"></ion-icon>
+      <span>Compras</span>
+    </button>
+    <button type="button" class="nav-item-figma" (click)="signOut()">
+      <ion-icon name="log-out-outline"></ion-icon>
+      <span>Salir</span>
+    </button>
+  </nav>
+
+  <!-- Navegación para Comprador -->
+  <nav class="bottom-navigation-figma" *ngIf="userProfile?.role === 'comprador'">
+    <button type="button" class="nav-item-figma" (click)="goToCatalog()">
+      <ion-icon name="home-outline"></ion-icon>
+      <span>Inicio</span>
+    </button>
+    <button type="button" class="nav-item-figma" (click)="goToCatalog()">
+      <ion-icon name="compass-outline"></ion-icon>
+      <span>Explorar</span>
+    </button>
+    <button type="button" class="nav-item-figma active">
+      <ion-icon name="receipt"></ion-icon>
+      <span>Pedidos</span>
+    </button>
+    <button type="button" class="nav-item-figma" (click)="goToProfile()">
+      <ion-icon name="person-outline"></ion-icon>
+      <span>Perfil</span>
     </button>
   </nav>
 </ion-footer>

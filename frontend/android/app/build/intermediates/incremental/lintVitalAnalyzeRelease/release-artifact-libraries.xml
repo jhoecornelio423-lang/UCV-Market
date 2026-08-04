@@ -53,10 +53,10 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:capacitor-android::release"
-      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\5d836218625d36286dbedf4e7d515fd0\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\5d836218625d36286dbedf4e7d515fd0\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\3317ae9ddfbc857b5e660fe6b633a648\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\3317ae9ddfbc857b5e660fe6b633a648\transformed\out\jars\libs\R.jar"
       resolved="android:capacitor-android:unspecified"
       partialResultsDir="C:\Users\JuanPerezma\Documents\UCV-Market\frontend\node_modules\@capacitor\android\capacitor\build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\5d836218625d36286dbedf4e7d515fd0\transformed\out"
+      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\3317ae9ddfbc857b5e660fe6b633a648\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -81,10 +81,10 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:capacitor-app::release"
-      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f8b5104b93150b862d2d69f092dbb390\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f8b5104b93150b862d2d69f092dbb390\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\10b73f1ad9ab12809c2c3152d6390b11\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\10b73f1ad9ab12809c2c3152d6390b11\transformed\out\jars\libs\R.jar"
       resolved="android:capacitor-app:unspecified"
       partialResultsDir="C:\Users\JuanPerezma\Documents\UCV-Market\frontend\node_modules\@capacitor\app\android\build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f8b5104b93150b862d2d69f092dbb390\transformed\out"
+      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\10b73f1ad9ab12809c2c3152d6390b11\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -109,10 +109,10 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:capacitor-keyboard::release"
-      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f0cde871bb4426821850fc8b3436db95\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f0cde871bb4426821850fc8b3436db95\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\0339bc26b9c6913310896d08ea1b154b\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\0339bc26b9c6913310896d08ea1b154b\transformed\out\jars\libs\R.jar"
       resolved="android:capacitor-keyboard:unspecified"
       partialResultsDir="C:\Users\JuanPerezma\Documents\UCV-Market\frontend\node_modules\@capacitor\keyboard\android\build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\f0cde871bb4426821850fc8b3436db95\transformed\out"
+      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\0339bc26b9c6913310896d08ea1b154b\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"
@@ -123,10 +123,10 @@
       proguardRules="proguard.txt"/>
   <library
       name=":@@:capacitor-status-bar::release"
-      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\6f52cc4dcd2df56cf009264f6bbcc2ec\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\6f52cc4dcd2df56cf009264f6bbcc2ec\transformed\out\jars\libs\R.jar"
+      jars="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\4c67bbeae5e8abb133368d6e3cee41f2\transformed\out\jars\classes.jar;C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\4c67bbeae5e8abb133368d6e3cee41f2\transformed\out\jars\libs\R.jar"
       resolved="android:capacitor-status-bar:unspecified"
       partialResultsDir="C:\Users\JuanPerezma\Documents\UCV-Market\frontend\node_modules\@capacitor\status-bar\android\build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\6f52cc4dcd2df56cf009264f6bbcc2ec\transformed\out"
+      folder="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\4c67bbeae5e8abb133368d6e3cee41f2\transformed\out"
       manifest="AndroidManifest.xml"
       resFolder="res"
       assetsFolder="assets"

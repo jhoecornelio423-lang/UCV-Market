@@ -1,381 +1,255 @@
-// Variables locales de diseño
-$primary-color: #0C4A6E;
-$accent-color: #E11D48;
-$text-light: #F8FAFC;
-$text-muted: #94A3B8;
-$background-dark: #0B0F19;
-$card-bg: rgba(30, 41, 59, 0.45);
-$input-bg: rgba(255, 255, 255, 0.05);
+$primary: #E8432D;
+$primary-light: #FFF2F0;
+$navy: #07152f;
+$muted: #818a9b;
+$bg: #f8f9fb;
+$sidebar-width: 280px;
 
-.cart-content {
-  --background: #{$background-dark};
-  --color: #{$text-light};
-}
-
-.cart-header {
-  background: radial-gradient(circle at 10% 20%, rgba(12, 74, 110, 0.15) 0%, rgba(11, 15, 25, 1) 90%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-  .header-toolbar {
-    --background: transparent;
-    --color: white;
-    --title-font-weight: 700;
-  }
-}
-
-.back-btn {
-  --color: white;
-}
-
-// Carrito Vacío
-.empty-cart-state {
+app-cart {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 6rem 2rem;
-  animation: fadeIn 0.5s ease;
+  height: 100%;
 
-  .empty-icon-container {
-    font-size: 4rem;
-    color: $text-muted;
-    background: rgba(255, 255, 255, 0.02);
-    width: 110px;
-    height: 110px;
-    border-radius: 50%;
+  .cart-content {
+    --background: #{$bg};
+    --color: #{$navy};
+  }
+
+  .cart-main-shell {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    margin-bottom: 1.5rem;
-  }
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
 
-  h2 {
-    font-size: 1.35rem;
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: $text-muted;
-    max-width: 300px;
-    margin: 0 0 2rem 0;
-  }
-
-  .return-catalog-btn {
-    background: linear-gradient(135deg, #0284C7 0%, $primary-color 100%);
-    border: none;
-    color: white;
-    padding: 0.9rem 1.75rem;
-    border-radius: 14px;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 5px 15px rgba(2, 132, 199, 0.2);
-    transition: all 0.2s;
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
-    }
-  }
-}
-
-// Contenedor con items
-.cart-container {
-  padding: 1.25rem;
-  animation: fadeIn 0.5s ease;
-}
-
-// Lista de Items
-.items-list-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-}
-
-.cart-item-card {
-  display: flex;
-  background: $card-bg;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1rem;
-  gap: 1rem;
-  align-items: center;
-
-  .item-img-wrapper {
-    width: 70px;
-    height: 70px;
-    border-radius: 12px;
-    overflow: hidden;
-    background: rgba(15, 23, 42, 0.6);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    @media (min-width: 1024px) {
+      flex-direction: row;
     }
   }
 
-  .item-details-wrapper {
-    flex: 1;
+  /* Sidebar Desktop */
+  .desktop-sidebar {
+    display: none;
 
-    .title-remove-row {
+    @media (min-width: 1024px) {
       display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      flex-direction: column;
+      width: $sidebar-width;
+      background: white;
+      border-right: 1px solid #F3F4F6;
+      padding: 30px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+      z-index: 1000;
 
-      .item-title {
-        font-size: 0.95rem;
-        font-weight: 700;
-        color: white;
-        margin: 0;
-        line-height: 1.3;
-      }
-
-      .remove-item-btn {
-        background: transparent;
-        border: none;
-        color: #F87171;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0;
-
-        &:hover {
-          color: #EF4444;
-        }
-      }
-    }
-
-    .seller-lbl {
-      font-size: 0.75rem;
-      color: $text-muted;
-      margin: 0.15rem 0 0.5rem 0;
-    }
-
-    .price-quantity-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-
-      .item-price {
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #38BDF8;
-      }
-
-      .quantity-selector {
+      .sidebar-brand {
         display: flex;
         align-items: center;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 10px;
-        padding: 2px;
+        gap: 12px;
+        margin-bottom: 40px;
+        .logo {
+          width: 40px;
+          height: 40px;
+          background: $primary;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 900;
+          font-size: 20px;
+        }
+        h2 { font-size: 18px; font-weight: 900; color: $navy; margin: 0; }
+      }
 
-        .qty-btn {
-          width: 28px;
-          height: 28px;
-          border-radius: 8px;
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        .nav-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          border-radius: 14px;
+          color: $muted;
+          font-weight: 700;
+          font-size: 14px;
+          transition: all 0.2s;
           border: none;
           background: transparent;
-          color: white;
-          font-size: 0.9rem;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          text-align: left;
           cursor: pointer;
 
-          &:hover:not([disabled]) {
-            background: rgba(255, 255, 255, 0.08);
+          ion-icon { font-size: 20px; }
+
+          &.active {
+            background: $primary-light;
+            color: $primary;
           }
 
-          &:disabled {
-            opacity: 0.3;
+          &:hover:not(.active) {
+            background: #F9FAFB;
+            color: $navy;
           }
         }
+      }
 
-        .qty-val {
-          font-size: 0.85rem;
+      .sidebar-footer {
+        margin-top: auto;
+        .logout-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          color: #EF4444;
           font-weight: 700;
-          padding: 0 0.75rem;
-          color: white;
+          cursor: pointer;
+          background: transparent;
+          border: none;
         }
       }
     }
   }
-}
 
-// Paneles Genéricos Glass
-.glass-panel {
-  background: $card-bg;
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 18px;
-  padding: 1.25rem;
-  margin-bottom: 1.25rem;
-
-  h3 {
+  .main-content-wrapper {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 1rem;
-    font-weight: 700;
-    margin: 0 0 0.4rem 0;
-    color: white;
+    flex-direction: column;
+    min-width: 0;
+  }
 
-    ion-icon {
-      color: #38BDF8;
-      font-size: 1.25rem;
+  .cart-header {
+    --background: white;
+    border-bottom: 1px solid #F3F4F6;
+    .header-toolbar {
+      --background: white;
+      --color: #{$navy};
+      --title-font-weight: 900;
+      padding-top: 10px;
     }
   }
 
-  .section-desc {
-    font-size: 0.8rem;
-    color: $text-muted;
-    margin: 0 0 1rem 0;
-  }
-}
-
-// Punto de Encuentro Dropdown
-.select-wrapper {
-  position: relative;
-  background: $input-bg;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 0.8rem 1rem;
-
-  select {
-    background: transparent;
-    border: none;
-    outline: none;
-    color: white;
+  .cart-shell {
+    padding: 24px 20px 100px;
+    max-width: 600px;
+    margin: 0 auto;
     width: 100%;
-    font-size: 0.85rem;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
+  }
 
-    option {
-      background-color: $background-dark;
-      color: white;
+  .empty-cart-figma {
+    text-align: center;
+    padding: 60px 20px;
+    .empty-icon-wrapper {
+      width: 80px; height: 80px; border-radius: 50%; background: #F3F4F6;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 32px; color: $muted;
+    }
+    h2 { font-size: 20px; font-weight: 900; color: $navy; }
+    p { font-size: 14px; color: $muted; margin: 8px 0 24px; }
+    .btn-primary-figma {
+      background: $primary; color: white; border: none; padding: 14px 28px;
+      border-radius: 16px; font-weight: 800; font-size: 14px;
     }
   }
 
-  .select-chevron {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: $text-muted;
-    pointer-events: none;
-  }
-}
+  .cart-card-figma {
+    background: white; border-radius: 24px; padding: 15px;
+    display: flex; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid #F3F4F6; margin-bottom: 12px;
 
-// Totales
-.totals-section {
-  .totals-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.65rem;
-
-    .lbl {
-      font-size: 0.85rem;
-      color: $text-muted;
+    .item-img {
+      width: 72px; height: 72px; border-radius: 16px; overflow: hidden;
+      background: #F3F4F6; flex-shrink: 0;
+      img { width: 100%; height: 100%; object-fit: cover; }
     }
 
-    .val {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: white;
-
-      &.free {
-        color: #10B981;
+    .item-info {
+      flex: 1; min-width: 0;
+      .title-row {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        h4 { font-size: 14px; font-weight: 900; color: $navy; margin: 0; }
+        .remove-btn { background: transparent; border: none; color: #D1D5DB; font-size: 18px; padding: 0; }
+      }
+      .seller { font-size: 11px; color: $muted; margin: 2px 0 10px; }
+      .price-qty-row {
+        display: flex; justify-content: space-between; align-items: center;
+        .price { font-size: 16px; font-weight: 900; color: $primary; }
+        .qty-control {
+          display: flex; align-items: center; gap: 12px;
+          background: $primary-light; border-radius: 10px; padding: 4px 8px;
+          button {
+            width: 24px; height: 24px; border-radius: 6px; background: white;
+            border: none; display: flex; align-items: center; justify-content: center;
+            color: $primary; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+          }
+          span { font-size: 14px; font-weight: 900; color: $navy; width: 14px; text-align: center; }
+        }
       }
     }
+  }
 
-    &.divider {
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 0.85rem;
-      margin-top: 0.85rem;
-      margin-bottom: 0.85rem;
+  .delivery-card-figma {
+    background: white; border-radius: 24px; padding: 20px;
+    margin-top: 24px; border: 1px solid #F3F4F6;
+    h3 {
+        font-size: 14px; font-weight: 900; color: $navy; margin: 0 0 15px 0;
+        display: flex; align-items: center; gap: 8px;
+        ion-icon { color: $primary; }
     }
-
-    .lbl-total {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: white;
+    .select-wrapper-figma {
+        position: relative;
+        select {
+            width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px solid #F3F4F6;
+            background: #F9FAFB; color: $navy; font-size: 13px; font-weight: 700;
+            appearance: none; outline: none;
+        }
+        .chevron { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: $muted; pointer-events: none; }
     }
+  }
 
-    .val-total {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #38BDF8;
+  .summary-card-figma {
+    background: white; border-radius: 24px; padding: 20px;
+    margin-top: 12px; border: 1px solid #F3F4F6;
+    .summary-row {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 10px; font-size: 14px;
+        span { color: $muted; font-weight: 600; }
+        strong { color: $navy; font-weight: 800; }
+        .free { color: #10B981; }
+        &.total { margin-bottom: 0; span { color: $navy; font-weight: 900; } }
+        .total-price { font-size: 18px; color: $primary; }
+    }
+    .divider { height: 1px; background: #F3F4F6; margin: 15px 0; }
+  }
+
+  .footer-actions {
+    padding: 24px 0 40px;
+    .btn-checkout-figma {
+        width: 100%; background: linear-gradient(135deg, #E8432D, #FF7B5E);
+        color: white; border: none; border-radius: 20px; padding: 18px;
+        font-size: 16px; font-weight: 900; box-shadow: 0 10px 25px rgba(232, 67, 45, 0.25);
+        cursor: pointer;
     }
   }
 
-  .payment-alert {
-    display: flex;
-    gap: 0.5rem;
-    background: rgba(56, 189, 248, 0.08);
-    border: 1px solid rgba(56, 189, 248, 0.15);
-    border-radius: 12px;
-    padding: 0.75rem;
-    align-items: flex-start;
-
-    ion-icon {
-      font-size: 1.25rem;
-      color: #38BDF8;
-      flex-shrink: 0;
-    }
-
-    p {
-      font-size: 0.75rem;
-      color: #38BDF8;
-      margin: 0;
-      line-height: 1.4;
+  /* Nav Bar Figma */
+  .bottom-navigation-figma {
+    height: 72px; display: flex; background: white; border-top: 1px solid #F3F4F6;
+    padding: 0 10px; padding-bottom: env(safe-area-inset-bottom);
+    .nav-item-figma {
+      flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 4px; background: transparent; border: none; color: #B0B0C0; cursor: pointer;
+      ion-icon { font-size: 22px; }
+      span { font-size: 10px; font-weight: 800; }
+      &.active {
+        color: $primary;
+        &::after { content: ''; width: 4px; height: 4px; background: $primary; border-radius: 50%; margin-top: 2px; }
+      }
     }
   }
-}
-
-// Botón de Checkout
-.checkout-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #0284C7 0%, $accent-color 100%);
-  border: none;
-  color: white;
-  padding: 1.1rem;
-  border-radius: 16px;
-  font-size: 1rem;
-  font-weight: 750;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(225, 29, 72, 0.35);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-
-  ion-icon {
-    font-size: 1.15rem;
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }

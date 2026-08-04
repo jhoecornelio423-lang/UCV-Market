@@ -235,4 +235,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+
+  signOut() {
+    this.authService.signOut().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+  }
 }

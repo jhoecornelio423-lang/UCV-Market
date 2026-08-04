@@ -136,7 +136,7 @@ export class CartComponent implements OnInit, OnDestroy {
   async showSuccessAlert(ordersCount: number) {
     const alert = await this.alertCtrl.create({
       header: '¡Pedido Realizado!',
-      message: ordersCount === 1 
+      message: ordersCount === 1
         ? 'Tu pedido ha sido enviado al emprendedor. Revisa la sección de pedidos para contactarlo por WhatsApp.'
         : `Se han generado ${ordersCount} pedidos individuales para cada emprendedor. Por favor coordina con cada uno.`,
       buttons: [
@@ -164,5 +164,19 @@ export class CartComponent implements OnInit, OnDestroy {
 
   goToCatalog() {
     this.router.navigate(['/catalog']);
+  }
+
+  goToOrders() {
+    this.router.navigate(['/orders']);
+  }
+
+  goToProfile() {
+    this.router.navigate(['/profile']);
+  }
+
+  signOut() {
+    this.authService.signOut().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }

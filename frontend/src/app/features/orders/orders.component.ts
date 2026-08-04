@@ -17,21 +17,29 @@ export class OrdersComponent implements OnInit, OnDestroy {
   buyerOrders: Order[] = [];
   sellerOrders: Order[] = [];
 
-  activeTab: 'compras' | 'ventas' = 'ventas';
-  orderFilter: 'new' | 'active' | 'ready' = 'new';
-  expandedOrderId: string | null = null;
+  activeTab: 'compras' | 'ventas' = 'compras';
+
+  // Filtros para Comprador
+  buyerFilter: 'active' | 'history' = 'active';
+
+  // Filtros para Vendedor
+  sellerFilter: 'new' | 'active' | 'ready' = 'new';
+
   userProfile: Profile | null = null;
   loading = false;
 
   get visibleOrders(): Order[] {
     if (this.activeTab === 'compras') {
-      return this.buyerOrders;
+      const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
+      return this.buyerOrders.filter(order => this.buyerFilter === 'history'
+        ? historicalStatuses.includes(order.status)
+        : !historicalStatuses.includes(order.status));
     }
 
     // Filtros para Vendedor según Figma
-    if (this.orderFilter === 'new') {
+    if (this.sellerFilter === 'new') {
       return this.sellerOrders.filter(o => o.status === 'pending');
-    } else if (this.orderFilter === 'active') {
+    } else if (this.sellerFilter === 'active') {
       return this.sellerOrders.filter(o => ['accepted', 'preparing'].includes(o.status));
     } else {
       return this.sellerOrders.filter(o => ['ready', 'completed', 'cancelled'].includes(o.status));
@@ -112,18 +120,16 @@ export class OrdersComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  selectOrderFilter(filter: 'new' | 'active' | 'ready') {
-    this.orderFilter = filter;
-    this.expandedOrderId = null;
+  setBuyerFilter(filter: 'active' | 'history') {
+    this.buyerFilter = filter;
+  }
+
+  setSellerFilter(filter: 'new' | 'active' | 'ready') {
+    this.sellerFilter = filter;
   }
 
   selectOrderType(type: 'compras' | 'ventas') {
     this.activeTab = type;
-    this.expandedOrderId = null;
-  }
-
-  toggleOrderDetails(orderId: string) {
-    this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
   }
 
   getNextStatus(status: OrderStatus): OrderStatus {
@@ -406,5 +412,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+
+  signOut() {
+    this.authService.signOut().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }
