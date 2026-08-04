@@ -43,8 +43,8 @@ export class AuthService {
   /**
    * Registra un nuevo estudiante UCV.
    */
-  signUp(email: string, password: string, fullName: string, phone: string, role: UserRole, campus: string): Observable<Profile> {
-    return this.authRepository.signUp(email, password, fullName, phone, role, campus).pipe(
+  signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile> {
+    return this.authRepository.signUp(email, password, fullName, phone, studentCode, role, campus).pipe(
       tap(profile => {
         // La sesión se inicia automáticamente en el cliente tras el registro en Supabase
         this.currentProfileSubject.next(profile);

@@ -11,7 +11,7 @@ import { map, switchMap, catchError } from 'rxjs/operators';
 export class SupabaseAuthRepository implements AuthRepository {
   constructor(private supabaseService: SupabaseClientService) {}
 
-  signUp(email: string, password: string, fullName: string, phone: string, role: UserRole, campus: string): Observable<Profile> {
+  signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile> {
     // 1. Validar dominio de correo UCV en el cliente
     const ucvRegex = /^[a-zA-Z0-9._%+-]+@ucv(virtual)?\.edu\.pe$/;
     if (!ucvRegex.test(email)) {
@@ -26,6 +26,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         data: {
           full_name: fullName,
           phone: phone,
+          student_code: studentCode,
           role: role,
           campus: campus
         }

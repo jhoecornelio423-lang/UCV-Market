@@ -15,21 +15,6 @@ export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   showPassword = false;
 
-  // Lista estática de campus de la UCV
-  campuses: string[] = [
-    'UCV - Lima Norte',
-    'UCV - Lima Este',
-    'UCV - Callao',
-    'UCV - Ate',
-    'UCV - Trujillo',
-    'UCV - Piura',
-    'UCV - Chiclayo',
-    'UCV - Chimbote',
-    'UCV - Huaraz',
-    'UCV - Tarapoto',
-    'UCV - Moyobamba'
-  ];
-
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -40,9 +25,11 @@ export class RegisterComponent implements OnInit {
     this.registerForm = this.fb.group({
       fullName: ['', [Validators.required, Validators.minLength(4)]],
       email: ['', [Validators.required, Validators.email, Validators.pattern(/^[a-zA-Z0-9._%+-]+@ucv(virtual)?\.edu\.pe$/)]],
+      studentCode: ['', [Validators.required, Validators.pattern(/^[0-9]{8,10}$/)]],
       phone: ['', [Validators.required, Validators.pattern(/^9[0-9]{8}$/)]], // Celular peruano estándar (9 dígitos)
       password: ['', [Validators.required, Validators.minLength(6)]],
       role: ['comprador', [Validators.required]],
+      acceptTerms: [false, [Validators.requiredTrue]],
       campus: ['UCV - Lima Norte', [Validators.required]]
     });
   }
@@ -57,7 +44,7 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    const { email, password, fullName, phone, role, campus } = this.registerForm.value;
+    const { email, password, fullName, phone, studentCode, role, campus } = this.registerForm.value;
 
     const loading = await this.loadingCtrl.create({
       message: 'Creando cuenta...',
@@ -66,7 +53,7 @@ export class RegisterComponent implements OnInit {
     });
     await loading.present();
 
-    this.authService.signUp(email, password, fullName, phone, role as UserRole, campus).subscribe({
+    this.authService.signUp(email, password, fullName, phone, studentCode, role as UserRole, campus).subscribe({
       next: (profile) => {
         loading.dismiss();
         this.showSuccessAlert(profile.role);
