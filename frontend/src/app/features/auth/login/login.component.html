@@ -30,55 +30,14 @@
         <span class="campus-badge"><i></i> UCV · Lima Norte</span>
         <span class="buyer-badge">
           <i></i>
-          {{ selectedRole === 'comprador' ? 'Comprador' : 'Emprendedor' }}
+          Comunidad UCV
         </span>
         <div class="banner-pages" aria-hidden="true">
           <span></span><span class="active"></span><span></span>
         </div>
       </section>
 
-      <fieldset class="role-selector">
-        <legend>¿Cómo deseas ingresar?</legend>
-        <div class="role-options">
-          <label class="role-option" for="role-buyer">
-            <input
-              id="role-buyer"
-              type="radio"
-              name="account-role"
-              value="comprador"
-              [checked]="selectedRole === 'comprador'"
-              (change)="selectRole('comprador')"
-            />
-            <span class="role-option-content">
-              <ion-icon name="cart-outline" aria-hidden="true"></ion-icon>
-              <span>
-                <strong>Comprador</strong>
-                <small>Quiero comprar</small>
-              </span>
-              <ion-icon class="role-check" name="checkmark-circle" aria-hidden="true"></ion-icon>
-            </span>
-          </label>
-
-          <label class="role-option" for="role-seller">
-            <input
-              id="role-seller"
-              type="radio"
-              name="account-role"
-              value="emprendedor"
-              [checked]="selectedRole === 'emprendedor'"
-              (change)="selectRole('emprendedor')"
-            />
-            <span class="role-option-content">
-              <ion-icon name="storefront-outline" aria-hidden="true"></ion-icon>
-              <span>
-                <strong>Emprendedor</strong>
-                <small>Quiero vender</small>
-              </span>
-              <ion-icon class="role-check" name="checkmark-circle" aria-hidden="true"></ion-icon>
-            </span>
-          </label>
-        </div>
-      </fieldset>
+      
 
       <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div
@@ -146,7 +105,7 @@
         </div>
 
         <div class="forgot-row">
-          <a class="forgot-pass-link">¿Olvidaste tu contraseña?</a>
+          <a class="forgot-pass-link" (click)="onForgotPassword()">¿Olvidaste tu contraseña?</a>
         </div>
 
         <button type="submit" class="submit-btn">Iniciar sesión</button>

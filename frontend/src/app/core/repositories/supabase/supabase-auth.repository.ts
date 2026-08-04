@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthRepository } from '../auth.repository';
 import { SupabaseClientService } from '../../database/supabase.client';
 import { Profile, UserRole } from '../../models/profile.model';
-import { from, Observable, of, throwError } from 'rxjs';
+import { from, Observable, of, throwError, delay } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -132,11 +132,31 @@ export class SupabaseAuthRepository implements AuthRepository {
     );
   }
 
-  resetPassword(email: string): Observable<boolean> {
-    const promise = this.supabaseService.client.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://ucvmarket.pe/reset-password'
+  confirmResetPassword(token: string, newPassword: string): Observable<boolean> {
+    // Set the session using the token received from the reset link
+    const setSessionPromise = this.supabaseService.client.auth.setSession({
+      access_token: token,
+      refresh_token: ''
     });
 
+    const resetPromise = setSessionPromise.then(() => {
+      return this.supabaseService.client.auth.updateUser({ password: newPassword });
+    });
+
+    return from(resetPromise).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return true;
+      })
+    );
+  }
+
+  resetPassword(email: string): Observable<boolean> {
+    const promise = this.supabaseService.client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login/reset-password`
+    });
     return from(promise).pipe(
       map(response => {
         if (response.error) {
@@ -145,5 +165,17 @@ export class SupabaseAuthRepository implements AuthRepository {
         return true;
       })
     );
+  }
+
+  /** Generate a simple JWT-like token for password reset */
+  generateResetToken(email: string): Observable<string> {
+    const token = btoa(`${email}:${Date.now()}`);
+    return of(token).pipe(delay(500));
+  }
+
+  /** Reset password using token */
+  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean> {
+    // Reuse confirmResetPassword logic
+    return this.confirmResetPassword(token, newPassword);
   }
 }

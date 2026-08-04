@@ -12,4 +12,6 @@ export interface AuthRepository {
   getProfile(id: string): Observable<Profile>;
   updateProfile(profile: Partial<Profile>): Observable<Profile>;
   resetPassword(email: string): Observable<boolean>;
+  generateResetToken(email: string): Observable<string>;
+  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean>;
 }

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { tap, catchError, map, switchMap } from 'rxjs/operators';
+import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { Profile, UserRole } from '../models/profile.model';
 import { AuthRepository, AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { SupabaseClientService } from '../database/supabase.client';
@@ -11,6 +11,12 @@ import { SupabaseClientService } from '../database/supabase.client';
 export class AuthService {
   private currentProfileSubject = new BehaviorSubject<Profile | null>(null);
   public currentProfile$: Observable<Profile | null> = this.currentProfileSubject.asObservable();
+
+  /**
+   * Señaliza cuando la sesión inicial ha sido evaluada (existe o no).
+   */
+  private isInitializedSubject = new BehaviorSubject<boolean>(false);
+  public isInitialized$: Observable<boolean> = this.isInitializedSubject.asObservable();
 
   constructor(
     @Inject(AUTH_REPOSITORY) private authRepository: AuthRepository,
@@ -33,9 +39,14 @@ export class AuthService {
             this.currentProfileSubject.next(null);
             return of(null);
           })
-        ).subscribe();
+        ).subscribe(() => {
+          // Marca que la inicialización ya está completa
+          this.isInitializedSubject.next(true);
+        });
       } else {
         this.currentProfileSubject.next(null);
+        // Si no hay sesión, la inicialización también termina
+        this.isInitializedSubject.next(true);
       }
     });
   }
