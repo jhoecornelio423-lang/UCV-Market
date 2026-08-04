@@ -1,183 +1,270 @@
-<ion-header class="seller-header ion-no-border">
-  <ion-toolbar class="header-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/catalog" text="" class="back-btn"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Mi Emprendimiento</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true" class="seller-content">
+  <div class="seller-shell">
 
-  <!-- Modal/Formulario de Producto Overlay -->
-  <div *ngIf="showForm" class="form-overlay-container">
-    <div class="form-card glass-panel">
-      <h2 class="form-title">{{ formMode === 'create' ? 'Agregar Producto' : 'Editar Producto' }}</h2>
-      
-      <div class="form-body">
-        <!-- Nombre -->
-        <div class="form-group">
-          <label for="p-name">Nombre del Producto *</label>
-          <input id="p-name" type="text" [(ngModel)]="pName" placeholder="Ej. Empanada de Pollo" />
-        </div>
-
-        <!-- Descripción -->
-        <div class="form-group">
-          <label for="p-desc">Descripción</label>
-          <textarea id="p-desc" rows="3" [(ngModel)]="pDescription" placeholder="Ej. Calientita, con ají de cortesía..."></textarea>
-        </div>
-
-        <!-- Precio y Stock Row -->
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label for="p-price">Precio (S/.) *</label>
-            <input id="p-price" type="number" step="0.1" [(ngModel)]="pPrice" placeholder="0.00" />
-          </div>
-          <div class="form-group flex-1">
-            <label for="p-stock">Stock Inicial *</label>
-            <input id="p-stock" type="number" [(ngModel)]="pStock" placeholder="5" />
-          </div>
-        </div>
-
-        <!-- Categoría -->
-        <div class="form-group">
-          <label for="p-cat">Categoría *</label>
-          <div class="select-wrapper">
-            <select id="p-cat" [(ngModel)]="pCategoryId">
-              <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Lugar de Entrega -->
-        <div class="form-group">
-          <label for="p-spot">Punto de Entrega Principal</label>
-          <input id="p-spot" type="text" [(ngModel)]="pPickupLocation" placeholder="Ej. Biblioteca Pabellón A" />
-        </div>
-
-        <!-- Carga de Imagen (Solo al crear) -->
-        <div class="form-group" *ngIf="formMode === 'create'">
-          <label for="p-file">Imagen del Producto</label>
-          <div class="file-input-wrapper">
-            <input id="p-file" type="file" accept="image/*" (change)="onFileChange($event)" />
-            <ion-icon name="cloud-upload-outline"></ion-icon>
-            <span>{{ selectedFiles.length > 0 ? selectedFiles[0].name : 'Seleccionar Imagen' }}</span>
-          </div>
-        </div>
+    <!-- Desktop Sidebar Navigation (Mantenida fija a nivel web) -->
+    <aside class="desktop-sidebar">
+      <div class="sidebar-brand">
+        <div class="logo">U</div>
+        <h2>UCV Market</h2>
       </div>
-
-      <div class="form-footer">
-        <button class="btn-cancel" (click)="closeForm()">Cancelar</button>
-        <button class="btn-save" (click)="saveProduct()">Guardar Producto</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Dashboard del Vendedor (Estadísticas) -->
-  <div class="seller-dashboard-container" *ngIf="!showForm">
-    
-    <!-- Tarjetas de Indicadores -->
-    <div class="stats-grid">
-      <div class="stat-card completed glass-panel">
-        <ion-icon name="cash-outline" class="stat-icon"></ion-icon>
-        <div class="stat-info">
-          <span class="val">S/. {{ totalSales.toFixed(2) }}</span>
-          <span class="lbl">Ventas Entregadas</span>
-        </div>
-      </div>
-
-      <div class="stat-card pending glass-panel" (click)="goToOrders()">
-        <ion-icon name="time-outline" class="stat-icon"></ion-icon>
-        <div class="stat-info">
-          <span class="val">{{ pendingOrdersCount }}</span>
-          <span class="lbl">Pedidos Pendientes</span>
-        </div>
-        <ion-badge *ngIf="pendingOrdersCount > 0" color="danger" class="stat-badge">Nuevo</ion-badge>
-      </div>
-
-      <div class="stat-card clicks glass-panel">
-        <ion-icon name="logo-whatsapp" class="stat-icon"></ion-icon>
-        <div class="stat-info">
-          <span class="val">{{ totalClicks }}</span>
-          <span class="lbl">Consultas WhatsApp</span>
-        </div>
-      </div>
-
-      <div class="stat-card active glass-panel">
-        <ion-icon name="cube-outline" class="stat-icon"></ion-icon>
-        <div class="stat-info">
-          <span class="val">{{ activeProductsCount }}</span>
-          <span class="lbl">Productos Activos</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Gestión de Pedidos Acceso rápido -->
-    <button class="orders-shortcut-btn" (click)="goToOrders()">
-      <ion-icon name="list-outline"></ion-icon>
-      <span>Ver y Gestionar Pedidos Recibidos</span>
-      <ion-icon name="arrow-forward-outline" slot="end" class="arrow-end"></ion-icon>
-    </button>
-
-    <!-- Lista de Productos (Mi Inventario) -->
-    <div class="inventory-section">
-      <div class="section-header">
-        <h3>Mi Inventario</h3>
-        <button class="btn-add-product" (click)="openCreateForm()">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>Nuevo Producto</span>
+      <nav class="nav-links">
+        <button class="nav-item" [class.active]="!showForm" (click)="closeForm()"><ion-icon name="stats-chart-outline"></ion-icon> Dashboard</button>
+        <button class="nav-item" (click)="goToOrders()"><ion-icon name="bag-handle-outline"></ion-icon> Pedidos</button>
+        <button class="nav-item"><ion-icon name="pricetag-outline"></ion-icon> Productos</button>
+        <button class="nav-item"><ion-icon name="trending-up-outline"></ion-icon> Ventas</button>
+        <button class="nav-item"><ion-icon name="business-outline"></ion-icon> Negocio</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="logout-btn" (click)="signOut()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          Salir
         </button>
       </div>
+    </aside>
 
-      <!-- Grid de productos del vendedor -->
-      <div *ngIf="products.length === 0" class="empty-inventory">
-        <ion-icon name="cube-outline"></ion-icon>
-        <p>Aún no tienes productos registrados. Crea uno nuevo para empezar a vender.</p>
+    <div class="main-content-wrapper">
+
+      <!-- VISTA: FORMULARIO NUEVO PRODUCTO (FIGMA STYLE) -->
+      <div *ngIf="showForm" class="form-container-figma">
+        <header class="form-header-figma">
+          <button class="back-circle" (click)="closeForm()">
+            <ion-icon name="arrow-back-outline"></ion-icon>
+          </button>
+          <h2>{{ formMode === 'create' ? 'Nuevo producto' : 'Editar producto' }}</h2>
+        </header>
+
+        <div class="form-scroll-area">
+          <!-- Foto del producto -->
+          <section class="form-card-figma">
+            <h3>Foto del producto</h3>
+            <div class="upload-zone"
+                 (click)="fileInput.click()"
+                 (drop)="onFileDropped($event)"
+                 (dragover)="onDragOver($event)">
+              <input #fileInput type="file" hidden (change)="onFileChange($event)" accept="image/*">
+
+              <div class="upload-content" *ngIf="!previewImageUrl">
+                <div class="camera-icon"><ion-icon name="camera-outline"></ion-icon></div>
+                <p class="upload-text">Subir foto</p>
+                <p class="upload-hint">Arrastra una imagen o haz clic aquí</p>
+              </div>
+
+              <div class="preview-container" *ngIf="previewImageUrl">
+                <img [src]="previewImageUrl" class="preview-img" alt="Vista previa">
+                <div class="preview-overlay">
+                  <ion-icon name="sync-outline"></ion-icon>
+                  <span>Cambiar foto</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Datos Principales -->
+          <section class="form-card-figma">
+            <div class="input-group-figma">
+              <label>Nombre del producto *</label>
+              <input type="text" [(ngModel)]="pName" placeholder="Ej: Brownie Oreo">
+            </div>
+            <div class="divider-line"></div>
+            <div class="input-group-figma">
+              <label>Descripción</label>
+              <textarea [(ngModel)]="pDescription" placeholder="Describe tu producto, ingredientes, tamaño..." rows="2"></textarea>
+            </div>
+          </section>
+
+          <!-- Precio y Stock -->
+          <section class="form-card-figma row-layout">
+            <div class="input-group-figma flex-1">
+              <label>Precio (S/) *</label>
+              <input type="number" [(ngModel)]="pPrice" placeholder="6.00" class="highlight-orange">
+            </div>
+            <div class="input-group-figma flex-1">
+              <label>Stock</label>
+              <input type="number" [(ngModel)]="pStock" placeholder="20">
+            </div>
+          </section>
+
+          <!-- Categoría -->
+          <section class="form-card-figma">
+            <label class="label-figma">Categoría *</label>
+            <div class="chips-grid">
+              <button *ngFor="let cat of categories"
+                      class="chip-item"
+                      [class.active]="pCategoryId === cat.id"
+                      (click)="pCategoryId = cat.id">
+                <span class="emoji">{{ cat.icon }}</span>
+                {{ cat.name }}
+              </button>
+            </div>
+          </section>
+
+          <!-- Tiempo de Preparación -->
+          <section class="form-card-figma">
+            <label class="label-figma">Tiempo de preparación</label>
+            <div class="chips-grid">
+              <button *ngFor="let time of ['5 min', '10 min', '15 min', '20 min', '30 min']"
+                      class="chip-item time-chip"
+                      [class.active]="pPreparationTime === time"
+                      (click)="pPreparationTime = time">
+                {{ time }}
+              </button>
+            </div>
+          </section>
+
+          <!-- Botón Publicar -->
+          <div class="footer-actions-figma">
+            <button class="btn-publish-figma" (click)="saveProduct()">
+              {{ formMode === 'create' ? 'Publicar producto' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div *ngIf="products.length > 0" class="products-list">
-        <div *ngFor="let product of products" class="product-item glass-panel" [class.paused]="!product.is_active">
-          <div class="item-img-wrapper">
-            <img 
-              [src]="(product.product_images && product.product_images.length > 0) ? product.product_images[0].image_url : 'assets/placeholder-product.png'" 
-              [alt]="product.name"
-            />
-          </div>
-
-          <div class="item-details-wrapper">
-            <h4 class="item-title">{{ product.name }}</h4>
-            <div class="item-price">S/. {{ product.price.toFixed(2) }}</div>
-            <div class="item-stock" [class.no-stock]="product.stock === 0">
-              Stock: {{ product.stock }} uds
+      <!-- VISTA: DASHBOARD PRINCIPAL (Existente) -->
+      <div *ngIf="!showForm" class="dashboard-view">
+        <header class="seller-header-figma">
+          <div class="header-top">
+            <div class="brand-info">
+              <p class="role-label">Dashboard vendedor</p>
+              <h1>{{ userProfile?.full_name || 'Sweet Corner' }}</h1>
+              <div class="rating-info">
+                <ion-icon name="star" class="star"></ion-icon>
+                <span class="val">{{ userProfile?.rating_average || '4.9' }}</span>
+                <span class="divider">·</span>
+                <span class="reviews">234 reseñas</span>
+              </div>
+            </div>
+            <div class="header-actions">
+              <button class="notif-btn">
+                <ion-icon name="notifications-outline"></ion-icon>
+                <span class="badge">1</span>
+              </button>
+              <button class="profile-btn ion-hide-lg-up" (click)="signOut()">
+                <ion-icon name="person-outline"></ion-icon>
+              </button>
             </div>
           </div>
 
-          <div class="item-actions-wrapper">
-            <!-- Toggle Visibilidad Rápida -->
-            <button 
-              class="btn-action-icon btn-toggle-active" 
-              [class.active]="product.is_active"
-              (click)="toggleProductActive(product)"
-              [title]="product.is_active ? 'Pausar Anuncio' : 'Activar Anuncio'"
-            >
-              <ion-icon [name]="product.is_active ? 'eye-outline' : 'eye-off-outline'"></ion-icon>
-            </button>
+          <!-- Quick Stats (Mobile) -->
+          <div class="stats-row ion-hide-lg-up">
+            <div class="stat-box">
+              <span class="val">S/ {{ totalSales.toFixed(0) }}</span>
+              <span class="lbl">Ventas hoy</span>
+              <span class="trend">+18% vs ayer</span>
+            </div>
+            <div class="stat-box">
+              <span class="val">{{ pendingOrdersCount + activeOrders.length }}</span>
+              <span class="lbl">Pedidos</span>
+              <span class="sub">{{ activeOrders.length }} activos</span>
+            </div>
+            <div class="stat-box">
+              <span class="val">{{ userProfile?.rating_average || '4.9' }} <ion-icon name="star"></ion-icon></span>
+              <span class="lbl">Rating</span>
+              <span class="status">Excelente</span>
+            </div>
+          </div>
+        </header>
 
-            <!-- Editar -->
-            <button class="btn-action-icon btn-edit" (click)="openEditForm(product)" title="Editar">
-              <ion-icon name="create-outline"></ion-icon>
-            </button>
+        <div class="main-body">
+          <!-- Desktop Stats Grid -->
+          <div class="desktop-stats-grid ion-hide-lg-down">
+              <div class="stat-card-web">
+                  <span class="val">S/ {{ totalSales.toFixed(0) }}</span>
+                  <span class="lbl">Ventas hoy</span>
+                  <span class="trend up">+18% vs ayer</span>
+              </div>
+              <div class="stat-card-web">
+                  <span class="val">{{ pendingOrdersCount + activeOrders.length }}</span>
+                  <span class="lbl">Total Pedidos</span>
+                  <span class="trend">{{ activeOrders.length }} activos</span>
+              </div>
+              <div class="stat-card-web">
+                  <span class="val">{{ userProfile?.rating_average || '4.9' }}</span>
+                  <span class="lbl">Reputación</span>
+                  <span class="trend">Nivel Pro</span>
+              </div>
+          </div>
 
-            <!-- Dar de Baja -->
-            <button class="btn-action-icon btn-delete" (click)="deleteProduct(product)" title="Dar de baja">
-              <ion-icon name="trash-outline"></ion-icon>
+          <div class="action-shortcuts">
+            <button class="action-card" (click)="openCreateForm()">
+              <div class="icon-circle plus">
+                <ion-icon name="add-circle-outline"></ion-icon>
+              </div>
+              <span>Nuevo<br>producto</span>
+            </button>
+            <button class="action-card" (click)="goToOrders()">
+              <div class="icon-circle orders">
+                <ion-icon name="bag-handle-outline"></ion-icon>
+              </div>
+              <span>Ver<br>pedidos</span>
             </button>
           </div>
+
+          <section class="section-figma orders-section">
+            <div class="section-header">
+              <h3>Pedidos activos</h3>
+              <button class="view-all" (click)="goToOrders()">Ver todo</button>
+            </div>
+            <div class="orders-list-figma">
+              <div *ngFor="let order of activeOrders" class="order-item-figma">
+                <div class="order-info">
+                  <p class="order-title">#{{ order.id.substring(0, 3) }} · {{ order.order_items?.[0]?.product?.name || 'Pedido' }}</p>
+                  <p class="order-time">Hace 2 min</p>
+                </div>
+                <span class="status-badge-figma" [class]="order.status">
+                  {{ order.status === 'pending' ? 'Pendiente' :
+                     order.status === 'accepted' ? 'Aceptado' :
+                     order.status === 'preparing' ? 'Preparando' : 'Listo' }}
+                </span>
+              </div>
+              <div *ngIf="activeOrders.length === 0" class="empty-mini">
+                No hay pedidos activos ahora
+              </div>
+            </div>
+          </section>
+
+          <section class="section-figma chart-section">
+            <div class="section-header">
+              <h3>Ventas esta semana</h3>
+              <span class="growth"><ion-icon name="arrow-up-outline"></ion-icon> 23%</span>
+            </div>
+            <div class="chart-container">
+              <div class="bar-chart">
+                <div *ngFor="let item of salesData" class="bar-wrapper">
+                  <div class="bar" [style.height.%]="(item.ventas / 28) * 100"></div>
+                  <span class="day">{{ item.day }}</span>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
 
     </div>
-
   </div>
-
 </ion-content>
+
+<ion-footer class="seller-footer ion-no-border ion-hide-lg-up">
+  <nav class="bottom-navigation-figma">
+    <button type="button" class="nav-item-figma" [class.active]="!showForm" (click)="closeForm()">
+      <ion-icon name="stats-chart"></ion-icon>
+      <span>Dashboard</span>
+    </button>
+    <button type="button" class="nav-item-figma" (click)="goToOrders()">
+      <ion-icon name="bag-handle-outline"></ion-icon>
+      <span>Pedidos</span>
+    </button>
+    <button type="button" class="nav-item-figma">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <span>Productos</span>
+    </button>
+    <button type="button" class="nav-item-figma">
+      <ion-icon name="trending-up-outline"></ion-icon>
+      <span>Ventas</span>
+    </button>
+    <button type="button" class="nav-item-figma">
+      <ion-icon name="business-outline"></ion-icon>
+      <span>Negocio</span>
+    </button>
+  </nav>
+</ion-footer>

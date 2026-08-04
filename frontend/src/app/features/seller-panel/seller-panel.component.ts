@@ -9,6 +9,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { Product } from '../../core/models/product.model';
 import { Category } from '../../core/models/category.model';
 import { Profile } from '../../core/models/profile.model';
+import { Order } from '../../core/models/order.model';
 
 @Component({
   selector: 'app-seller-panel',
@@ -20,12 +21,24 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   categories: Category[] = [];
   userProfile: Profile | null = null;
-  
+
   // Estadísticas
   totalSales = 0;
   totalClicks = 0;
   pendingOrdersCount = 0;
   activeProductsCount = 0;
+
+  activeOrders: Order[] = [];
+  salesData = [
+    { day: 'L', ventas: 8 },
+    { day: 'M', ventas: 15 },
+    { day: 'X', ventas: 12 },
+    { day: 'J', ventas: 20 },
+    { day: 'V', ventas: 25 },
+    { day: 'S', ventas: 18 },
+    { day: 'D', ventas: 7 },
+  ];
+  topProducts: any[] = [];
 
   // Control del Formulario de Creación/Edición
   showForm = false;
@@ -40,7 +53,9 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
   pCategoryId: string = '';
   pPickupLocation: string = 'Biblioteca Pabellón A';
   pIsActive: boolean = true;
+  pPreparationTime: string = '10 min';
   selectedFiles: File[] = [];
+  previewImageUrl: string | null = null;
 
   private subscriptions = new Subscription();
 
@@ -89,6 +104,17 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
         this.products = products;
         this.activeProductsCount = products.filter(p => p.is_active).length;
         this.totalClicks = products.reduce((acc, p) => acc + (p.whatsapp_clicks || 0), 0);
+
+        // Mock Top Products based on actual data
+        this.topProducts = products
+          .slice(0, 3)
+          .map((p, index) => ({
+            id: p.id,
+            name: p.name,
+            img: p.product_images && p.product_images.length > 0 ? p.product_images[0].image_url : 'assets/images/login-food-banner.jpg',
+            price: p.price,
+            sold: 22 - (index * 5)
+          }));
       },
       error: (err) => console.error('Error al cargar productos del vendedor:', err)
     });
@@ -100,6 +126,10 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
         this.totalSales = orders
           .filter(o => o.status === 'completed')
           .reduce((acc, o) => acc + o.total_price, 0);
+
+        this.activeOrders = orders
+          .filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status))
+          .slice(0, 2);
       },
       error: (err) => console.error('Error al cargar ventas del vendedor:', err)
     });
@@ -111,13 +141,15 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
     this.pName = '';
     this.pDescription = '';
     this.pPrice = 0;
-    this.pStock = 5;
+    this.pStock = 20;
     this.pIsActive = true;
+    this.pPreparationTime = '10 min';
     this.pPickupLocation = 'Biblioteca Pabellón A';
     if (this.categories.length > 0) {
       this.pCategoryId = this.categories[0].id;
     }
     this.selectedFiles = [];
+    this.previewImageUrl = null;
     this.showForm = true;
   }
 
@@ -141,7 +173,32 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
 
   onFileChange(event: any) {
     if (event.target.files && event.target.files.length > 0) {
-      this.selectedFiles = Array.from(event.target.files);
+      this.handleFiles(event.target.files);
+    }
+  }
+
+  onFileDropped(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      this.handleFiles(event.dataTransfer.files);
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  private handleFiles(files: FileList) {
+    const file = files[0];
+    if (file && file.type.startsWith('image/')) {
+      this.selectedFiles = [file];
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.previewImageUrl = e.target.result;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
@@ -201,7 +258,7 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
     this.productRepository.updateProduct(product.id, { is_active: updatedStatus }).subscribe({
       next: () => {
         this.showToast(
-          updatedStatus ? 'Producto activado y visible en catálogo.' : 'Producto pausado del catálogo.', 
+          updatedStatus ? 'Producto activado y visible en catálogo.' : 'Producto pausado del catálogo.',
           'success'
         );
         if (this.userProfile) this.loadSellerData(this.userProfile.id);
@@ -256,5 +313,11 @@ export class SellerPanelComponent implements OnInit, OnDestroy {
 
   goToOrders() {
     this.router.navigate(['/orders']);
+  }
+
+  signOut() {
+    this.authService.signOut().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
   }
 }

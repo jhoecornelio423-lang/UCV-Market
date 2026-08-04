@@ -16,26 +16,36 @@ import { Profile } from '../../core/models/profile.model';
 export class OrdersComponent implements OnInit, OnDestroy {
   buyerOrders: Order[] = [];
   sellerOrders: Order[] = [];
-  
-  activeTab: 'compras' | 'ventas' = 'compras';
-  orderFilter: 'active' | 'history' = 'active';
+
+  activeTab: 'compras' | 'ventas' = 'ventas';
+  orderFilter: 'new' | 'active' | 'ready' = 'new';
   expandedOrderId: string | null = null;
   userProfile: Profile | null = null;
   loading = false;
 
   get visibleOrders(): Order[] {
-    const orders = this.activeTab === 'compras' ? this.buyerOrders : this.sellerOrders;
-    const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
+    if (this.activeTab === 'compras') {
+      return this.buyerOrders;
+    }
 
-    return orders.filter(order => this.orderFilter === 'history'
-      ? historicalStatuses.includes(order.status)
-      : !historicalStatuses.includes(order.status));
+    // Filtros para Vendedor según Figma
+    if (this.orderFilter === 'new') {
+      return this.sellerOrders.filter(o => o.status === 'pending');
+    } else if (this.orderFilter === 'active') {
+      return this.sellerOrders.filter(o => ['accepted', 'preparing'].includes(o.status));
+    } else {
+      return this.sellerOrders.filter(o => ['ready', 'completed', 'cancelled'].includes(o.status));
+    }
+  }
+
+  get newOrdersCount(): number {
+    return this.sellerOrders.filter(o => o.status === 'pending').length;
   }
 
   private subscriptions = new Subscription();
 
   private authService = inject(AuthService);
-  private router = inject(Router);
+  public router = inject(Router);
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
@@ -49,6 +59,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
       this.authService.currentProfile$.subscribe(profile => {
         this.userProfile = profile;
         if (profile) {
+          // Si el usuario es emprendedor, mostrar ventas por defecto
+          this.activeTab = profile.role === 'emprendedor' ? 'ventas' : 'compras';
+
           this.loadBuyerOrders(profile.id);
           if (profile.role === 'emprendedor') {
             this.loadSellerOrders(profile.id);
@@ -99,7 +112,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  selectOrderFilter(filter: 'active' | 'history') {
+  selectOrderFilter(filter: 'new' | 'active' | 'ready') {
     this.orderFilter = filter;
     this.expandedOrderId = null;
   }
@@ -111,6 +124,36 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   toggleOrderDetails(orderId: string) {
     this.expandedOrderId = this.expandedOrderId === orderId ? null : orderId;
+  }
+
+  getNextStatus(status: OrderStatus): OrderStatus {
+    const flow: Record<string, OrderStatus> = {
+      'pending': 'accepted',
+      'accepted': 'preparing',
+      'preparing': 'ready',
+      'ready': 'completed'
+    };
+    return flow[status] || status;
+  }
+
+  getNextActionLabel(status: OrderStatus): string {
+    const labels: Record<string, string> = {
+      'pending': 'Aceptar pedido',
+      'accepted': 'Comenzar preparación',
+      'preparing': 'Marcar como listo',
+      'ready': 'Confirmar entrega'
+    };
+    return labels[status] || 'Actualizar';
+  }
+
+  getNextActionIcon(status: OrderStatus): string {
+    const icons: Record<string, string> = {
+      'pending': 'checkmark',
+      'accepted': 'restaurant-outline',
+      'preparing': 'checkmark',
+      'ready': 'checkmark-done'
+    };
+    return icons[status] || 'sync-outline';
   }
 
   getStatusLabel(status: OrderStatus): string {
@@ -283,7 +326,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
           handler: (data) => {
             const rating = parseInt(data.rating, 10);
             const comment = data.comment;
-            
+
             if (isNaN(rating) || rating < 1 || rating > 5) {
               this.showToast('Por favor, ingresa una calificación válida del 1 al 5.', 'warning');
               return false; // Evita cerrar el modal
@@ -355,6 +398,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   goToCatalog() {
     this.router.navigate(['/catalog']);
+  }
+
+  goToSellerDashboard() {
+    this.router.navigate(['/seller']);
   }
 
   goToProfile() {
