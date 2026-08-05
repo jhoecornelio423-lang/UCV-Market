@@ -1,130 +1,24 @@
-@use "sass:color";
-
 $navy: #07152f;
 $muted: #818a9b;
 $primary: #E8432D;
 $primary-light: #FFF2F0;
 $surface: #f5f6f8;
-$sidebar-width: 280px;
+
+:host {
+  display: block;
+  height: 100%;
+}
 
 .catalog-content {
   --background: #{$surface};
   --color: #{$navy};
 }
 
-.catalog-main-shell {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-
-  @media (min-width: 1024px) {
-    flex-direction: row;
-  }
-}
-
-/* Sidebar Desktop */
-.desktop-sidebar {
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: flex;
-    flex-direction: column;
-    width: $sidebar-width;
-    background: white;
-    border-right: 1px solid #F3F4F6;
-    padding: 30px 20px;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    flex-shrink: 0;
-    z-index: 1000;
-
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 40px;
-      .logo {
-        width: 40px;
-        height: 40px;
-        background: $primary;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 900;
-        font-size: 20px;
-      }
-      h2 { font-size: 18px; font-weight: 900; color: $navy; margin: 0; }
-    }
-
-    .nav-links {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      .nav-item {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        border-radius: 14px;
-        color: $muted;
-        font-weight: 700;
-        font-size: 14px;
-        transition: all 0.2s;
-        border: none;
-        background: transparent;
-        text-align: left;
-        cursor: pointer;
-
-        ion-icon { font-size: 20px; }
-
-        &.active {
-          background: $primary-light;
-          color: $primary;
-        }
-
-        &:hover:not(.active) {
-          background: #F9FAFB;
-          color: $navy;
-        }
-      }
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      .logout-btn {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        color: #EF4444;
-        font-weight: 700;
-        cursor: pointer;
-        background: transparent;
-        border: none;
-      }
-    }
-  }
-}
-
-.main-content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
 .catalog-shell {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 24px 20px 40px;
+  padding: calc(env(safe-area-inset-top) + 20px) 20px 40px;
 }
 
 /* Header */
@@ -134,20 +28,8 @@ $sidebar-width: 280px;
   align-items: flex-start;
   margin-bottom: 20px;
 
-  .welcome-line {
-    font-size: 13px;
-    font-weight: 500;
-    color: $muted;
-    margin: 0;
-  }
-
-  h1 {
-    font-size: 24px;
-    font-weight: 900;
-    color: $navy;
-    margin: 4px 0;
-    letter-spacing: -1px;
-  }
+  .welcome-line { font-size: 13px; font-weight: 500; color: $muted; margin: 0; }
+  h1 { font-size: 24px; font-weight: 900; color: $navy; margin: 4px 0; letter-spacing: -1px; }
 
   .campus-selector {
     display: flex;
@@ -159,22 +41,14 @@ $sidebar-width: 280px;
     color: $muted;
     font-size: 12px;
     font-weight: 600;
-
-    ion-icon {
-      color: $primary;
-      font-size: 14px;
-    }
-    .chevron {
-      color: #D1D5DB;
-      font-size: 12px;
-    }
+    ion-icon { color: $primary; font-size: 14px; }
+    .chevron { color: #D1D5DB; font-size: 12px; }
   }
 }
 
 .header-actions {
   display: flex;
   gap: 12px;
-
   .header-icon {
     position: relative;
     width: 44px;
@@ -205,10 +79,7 @@ $sidebar-width: 280px;
       align-items: center;
       justify-content: center;
       border: 2px solid white;
-
-      &.pulse {
-        animation: pulse-red 2s infinite;
-      }
+      &.pulse { animation: pulse-red 2s infinite; }
     }
   }
 }
@@ -224,19 +95,9 @@ $sidebar-width: 280px;
   box-shadow: 0 4px 15px rgba(0,0,0,0.03);
   margin-bottom: 24px;
   border: 1.5px solid #F3F4F6;
-
-  ion-icon {
-    font-size: 18px;
-    color: #9CA3AF;
-  }
-
+  ion-icon { font-size: 18px; color: #9CA3AF; }
   input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-size: 14px;
-    font-weight: 500;
-    color: $navy;
+    border: none; outline: none; width: 100%; font-size: 14px; font-weight: 500; color: $navy;
     &::placeholder { color: #9CA3AF; }
   }
 }
@@ -255,407 +116,106 @@ $sidebar-width: 280px;
   cursor: pointer;
 
   &::after {
-    content: '';
-    position: absolute;
-    top: -50px;
-    right: -20px;
-    width: 200px;
-    height: 200px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
+    content: ''; position: absolute; top: -50px; right: -20px;
+    width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;
   }
 
   .banner-content {
-    position: relative;
-    z-index: 2;
-    flex: 1;
-
-    .offer-label {
-      font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.8);
-      letter-spacing: 1px;
-    }
-
-    .banner-title {
-      font-size: 20px;
-      font-weight: 900;
-      color: white;
-      margin: 8px 0 12px;
-      line-height: 1.2;
-    }
-
+    position: relative; z-index: 2; flex: 1;
+    .offer-label { font-size: 10px; font-weight: 900; text-transform: uppercase; color: rgba(255,255,255,0.8); letter-spacing: 1px; }
+    .banner-title { font-size: 20px; font-weight: 900; color: white; margin: 8px 0 12px; line-height: 1.2; }
     .banner-btn {
-      background: white;
-      color: $primary;
-      border: none;
-      border-radius: 99px;
-      padding: 6px 14px;
-      font-size: 11px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      background: white; color: $primary; border: none; border-radius: 99px; padding: 6px 14px;
+      font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 6px;
     }
   }
 
   .banner-image-container {
-    width: 110px;
-    height: 110px;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 4px solid rgba(255,255,255,0.2);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+    width: 110px; height: 110px; border-radius: 20px; overflow: hidden;
+    border: 4px solid rgba(255,255,255,0.2); box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    img { width: 100%; height: 100%; object-fit: cover; }
   }
 }
 
-/* Titles */
-.section-title-figma {
-  font-size: 16px;
-  font-weight: 900;
-  color: $navy;
-  margin-bottom: 16px;
-}
-
 /* Categories */
+.section-title-figma { font-size: 16px; font-weight: 900; color: $navy; margin-bottom: 16px; }
 .categories-scroll-figma {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 5px;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
-
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
   .category-chip-figma {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: white;
-    border: 1.5px solid #F0F0F5;
-    border-radius: 99px;
-    padding: 10px 18px;
-    font-size: 13px;
-    font-weight: 700;
-    color: #4B5563;
+    flex-shrink: 0; display: flex; align-items: center; gap: 8px; background: white;
+    border: 1.5px solid #F0F0F5; border-radius: 99px; padding: 10px 18px; font-size: 13px; font-weight: 700; color: #4B5563;
     transition: all 0.2s;
-
-    &.active {
-      background: $primary;
-      color: white;
-      border-color: $primary;
-      box-shadow: 0 8px 15px rgba(232, 67, 45, 0.2);
-    }
+    &.active { background: $primary; color: white; border-color: $primary; box-shadow: 0 8px 15px rgba(232, 67, 45, 0.2); }
   }
 }
 
 /* Horizontal Scroller */
 .section-header-figma {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 30px 0 16px;
-
-  h3 {
-    font-size: 16px;
-    font-weight: 900;
-    color: $navy;
-    margin: 0;
-  }
-  .see-all {
-    background: transparent;
-    border: none;
-    color: $primary;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-  }
+  display: flex; justify-content: space-between; align-items: center; margin: 30px 0 16px;
+  h3 { font-size: 16px; font-weight: 900; color: $navy; margin: 0; }
+  .see-all { background: transparent; border: none; color: $primary; font-size: 13px; font-weight: 700; cursor: pointer; }
 }
-
 .horizontal-scroller {
-  display: flex;
-  gap: 14px;
-  overflow-x: auto;
-  padding: 2px 2px 15px;
-  scrollbar-width: none;
-  &::-webkit-scrollbar { display: none; }
+  display: flex; gap: 14px; overflow-x: auto; padding: 2px 2px 15px;
+  scrollbar-width: none; &::-webkit-scrollbar { display: none; }
 }
 
-/* Product Card Small (Figma) */
+/* Cards */
 .product-card-small {
-  flex-shrink: 0;
-  width: 165px;
-  background: white;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-  border: 1px solid #F9FAFB;
-  cursor: pointer;
-
+  flex-shrink: 0; width: 165px; background: white; border-radius: 24px; overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1.5px solid #F9FAFB; cursor: pointer;
   .card-image {
-    position: relative;
-    height: 120px;
-    background: #F3F4F6;
+    position: relative; height: 120px; background: #F3F4F6;
     img { width: 100%; height: 100%; object-fit: cover; }
-
     .fav-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.9);
-      border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: #9CA3AF;
-    }
-
-    .low-stock-badge {
-      position: absolute;
-      bottom: 8px;
-      left: 8px;
-      background: rgba(255,255,255,0.95);
-      color: #EA580C;
-      font-size: 9px;
-      font-weight: 900;
-      padding: 3px 8px;
-      border-radius: 8px;
+      position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border-radius: 50%;
+      background: rgba(255,255,255,0.9); border: none; display: flex; align-items: center; justify-content: center; color: #9CA3AF;
     }
   }
-
   .card-info {
     padding: 12px;
-
-    h4 {
-      font-size: 13px;
-      font-weight: 900;
-      color: $navy;
-      margin: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .seller-name {
-      font-size: 11px;
-      color: $muted;
-      margin: 2px 0 8px;
-    }
-    .meta-row {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      margin-bottom: 8px;
-      .rating {
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        font-size: 11px;
-        font-weight: 700;
-        color: #374151;
-        ion-icon { color: #FBBF24; font-size: 10px; }
-      }
-      .dot { color: #D1D5DB; }
-      .time { font-size: 11px; color: $muted; }
-    }
-    .price {
-      display: block;
-      color: $primary;
-      font-size: 15px;
-      font-weight: 900;
-    }
-
+    h4 { font-size: 13px; font-weight: 900; color: $navy; margin: 0; text-overflow: ellipsis; overflow: hidden; }
+    .seller-name { font-size: 11px; color: $muted; margin: 2px 0 8px; }
+    .price { display: block; color: $primary; font-size: 15px; font-weight: 900; }
     .card-footer-small {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 5px;
-
-      .action-buttons {
-        display: flex;
-        gap: 6px;
-
-        button {
-          width: 28px;
-          height: 28px;
-          border-radius: 8px;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 16px;
-          cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center; margin-top: 5px;
+        .price.out-price { color: #9CA3AF; text-decoration: line-through; font-size: 12px; }
+        .out-label { font-size: 10px; font-weight: 800; color: #EF4444; background: #FEF2F2; padding: 2px 6px; border-radius: 6px; }
+        .action-buttons {
+          display: flex; gap: 6px;
+          button {
+            width: 28px; height: 28px; border-radius: 8px; border: none; display: flex; align-items: center;
+            justify-content: center; font-size: 16px; cursor: pointer;
+          }
+          .btn-wa-mini { background: #E8F5E9; color: #2E7D32; }
+          .btn-cart-mini { background: $primary; color: white; }
         }
-
-        .btn-wa-mini {
-          background: #E8F5E9;
-          color: #2E7D32;
-        }
-
-        .btn-cart-mini {
-          background: $primary;
-          color: white;
-        }
-      }
     }
   }
-}
-
-/* Vertical Row Card (Figma) */
-.vertical-list-figma {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
 }
 
 .product-card-row {
-  background: white;
-  border-radius: 24px;
-  padding: 12px;
-  display: flex;
-  gap: 14px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-  border: 1px solid #F9FAFB;
-  cursor: pointer;
-
-  .row-image {
-    width: 90px;
-    height: 90px;
-    border-radius: 18px;
-    overflow: hidden;
-    background: #F3F4F6;
-    flex-shrink: 0;
-    img { width: 100%; height: 100%; object-fit: cover; }
-  }
-
+  background: white; border-radius: 24px; padding: 12px; display: flex; gap: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.04); border: 1.5px solid #F9FAFB; cursor: pointer;
+  .row-image { width: 90px; height: 90px; border-radius: 18px; overflow: hidden; flex-shrink: 0; img { width: 100%; height: 100%; object-fit: cover; } }
   .row-info {
-    flex: 1;
-    min-width: 0;
-
-    .title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      h4 { font-size: 14px; font-weight: 900; color: $navy; margin: 0; }
-      .fav-btn-inline { background: transparent; border: none; color: #D1D5DB; font-size: 18px; padding: 0; }
-    }
-
+    flex: 1; min-width: 0;
+    .title-row { display: flex; justify-content: space-between; h4 { font-size: 14px; font-weight: 900; color: $navy; margin: 0; } }
     .seller-name { font-size: 11px; color: $muted; margin: 2px 0 6px; }
-
-    .meta-row {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: $muted;
-      font-weight: 500;
-      margin-bottom: 8px;
-      .star-icon { color: #FBBF24; font-size: 12px; }
-      .divider { color: #E5E7EB; }
-    }
-
     .price-stock-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       .price { color: $primary; font-size: 16px; font-weight: 900; }
-
       .action-buttons-inline {
-        display: flex;
-        gap: 8px;
-
-        button {
-          width: 32px;
-          height: 32px;
-          border-radius: 10px;
-          border: none;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 18px;
-          cursor: pointer;
-        }
-
-        .btn-wa-row {
-          background: #E8F5E9;
-          color: #2E7D32;
-        }
-
-        .btn-cart-row {
-          background: $primary;
-          color: white;
-        }
-      }
-
-      .stock-badge {
-        display: none; // Hidden to make space for buttons in list view
+        display: flex; gap: 8px;
+        button { width: 32px; height: 32px; border-radius: 10px; border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .btn-wa-row { background: #E8F5E9; color: #2E7D32; }
+        .btn-cart-row { background: $primary; color: white; }
       }
     }
   }
 }
 
-/* Footer & Navigation Figma */
-.catalog-footer {
-  background: white;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.bottom-navigation-figma {
-  height: 72px;
-  display: flex;
-  background: white;
-  border-top: 1px solid #F3F4F6;
-  padding: 0 10px;
-
-  .nav-item-figma {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    background: transparent;
-    border: none;
-    color: #B0B0C0;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    ion-icon {
-      font-size: 22px;
-      transition: transform 0.2s;
-    }
-
-    span {
-      font-size: 10px;
-      font-weight: 800;
-    }
-
-    &.active {
-      color: $primary;
-      ion-icon { transform: translateY(-2px); }
-      &::after {
-        content: '';
-        width: 4px;
-        height: 4px;
-        background: $primary;
-        border-radius: 50%;
-        margin-top: 2px;
-      }
-    }
-  }
-}
-
-/* Animations */
 @keyframes pulse-red {
   0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(232, 67, 45, 0.7); }
   70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(232, 67, 45, 0); }

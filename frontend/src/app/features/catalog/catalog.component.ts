@@ -19,7 +19,7 @@ import { Profile } from '../../core/models/profile.model';
 export class CatalogComponent implements OnInit, OnDestroy {
   products: Product[] = [];
   categories: Category[] = [];
-  
+
   selectedCategoryId: string = '';
   searchQuery: string = '';
   loading = false;
@@ -170,7 +170,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
    */
   async addToCart(product: Product) {
     const success = this.cartService.addToCart(product, 1);
-    
+
     if (success) {
       const toast = await this.toastCtrl.create({
         message: `¡${product.name} agregado al carrito!`,
@@ -217,7 +217,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
     const buyerName = this.userProfile?.full_name || 'Estudiante UCV';
     const message = `Hola, te escribo desde UCV Market 🛒.\n\nSoy el comprador *${buyerName}* y vi tu publicación de *${product.name}* (S/. ${product.price.toFixed(2)}). ¿Sigue disponible?`;
     const waUrl = `https://wa.me/51${product.seller.phone}?text=${encodeURIComponent(message)}`;
-    
+
     window.open(waUrl, '_blank');
   }
 
@@ -228,8 +228,16 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.router.navigate(['/cart']);
   }
 
+  goToCatalog() {
+    this.router.navigate(['/catalog']);
+  }
+
   goToOrders() {
     this.router.navigate(['/orders']);
+  }
+
+  goToSellerDashboard() {
+    this.router.navigate(['/seller']);
   }
 
   goToProfile() {

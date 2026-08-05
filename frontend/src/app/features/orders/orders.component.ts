@@ -29,6 +29,11 @@ export class OrdersComponent implements OnInit, OnDestroy {
   loading = false;
 
   get visibleOrders(): Order[] {
+    // Seguridad de Rol: Si el usuario es comprador, forzar vista de compras
+    if (this.userProfile && this.userProfile.role === 'comprador') {
+      this.activeTab = 'compras';
+    }
+
     if (this.activeTab === 'compras') {
       const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
       return this.buyerOrders.filter(order => this.buyerFilter === 'history'
@@ -129,6 +134,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   selectOrderType(type: 'compras' | 'ventas') {
+    if (type === 'ventas' && this.userProfile?.role !== 'emprendedor') {
+      this.activeTab = 'compras';
+      return;
+    }
     this.activeTab = type;
   }
 

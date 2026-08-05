@@ -129,4 +129,11 @@ export class AuthService {
       })
     );
   }
+
+  /**
+   * Sube una imagen de negocio (avatar o banner) a storage.
+   */
+  uploadBusinessAsset(filePath: string, file: File): Observable<string> {
+    return this.authRepository.uploadBusinessAsset(filePath, file);
+  }
 }

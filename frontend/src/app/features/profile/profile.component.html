@@ -1,27 +1,6 @@
 <ion-content [fullscreen]="true" class="profile-content">
   <div class="profile-main-shell">
 
-    <!-- Desktop Sidebar Navigation (Mantenida fija a nivel web) -->
-    <aside class="desktop-sidebar">
-      <div class="sidebar-brand">
-        <div class="logo">U</div>
-        <h2>UCV Market</h2>
-      </div>
-      <nav class="nav-links">
-        <button class="nav-item" (click)="goToCatalog()"><ion-icon name="home-outline"></ion-icon> Inicio</button>
-        <button class="nav-item"><ion-icon name="compass-outline"></ion-icon> Explorar</button>
-        <button class="nav-item" (click)="goToOrders()"><ion-icon name="receipt-outline"></ion-icon> Pedidos</button>
-        <button class="nav-item"><ion-icon name="heart-outline"></ion-icon> Favoritos</button>
-        <button class="nav-item active"><ion-icon name="person"></ion-icon> Perfil</button>
-      </nav>
-      <div class="sidebar-footer">
-        <button class="logout-btn" (click)="confirmSignOut()">
-          <ion-icon name="log-out-outline"></ion-icon>
-          Salir
-        </button>
-      </div>
-    </aside>
-
     <div class="main-content-wrapper">
       <header class="profile-header ion-no-border">
         <ion-toolbar class="header-toolbar">

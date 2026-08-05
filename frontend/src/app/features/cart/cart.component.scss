@@ -130,7 +130,7 @@ app-cart {
       --background: white;
       --color: #{$navy};
       --title-font-weight: 900;
-      padding-top: 10px;
+      padding-top: calc(env(safe-area-inset-top) + 10px);
     }
   }
 

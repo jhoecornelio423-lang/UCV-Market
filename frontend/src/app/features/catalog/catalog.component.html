@@ -1,209 +1,139 @@
 <ion-content [fullscreen]="true" class="catalog-content">
-  <div class="catalog-main-shell">
-
-    <!-- Desktop Sidebar Navigation (Mantenida fija a nivel web) -->
-    <aside class="desktop-sidebar">
-      <div class="sidebar-brand">
-        <div class="logo">U</div>
-        <h2>UCV Market</h2>
-      </div>
-      <nav class="nav-links">
-        <button class="nav-item active"><ion-icon name="home"></ion-icon> Inicio</button>
-        <button class="nav-item"><ion-icon name="compass-outline"></ion-icon> Explorar</button>
-        <button class="nav-item" (click)="goToOrders()"><ion-icon name="receipt-outline"></ion-icon> Pedidos</button>
-        <button class="nav-item"><ion-icon name="heart-outline"></ion-icon> Favoritos</button>
-        <button class="nav-item" (click)="goToProfile()"><ion-icon name="person-outline"></ion-icon> Perfil</button>
-      </nav>
-      <div class="sidebar-footer">
-        <button class="logout-btn" (click)="signOut()">
-          <ion-icon name="log-out-outline"></ion-icon>
-          Salir
+  <main class="catalog-shell">
+    <header class="home-header">
+      <div class="identity-block">
+        <p class="welcome-line">{{ greeting }} 👋</p>
+        <h1>{{ displayName }}</h1>
+        <button type="button" class="campus-selector">
+          <ion-icon name="location" aria-hidden="true"></ion-icon>
+          <span>UCV · Campus Lima Norte</span>
+          <ion-icon name="chevron-down" class="chevron"></ion-icon>
         </button>
       </div>
-    </aside>
 
-    <div class="main-content-wrapper">
-      <main class="catalog-shell">
-        <header class="home-header">
-          <div class="identity-block">
-            <p class="welcome-line">{{ greeting }} 👋</p>
-            <h1>{{ displayName }}</h1>
-            <button type="button" class="campus-selector">
-              <ion-icon name="location" aria-hidden="true"></ion-icon>
-              <span>UCV · Campus Lima Norte</span>
-              <ion-icon name="chevron-down" class="chevron"></ion-icon>
-            </button>
-          </div>
+      <div class="header-actions">
+        <button type="button" class="header-icon" aria-label="Notificaciones">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <span class="action-badge pulse">2</span>
+        </button>
+        <button type="button" class="header-icon" (click)="goToCart()" aria-label="Abrir carrito">
+          <ion-icon name="cart-outline"></ion-icon>
+          <span *ngIf="cartCount > 0" class="action-badge">{{ cartCount }}</span>
+        </button>
+      </div>
+    </header>
 
-          <div class="header-actions">
-            <button type="button" class="header-icon" aria-label="Notificaciones">
-              <ion-icon name="notifications-outline"></ion-icon>
-              <span class="action-badge pulse">2</span>
-            </button>
-            <button type="button" class="header-icon" (click)="goToCart()" aria-label="Abrir carrito">
-              <ion-icon name="cart-outline"></ion-icon>
-              <span *ngIf="cartCount > 0" class="action-badge">{{ cartCount }}</span>
-            </button>
-          </div>
-        </header>
-
-        <div class="search-box">
-          <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
-          <input
-            type="search"
-            placeholder="Busca comida, postres, bebidas..."
-            aria-label="Buscar productos"
-            (input)="onSearchChange($event)"
-            [value]="searchQuery"
-          />
-        </div>
-
-        <!-- Figma Style Banner -->
-        <section *ngIf="featuredProduct as featured" class="featured-banner-figma" (click)="addToCart(featured)">
-          <div class="banner-content">
-            <span class="offer-label">🔥 Oferta del día</span>
-            <h2 class="banner-title">{{ featured.name }}<br>a S/ {{ (featured.price * 0.9).toFixed(2) }} hoy</h2>
-            <button type="button" class="banner-btn">
-              Ver oferta
-              <ion-icon name="arrow-forward-outline"></ion-icon>
-            </button>
-          </div>
-          <div class="banner-image-container">
-            <img [src]="getProductImage(featured)" [alt]="featured.name" />
-          </div>
-        </section>
-
-        <!-- Categories Figma Style -->
-        <section class="categories-section" aria-labelledby="categories-title">
-          <h3 id="categories-title" class="section-title-figma">Categorías</h3>
-          <div class="categories-scroll-figma">
-            <button
-              type="button"
-              class="category-chip-figma"
-              [class.active]="selectedCategoryId === ''"
-              (click)="selectCategory('')"
-            >
-              <span class="emoji">🍽️</span>
-              <span>Todo</span>
-            </button>
-            <button
-              type="button"
-              *ngFor="let category of categories"
-              class="category-chip-figma"
-              [class.active]="selectedCategoryId === category.id"
-              (click)="selectCategory(category.id)"
-            >
-              <span class="emoji">{{ category.icon }}</span>
-              <span>{{ category.name }}</span>
-            </button>
-          </div>
-        </section>
-
-        <div *ngIf="loading" class="catalog-skeleton">
-          <div *ngFor="let item of [1, 2, 3]" class="skeleton-card-figma"></div>
-        </div>
-
-        <ng-container *ngIf="!loading && products.length > 0">
-          <!-- Popular Ahora (Horizontal Scroll) -->
-          <section class="products-section-horizontal" aria-labelledby="popular-title">
-            <div class="section-header-figma">
-              <h3 id="popular-title">Popular ahora 🔥</h3>
-              <button type="button" class="see-all" (click)="selectCategory('')">Ver todo</button>
-            </div>
-
-            <div class="horizontal-scroller">
-              <article *ngFor="let product of popularProducts" class="product-card-small">
-                <div class="card-image">
-                  <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
-                  <button type="button" class="fav-btn">
-                    <ion-icon name="heart-outline"></ion-icon>
-                  </button>
-                  <span *ngIf="product.stock <= 2" class="low-stock-badge">¡Últimos!</span>
-                </div>
-                <div class="card-info">
-                  <h4>{{ product.name }}</h4>
-                  <p class="seller-name">{{ product.seller?.full_name || 'Vendedor UCV' }}</p>
-                  <div class="meta-row">
-                    <div class="rating">
-                      <ion-icon name="star"></ion-icon>
-                      <span>{{ product.seller?.rating_average || '5.0' }}</span>
-                    </div>
-                    <span class="dot">·</span>
-                    <span class="time">10 min</span>
-                  </div>
-                  <div class="card-footer-small">
-                    <strong class="price">S/ {{ product.price.toFixed(2) }}</strong>
-                    <div class="action-buttons">
-                      <button class="btn-wa-mini" (click)="contactSellerViaWhatsApp(product)" title="WhatsApp">
-                        <ion-icon name="logo-whatsapp"></ion-icon>
-                      </button>
-                      <button class="btn-cart-mini" (click)="addToCart(product)" title="Agregar">
-                        <ion-icon name="add"></ion-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </section>
-
-          <!-- Cerca de ti (Vertical List Detailed) -->
-          <section class="nearby-section-figma" aria-labelledby="nearby-title">
-            <div class="section-header-figma">
-              <h3 id="nearby-title">Cerca de ti 📍</h3>
-              <button type="button" class="see-all">Ver todo</button>
-            </div>
-
-            <div class="vertical-list-figma">
-              <article *ngFor="let product of nearbyProducts" class="product-card-row">
-                <div class="row-image">
-                  <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
-                </div>
-                <div class="row-info">
-                  <div class="title-row">
-                    <h4>{{ product.name }}</h4>
-                    <button class="fav-btn-inline">
-                      <ion-icon name="heart-outline"></ion-icon>
-                    </button>
-                  </div>
-                  <p class="seller-name">{{ product.seller?.full_name }}</p>
-                  <div class="meta-row">
-                    <ion-icon name="star" class="star-icon"></ion-icon>
-                    <span>{{ product.seller?.rating_average || '5.0' }}</span>
-                    <span class="divider">·</span>
-                    <ion-icon name="location-outline"></ion-icon>
-                    <span>{{ product.pickup_location }}</span>
-                  </div>
-                  <div class="price-stock-row">
-                    <strong class="price">S/ {{ product.price.toFixed(2) }}</strong>
-                    <div class="action-buttons-inline">
-                      <button class="btn-wa-row" (click)="contactSellerViaWhatsApp(product)">
-                        <ion-icon name="logo-whatsapp"></ion-icon>
-                      </button>
-                      <button class="btn-cart-row" (click)="addToCart(product)">
-                        <ion-icon name="add"></ion-icon>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </div>
-          </section>
-        </ng-container>
-
-        <section *ngIf="!loading && products.length === 0" class="empty-state-figma">
-          <div class="empty-icon"><ion-icon name="search-outline"></ion-icon></div>
-          <h2>No hay resultados</h2>
-          <p>Prueba con otra búsqueda o categoría.</p>
-        </section>
-      </main>
+    <div class="search-box">
+      <ion-icon name="search-outline" aria-hidden="true"></ion-icon>
+      <input
+        type="search"
+        placeholder="Busca comida, postres, bebidas..."
+        aria-label="Buscar productos"
+        (input)="onSearchChange($event)"
+        [value]="searchQuery"
+      />
     </div>
-  </div>
+
+    <!-- Figma Style Banner -->
+    <section *ngIf="featuredProduct as featured" class="featured-banner-figma" (click)="addToCart(featured)">
+      <div class="banner-content">
+        <span class="offer-label">🔥 Oferta del día</span>
+        <h2 class="banner-title">{{ featured.name }}<br>a S/ {{ (featured.price * 0.9).toFixed(2) }} hoy</h2>
+        <button type="button" class="banner-btn">
+          Ver oferta
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+      <div class="banner-image-container">
+        <img [src]="getProductImage(featured)" [alt]="featured.name" />
+      </div>
+    </section>
+
+    <!-- Categories Figma Style -->
+    <section class="categories-section" aria-labelledby="categories-title">
+      <h3 id="categories-title" class="section-title-figma">Categorías</h3>
+      <div class="categories-scroll-figma">
+        <button type="button" class="category-chip-figma" [class.active]="selectedCategoryId === ''" (click)="selectCategory('')">
+          <span class="emoji">🍽️</span>
+          <span>Todo</span>
+        </button>
+        <button type="button" *ngFor="let category of categories" class="category-chip-figma" [class.active]="selectedCategoryId === category.id" (click)="selectCategory(category.id)">
+          <span class="emoji">{{ category.icon }}</span>
+          <span>{{ category.name }}</span>
+        </button>
+      </div>
+    </section>
+
+    <div *ngIf="loading" class="catalog-skeleton">
+      <div *ngFor="let item of [1, 2, 3]" class="skeleton-card-figma"></div>
+    </div>
+
+    <ng-container *ngIf="!loading && products.length > 0">
+      <section class="products-section-horizontal" aria-labelledby="popular-title">
+        <div class="section-header-figma">
+          <h3 id="popular-title">Popular ahora 🔥</h3>
+          <button type="button" class="see-all" (click)="selectCategory('')">Ver todo</button>
+        </div>
+
+        <div class="horizontal-scroller">
+          <article *ngFor="let product of popularProducts" class="product-card-small">
+            <div class="card-image">
+              <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
+              <button type="button" class="fav-btn"><ion-icon name="heart-outline"></ion-icon></button>
+              <span *ngIf="product.stock <= 2 && product.stock > 0" class="low-stock-badge">¡Últimos!</span>
+            </div>
+            <div class="card-info">
+              <h4>{{ product.name }}</h4>
+              <p class="seller-name">{{ product.seller?.full_name || 'Vendedor UCV' }}</p>
+              <div class="card-footer-small">
+                <strong class="price" [class.out-price]="product.stock <= 0">S/ {{ product.price.toFixed(2) }}</strong>
+                <div class="action-buttons" *ngIf="product.stock > 0">
+                  <button class="btn-wa-mini" (click)="contactSellerViaWhatsApp(product)"><ion-icon name="logo-whatsapp"></ion-icon></button>
+                  <button class="btn-cart-mini" (click)="addToCart(product)"><ion-icon name="add"></ion-icon></button>
+                </div>
+                <span class="out-label" *ngIf="product.stock <= 0">Agotado</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="nearby-section-figma" aria-labelledby="nearby-title">
+        <div class="section-header-figma">
+          <h3 id="nearby-title">Cerca de ti 📍</h3>
+          <button type="button" class="see-all">Ver todo</button>
+        </div>
+
+        <div class="vertical-list-figma">
+          <article *ngFor="let product of nearbyProducts" class="product-card-row">
+            <div class="row-image">
+              <img [src]="getProductImage(product)" [alt]="product.name" loading="lazy" />
+            </div>
+            <div class="row-info">
+              <div class="title-row">
+                <h4>{{ product.name }}</h4>
+                <button class="fav-btn-inline"><ion-icon name="heart-outline"></ion-icon></button>
+              </div>
+              <p class="seller-name">{{ product.seller?.full_name }}</p>
+              <div class="price-stock-row">
+                <strong class="price">S/ {{ product.price.toFixed(2) }}</strong>
+                <div class="action-buttons-inline" *ngIf="product.stock > 0">
+                  <button class="btn-wa-row" (click)="contactSellerViaWhatsApp(product)"><ion-icon name="logo-whatsapp"></ion-icon></button>
+                  <button class="btn-cart-row" (click)="addToCart(product)"><ion-icon name="add"></ion-icon></button>
+                </div>
+                <span class="out-label" *ngIf="product.stock <= 0">Agotado</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+  </main>
 </ion-content>
 
 <ion-footer class="catalog-footer ion-no-border ion-hide-lg-up">
   <nav class="bottom-navigation-figma">
-    <button type="button" class="nav-item-figma active">
+    <button type="button" class="nav-item-figma active" (click)="userProfile?.role === 'emprendedor' ? goToSellerDashboard() : null">
       <ion-icon name="home"></ion-icon>
       <span>Inicio</span>
     </button>
@@ -212,8 +142,12 @@
       <span>Explorar</span>
     </button>
     <button type="button" class="nav-item-figma" (click)="goToOrders()">
-      <ion-icon name="receipt-outline"></ion-icon>
-      <span>Pedidos</span>
+      <ion-icon [name]="userProfile?.role === 'emprendedor' ? 'bag-handle-outline' : 'receipt-outline'"></ion-icon>
+      <span>{{ userProfile?.role === 'emprendedor' ? 'Ventas' : 'Pedidos' }}</span>
+    </button>
+    <button type="button" class="nav-item-figma" *ngIf="userProfile?.role === 'emprendedor'" (click)="goToOrders()">
+        <ion-icon name="cart-outline"></ion-icon>
+        <span>Compras</span>
     </button>
     <button type="button" class="nav-item-figma">
       <ion-icon name="heart-outline"></ion-icon>

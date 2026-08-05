@@ -1,3 +1,59 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <div class="app-main-layout" [class.with-sidebar]="showSidebar">
+
+    <!-- SIDEBAR GLOBAL (Mantenido quieto durante navegación) -->
+    <aside class="global-desktop-sidebar" *ngIf="showSidebar">
+      <div class="sidebar-brand">
+        <div class="logo">U</div>
+        <h2>UCV Market</h2>
+      </div>
+
+      <!-- Navegación para Emprendedor -->
+      <nav class="nav-links" *ngIf="userProfile?.role === 'emprendedor'">
+        <button class="nav-item" [class.active]="currentPath.startsWith('/seller') && !currentPath.includes('view=')" (click)="goTo('/seller')">
+          <ion-icon name="stats-chart-outline"></ion-icon> Dashboard
+        </button>
+        <button class="nav-item" [class.active]="currentPath === '/orders'" (click)="goTo('/orders')">
+          <ion-icon name="bag-handle-outline"></ion-icon> Ventas
+        </button>
+        <button class="nav-item" [class.active]="currentPath.includes('view=products')" (click)="goTo('/seller', {view: 'products'})">
+          <ion-icon name="pricetag-outline"></ion-icon> Productos
+        </button>
+        <button class="nav-item" [class.active]="currentPath.includes('view=stats')" (click)="goTo('/seller', {view: 'stats'})">
+          <ion-icon name="trending-up-outline"></ion-icon> Estadísticas
+        </button>
+        <button class="nav-item" [class.active]="currentPath.includes('view=business')" (click)="goTo('/seller', {view: 'business'})">
+          <ion-icon name="business-outline"></ion-icon> Mi negocio
+        </button>
+      </nav>
+
+      <!-- Navegación para Comprador -->
+      <nav class="nav-links" *ngIf="userProfile?.role === 'comprador'">
+        <button class="nav-item" [class.active]="currentPath === '/catalog'" (click)="goTo('/catalog')">
+          <ion-icon name="home-outline"></ion-icon> Inicio
+        </button>
+        <button class="nav-item"><ion-icon name="compass-outline"></ion-icon> Explorar</button>
+        <button class="nav-item" [class.active]="currentPath === '/orders'" (click)="goTo('/orders')">
+          <ion-icon name="receipt-outline"></ion-icon> Pedidos
+        </button>
+        <button class="nav-item"><ion-icon name="heart-outline"></ion-icon> Favoritos</button>
+        <button class="nav-item" [class.active]="currentPath === '/profile'" (click)="goTo('/profile')">
+          <ion-icon name="person-outline"></ion-icon> Perfil
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="logout-btn" (click)="signOut()">
+          <ion-icon name="log-out-outline"></ion-icon>
+          Salir
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO DINÁMICO -->
+    <div class="router-content-wrapper">
+      <ion-router-outlet></ion-router-outlet>
+    </div>
+
+  </div>
 </ion-app>

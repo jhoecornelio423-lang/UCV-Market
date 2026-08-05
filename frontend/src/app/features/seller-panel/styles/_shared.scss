@@ -1,0 +1,64 @@
+$primary: #E8432D;
+$primary-light: #FFF2F0;
+$navy: #07152f;
+$muted: #818a9b;
+$bg: #f8f9fb;
+
+/* Estrellas Doradas */
+.star-gold {
+  color: #FBBF24 !important;
+  font-size: 1.1em;
+  filter: drop-shadow(0 0 2px rgba(251, 181, 36, 0.4));
+  vertical-align: middle;
+  position: relative;
+  top: -4px;
+  margin-left: 4px;
+}
+
+/* Gráfico de Barras Pro (Usado en Dashboard y Stats) */
+.chart-container-pro {
+  position: relative;
+  height: 180px;
+  margin-top: 20px;
+  padding: 0 10px 30px 40px;
+
+  .grid-lines {
+    position: absolute;
+    inset: 0 10px 30px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+    .grid-line {
+      width: 100%; height: 1px; background: #F3F4F6; position: relative;
+      span { position: absolute; left: -35px; top: -8px; font-size: 10px; font-weight: 700; color: #9CA3AF; width: 30px; text-align: right; }
+    }
+  }
+
+  .bar-chart-pro {
+    position: relative; height: 100%; width: 100%; display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; z-index: 2;
+
+    .bar-wrapper-pro {
+      flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 10px; cursor: pointer;
+
+      .bar-group {
+        width: 100%; max-width: 32px; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; position: relative;
+        .bar-value-popup {
+            position: absolute; top: -25px; left: 50%; transform: translateX(-50%); background: $navy; color: white;
+            font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; opacity: 0; transition: opacity 0.2s;
+        }
+        .bar-fill {
+          width: 100%; background: #F3F4F6; border-radius: 8px; min-height: 4px; transition: height 0.5s ease;
+          &.has-value { background: linear-gradient(to top, $primary, #FF7B5E); box-shadow: 0 4px 10px rgba(232, 67, 45, 0.15); }
+        }
+      }
+      .day-label { font-size: 11px; font-weight: 800; color: #9CA3AF; }
+      &:hover { .bar-fill.has-value { filter: brightness(1.1); } .bar-value-popup { opacity: 1; } }
+    }
+  }
+}
+
+@keyframes skeleton-loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+.divider-line { height: 1.5px; background: #F9FAFB; margin: 16px 0; }

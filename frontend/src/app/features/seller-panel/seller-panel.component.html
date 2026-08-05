@@ -1,30 +1,8 @@
 <ion-content [fullscreen]="true" class="seller-content">
   <div class="seller-shell">
-
-    <!-- Desktop Sidebar Navigation (Mantenida fija a nivel web) -->
-    <aside class="desktop-sidebar">
-      <div class="sidebar-brand">
-        <div class="logo">U</div>
-        <h2>UCV Market</h2>
-      </div>
-      <nav class="nav-links">
-        <button class="nav-item" [class.active]="!showForm" (click)="closeForm()"><ion-icon name="stats-chart-outline"></ion-icon> Dashboard</button>
-        <button class="nav-item" (click)="goToOrders()"><ion-icon name="bag-handle-outline"></ion-icon> Pedidos</button>
-        <button class="nav-item"><ion-icon name="pricetag-outline"></ion-icon> Productos</button>
-        <button class="nav-item"><ion-icon name="trending-up-outline"></ion-icon> Ventas</button>
-        <button class="nav-item"><ion-icon name="business-outline"></ion-icon> Negocio</button>
-      </nav>
-      <div class="sidebar-footer">
-        <button class="logout-btn" (click)="signOut()">
-          <ion-icon name="log-out-outline"></ion-icon>
-          Salir
-        </button>
-      </div>
-    </aside>
-
     <div class="main-content-wrapper">
 
-      <!-- VISTA: FORMULARIO NUEVO PRODUCTO (FIGMA STYLE) -->
+      <!-- 1. VISTA: FORMULARIO NUEVO PRODUCTO (FIGMA STYLE) -->
       <div *ngIf="showForm" class="form-container-figma">
         <header class="form-header-figma">
           <button class="back-circle" (click)="closeForm()">
@@ -98,19 +76,6 @@
             </div>
           </section>
 
-          <!-- Tiempo de Preparación -->
-          <section class="form-card-figma">
-            <label class="label-figma">Tiempo de preparación</label>
-            <div class="chips-grid">
-              <button *ngFor="let time of ['5 min', '10 min', '15 min', '20 min', '30 min']"
-                      class="chip-item time-chip"
-                      [class.active]="pPreparationTime === time"
-                      (click)="pPreparationTime = time">
-                {{ time }}
-              </button>
-            </div>
-          </section>
-
           <!-- Botón Publicar -->
           <div class="footer-actions-figma">
             <button class="btn-publish-figma" (click)="saveProduct()">
@@ -120,8 +85,8 @@
         </div>
       </div>
 
-      <!-- VISTA: DASHBOARD PRINCIPAL (Existente) -->
-      <div *ngIf="!showForm" class="dashboard-view">
+      <!-- 2. VISTA: DASHBOARD PRINCIPAL -->
+      <div *ngIf="!showForm && activeView === 'dashboard'" class="dashboard-view">
         <header class="seller-header-figma">
           <div class="header-top">
             <div class="brand-info">
@@ -129,16 +94,41 @@
               <h1>{{ userProfile?.full_name || 'Sweet Corner' }}</h1>
               <div class="rating-info">
                 <ion-icon name="star" class="star"></ion-icon>
-                <span class="val">{{ userProfile?.rating_average || '4.9' }}</span>
+                <span class="val">{{ userProfile?.rating_average || '5.0' }}</span>
                 <span class="divider">·</span>
                 <span class="reviews">234 reseñas</span>
               </div>
             </div>
             <div class="header-actions">
-              <button class="notif-btn">
-                <ion-icon name="notifications-outline"></ion-icon>
-                <span class="badge">1</span>
-              </button>
+              <div class="notif-wrapper">
+                <button class="notif-btn" (click)="showNotifications()">
+                  <ion-icon name="notifications-outline"></ion-icon>
+                  <span class="badge" *ngIf="unreadNotifCount > 0">{{ unreadNotifCount }}</span>
+                </button>
+
+                <!-- DROPDOWN NOTIFICACIONES WEB -->
+                <div class="notif-dropdown-figma" *ngIf="showNotifDropdown">
+                  <div class="notif-header">
+                    <h3>Notificaciones</h3>
+                    <button class="btn-mark-all" (click)="markAllRead()">Marcar todo</button>
+                  </div>
+                  <div class="notif-list-scroll">
+                    <div *ngFor="let n of notifications" class="notif-item-figma" [class.unread]="n.unread">
+                      <div class="notif-icon-circle" [style.color]="n.color">
+                        <ion-icon [name]="n.icon || 'star'"></ion-icon>
+                      </div>
+                      <div class="notif-content-text">
+                        <div class="title-row">
+                          <p class="n-title">{{ n.title }}</p>
+                          <span class="n-time">{{ n.time }}</span>
+                          <div class="n-dot" *ngIf="n.unread"></div>
+                        </div>
+                        <p class="n-desc">{{ n.desc }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <button class="profile-btn ion-hide-lg-up" (click)="signOut()">
                 <ion-icon name="person-outline"></ion-icon>
               </button>
@@ -148,19 +138,19 @@
           <!-- Quick Stats (Mobile) -->
           <div class="stats-row ion-hide-lg-up">
             <div class="stat-box">
-              <span class="val">S/ {{ totalSales.toFixed(0) }}</span>
+              <span class="val">S/ {{ totalSalesToday.toFixed(0) }}</span>
               <span class="lbl">Ventas hoy</span>
-              <span class="trend">+18% vs ayer</span>
+              <span class="trend" [class.negative]="salesGrowthToday < 0">
+                {{ salesGrowthToday === 100 && totalSalesToday > 0 ? 'Récord' : (salesGrowthToday >= 0 ? '+' : '') + salesGrowthToday + '%' }}
+              </span>
             </div>
             <div class="stat-box">
               <span class="val">{{ pendingOrdersCount + activeOrders.length }}</span>
               <span class="lbl">Pedidos</span>
-              <span class="sub">{{ activeOrders.length }} activos</span>
             </div>
             <div class="stat-box">
-              <span class="val">{{ userProfile?.rating_average || '4.9' }} <ion-icon name="star"></ion-icon></span>
+              <span class="val">{{ userProfile?.rating_average || '5.0' }} <ion-icon name="star" class="star-gold"></ion-icon></span>
               <span class="lbl">Rating</span>
-              <span class="status">Excelente</span>
             </div>
           </div>
         </header>
@@ -169,9 +159,11 @@
           <!-- Desktop Stats Grid -->
           <div class="desktop-stats-grid ion-hide-lg-down">
               <div class="stat-card-web">
-                  <span class="val">S/ {{ totalSales.toFixed(0) }}</span>
+                  <span class="val">S/ {{ totalSalesToday.toFixed(0) }}</span>
                   <span class="lbl">Ventas hoy</span>
-                  <span class="trend up">+18% vs ayer</span>
+                  <span class="trend" [class.up]="salesGrowthToday >= 0" [class.down]="salesGrowthToday < 0">
+                    {{ salesGrowthToday === 100 && totalSalesToday > 0 ? 'Impulso inicial' : (salesGrowthToday >= 0 ? '+' : '') + salesGrowthToday + '%' }}
+                  </span>
               </div>
               <div class="stat-card-web">
                   <span class="val">{{ pendingOrdersCount + activeOrders.length }}</span>
@@ -179,9 +171,12 @@
                   <span class="trend">{{ activeOrders.length }} activos</span>
               </div>
               <div class="stat-card-web">
-                  <span class="val">{{ userProfile?.rating_average || '4.9' }}</span>
+                  <span class="val">
+                    {{ userProfile?.rating_average || '5.0' }}
+                    <ion-icon name="star" class="star-gold"></ion-icon>
+                  </span>
                   <span class="lbl">Reputación</span>
-                  <span class="trend">Nivel Pro</span>
+                  <span class="trend">{{ getReputationLabel(userProfile?.rating_average || 5.0) }}</span>
               </div>
           </div>
 
@@ -208,13 +203,11 @@
             <div class="orders-list-figma">
               <div *ngFor="let order of activeOrders" class="order-item-figma">
                 <div class="order-info">
-                  <p class="order-title">#{{ order.id.substring(0, 3) }} · {{ order.order_items?.[0]?.product?.name || 'Pedido' }}</p>
-                  <p class="order-time">Hace 2 min</p>
+                  <p class="order-title">{{ order.order_items?.[0]?.product?.name || 'Pedido' }}</p>
+                  <p class="order-time">Hace poco</p>
                 </div>
                 <span class="status-badge-figma" [class]="order.status">
-                  {{ order.status === 'pending' ? 'Pendiente' :
-                     order.status === 'accepted' ? 'Aceptado' :
-                     order.status === 'preparing' ? 'Preparando' : 'Listo' }}
+                  {{ getStatusLabel(order.status) }}
                 </span>
               </div>
               <div *ngIf="activeOrders.length === 0" class="empty-mini">
@@ -226,17 +219,383 @@
           <section class="section-figma chart-section">
             <div class="section-header">
               <h3>Ventas esta semana</h3>
-              <span class="growth"><ion-icon name="arrow-up-outline"></ion-icon> 23%</span>
+              <span class="growth" [class.negative]="salesGrowthWeekly < 0">
+                <ion-icon [name]="salesGrowthWeekly >= 0 ? 'arrow-up-outline' : 'arrow-down-outline'"></ion-icon>
+                {{ salesGrowthWeekly === 100 ? 'Récord' : (salesGrowthWeekly >= 0 ? '+' : '') + salesGrowthWeekly + '%' }}
+              </span>
             </div>
-            <div class="chart-container">
-              <div class="bar-chart">
-                <div *ngFor="let item of salesData" class="bar-wrapper">
-                  <div class="bar" [style.height.%]="(item.ventas / 28) * 100"></div>
-                  <span class="day">{{ item.day }}</span>
+            <div class="chart-container-pro">
+              <svg viewBox="0 0 700 180" width="100%" height="100%" class="svg-chart-pro">
+                <defs>
+                  <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#E8432D" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="#E8432D" stop-opacity="0.0" />
+                  </linearGradient>
+                  <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#E8432D" />
+                    <stop offset="100%" stop-color="#FF7B5E" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Grid lines -->
+                <line x1="50" y1="30" x2="650" y2="30" stroke="#F3F4F6" stroke-width="1" />
+                <line x1="50" y1="85" x2="650" y2="85" stroke="#F3F4F6" stroke-dasharray="4" stroke-width="1" />
+                <line x1="50" y1="140" x2="650" y2="140" stroke="#E5E7EB" stroke-width="1.5" />
+
+                <!-- Area -->
+                <path [attr.d]="svgAreaPath" fill="url(#areaGrad)" />
+
+                <!-- Line -->
+                <path [attr.d]="svgLinePath" fill="none" stroke="url(#lineGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- Data point nodes -->
+                <g *ngFor="let item of salesData; let i = index">
+                  <circle [attr.cx]="getChartPointX(i)"
+                          [attr.cy]="getChartPointY(item.ventas)"
+                          r="6"
+                          fill="#ffffff"
+                          stroke="#E8432D"
+                          stroke-width="3.5"
+                          class="chart-node-circle"
+                          (click)="onChartBarClick(item)">
+                  </circle>
+                  <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.ventas) - 20) + ')'">
+                    <rect x="-20" y="-18" width="40" height="20" rx="6" fill="#07152f" />
+                    <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.ventas }}</text>
+                  </g>
+                  <text [attr.x]="getChartPointX(i)" y="165" fill="#9CA3AF" font-size="11" font-weight="800" text-anchor="middle">{{ item.day }}</text>
+                </g>
+
+                <!-- Y-axis values -->
+                <text x="40" y="34" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">{{ getMaxSales() }}</text>
+                <text x="40" y="144" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">0</text>
+              </svg>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- 3. VISTA: MIS PRODUCTOS (FIGMA STYLE) -->
+      <div *ngIf="!showForm && activeView === 'products'" class="products-list-view">
+        <header class="products-header-figma">
+          <h1>Mis productos</h1>
+          <button class="btn-new-product" (click)="openCreateForm()">
+            <ion-icon name="add"></ion-icon>
+            Nuevo
+          </button>
+        </header>
+
+        <div class="products-grid-figma">
+
+          <!-- SKELETON LOADER -->
+          <ng-container *ngIf="loading">
+            <div *ngFor="let i of [1,2,3]" class="product-item-card skeleton">
+                <div class="card-main-content">
+                    <div class="product-img skeleton-box"></div>
+                    <div class="product-details">
+                        <div class="skeleton-line w-60"></div>
+                        <div class="skeleton-line w-40 mt-10"></div>
+                    </div>
+                </div>
+            </div>
+          </ng-container>
+
+          <article *ngFor="let product of products" class="product-item-card" [hidden]="loading">
+            <div class="card-main-content">
+              <div class="product-img">
+                <img [src]="product.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="">
+              </div>
+              <div class="product-details">
+                <div class="title-status">
+                  <h3>{{ product.name }}</h3>
+                  <div class="status-indicator"
+                       [class.active]="product.is_active && product.stock > 0"
+                       [class.out-of-stock]="product.stock <= 0"
+                       (click)="product.stock > 0 ? toggleStatus(product) : null">
+                    <span class="dot"></span>
+                    {{ product.stock <= 0 ? 'Agotado' : (product.is_active ? 'Activo' : 'Pausado') }}
+                  </div>
+                </div>
+                <p class="category-text">{{ getCategoryName(product.category_id) }}</p>
+                <div class="price-rating">
+                  <span class="price">S/ {{ product.price.toFixed(2) }}</span>
+                  <div class="rating">
+                    <ion-icon name="star" class="star-gold-mini"></ion-icon>
+                    <span>{{ product.rating_average || '5.0' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
+            <div class="card-actions-row">
+              <button class="btn-edit" (click)="openEditForm(product)">
+                <ion-icon name="create-outline"></ion-icon>
+                Editar
+              </button>
+              <div class="v-divider"></div>
+              <button class="btn-delete" (click)="deleteProduct(product)">
+                <ion-icon name="trash-outline"></ion-icon>
+                Eliminar
+              </button>
+            </div>
+          </article>
+
+          <div *ngIf="!loading && products.length === 0" class="empty-state-products">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            <p>Aún no tienes productos publicados.</p>
+            <button (click)="openCreateForm()">Publicar mi primer producto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. VISTA: ESTADÍSTICAS (FIGMA STYLE) -->
+      <div *ngIf="!showForm && activeView === 'stats'" class="stats-view-figma">
+        <header class="stats-header-orange">
+          <h1>Estadísticas</h1>
+          <p>{{ currentMonthYear | titlecase }} · {{ userProfile?.full_name || 'Sweet Corner' }}</p>
+        </header>
+
+        <div class="stats-shell-figma">
+          <!-- Summary Grid -->
+          <div class="stats-summary-grid">
+            <div class="summary-card">
+              <p class="lbl">Ingresos totales</p>
+              <h2 class="val">S/ {{ totalSales | number:'1.0-0' }}</h2>
+              <span class="trend" [class.up]="incomeGrowth >= 0" [class.down]="incomeGrowth < 0">
+                <ion-icon [name]="incomeGrowth >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+                {{ incomeGrowth === 100 ? 'Récord' : (incomeGrowth >= 0 ? '+' : '') + incomeGrowth + '%' }}
+              </span>
+            </div>
+            <div class="summary-card">
+              <p class="lbl">Pedidos totales</p>
+              <h2 class="val">{{ products.length }}</h2>
+              <span class="trend" [class.up]="ordersGrowth >= 0" [class.down]="ordersGrowth < 0">
+                <ion-icon [name]="ordersGrowth >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+                {{ ordersGrowth === 100 ? 'Récord' : (ordersGrowth >= 0 ? '+' : '') + ordersGrowth + '%' }}
+              </span>
+            </div>
+            <div class="summary-card">
+              <p class="lbl">Ticket promedio</p>
+              <h2 class="val">S/ {{ avgTicket | number:'1.2-2' }}</h2>
+              <span class="trend" [class.up]="ticketGrowth >= 0" [class.down]="ticketGrowth < 0">
+                <ion-icon [name]="ticketGrowth >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+                {{ ticketGrowth >= 0 ? '+' : '' }}{{ ticketGrowth }}%
+              </span>
+            </div>
+            <div class="summary-card">
+              <p class="lbl">Clientes nuevos</p>
+              <h2 class="val">{{ newCustomersCount }}</h2>
+              <span class="trend" [class.up]="customerGrowth >= 0" [class.down]="customerGrowth < 0">
+                <ion-icon [name]="customerGrowth >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+                {{ customerGrowth >= 0 ? '+' : '' }}{{ customerGrowth }}%
+              </span>
+            </div>
+          </div>
+
+          <!-- Ventas Diarias (SVG Area Chart) -->
+          <section class="chart-section-figma">
+            <div class="chart-header">
+              <h3>Ventas diarias</h3>
+              <span class="period">Esta semana</span>
+            </div>
+            <div class="chart-container-pro">
+              <svg viewBox="0 0 700 180" width="100%" height="100%" class="svg-chart-pro">
+                <defs>
+                  <linearGradient id="areaGradStats" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#E8432D" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="#E8432D" stop-opacity="0.0" />
+                  </linearGradient>
+                  <linearGradient id="lineGradStats" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#E8432D" />
+                    <stop offset="100%" stop-color="#FF7B5E" />
+                  </linearGradient>
+                </defs>
+
+                <!-- Grid lines -->
+                <line x1="50" y1="30" x2="650" y2="30" stroke="#F3F4F6" stroke-width="1" />
+                <line x1="50" y1="85" x2="650" y2="85" stroke="#F3F4F6" stroke-dasharray="4" stroke-width="1" />
+                <line x1="50" y1="140" x2="650" y2="140" stroke="#E5E7EB" stroke-width="1.5" />
+
+                <!-- Area -->
+                <path [attr.d]="svgAreaPath" fill="url(#areaGradStats)" />
+
+                <!-- Line -->
+                <path [attr.d]="svgLinePath" fill="none" stroke="url(#lineGradStats)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+
+                <!-- Data points -->
+                <g *ngFor="let item of salesData; let i = index">
+                  <circle [attr.cx]="getChartPointX(i)"
+                          [attr.cy]="getChartPointY(item.ventas)"
+                          r="6"
+                          fill="#ffffff"
+                          stroke="#E8432D"
+                          stroke-width="3.5"
+                          class="chart-node-circle"
+                          (click)="onChartBarClick(item)">
+                  </circle>
+                  <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.ventas) - 20) + ')'">
+                    <rect x="-20" y="-18" width="40" height="20" rx="6" fill="#07152f" />
+                    <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.ventas }}</text>
+                  </g>
+                  <text [attr.x]="getChartPointX(i)" y="165" fill="#9CA3AF" font-size="11" font-weight="800" text-anchor="middle">{{ item.day }}</text>
+                </g>
+
+                <!-- Y-axis -->
+                <text x="40" y="34" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">{{ getMaxSales() }}</text>
+                <text x="40" y="144" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">0</text>
+              </svg>
+            </div>
           </section>
+
+          <!-- Distribución de Ventas (SVG Donut Chart) -->
+          <section class="chart-section-figma">
+            <div class="chart-header">
+              <h3>Distribución</h3>
+              <span class="trend-tag"><ion-icon name="pie-chart-outline"></ion-icon> por categoría</span>
+            </div>
+            
+            <div class="distribution-shell-figma" *ngIf="categoryStats.length > 0">
+              <!-- SVG Donut Chart -->
+              <div class="donut-chart-wrapper">
+                <svg viewBox="0 0 140 140" width="100%" height="100%">
+                  <!-- Background Circle -->
+                  <circle cx="70" cy="70" r="50" fill="transparent" stroke="#F3F4F6" stroke-width="14"></circle>
+                  
+                  <!-- Slices -->
+                  <circle *ngFor="let cat of categoryStats"
+                          cx="70" cy="70" r="50"
+                          fill="transparent"
+                          [attr.stroke]="cat.color"
+                          stroke-width="14"
+                          stroke-dasharray="314.159"
+                          [attr.stroke-dashoffset]="cat.dashOffset"
+                          [style.transform]="'rotate(' + cat.cumAngle + 'deg)'"
+                          style="transform-origin: 70px 70px; transition: stroke-dashoffset 0.8s ease;">
+                  </circle>
+                  
+                  <!-- Center hole -->
+                  <circle cx="70" cy="70" r="41" fill="#ffffff"></circle>
+                  <text x="70" y="68" text-anchor="middle" font-size="10" font-weight="900" fill="#07152f">Categorías</text>
+                  <text x="70" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#818a9b">Ventas</text>
+                </svg>
+              </div>
+
+              <!-- Legend List -->
+              <div class="category-dist-list">
+                <div *ngFor="let cat of categoryStats" class="cat-stat-row-figma">
+                  <div class="color-dot" [style.background-color]="cat.color"></div>
+                  <div class="cat-details">
+                    <span class="cat-name">{{ cat.name }}</span>
+                    <span class="cat-share">{{ cat.percent }}% ({{ cat.count }} uds)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="categoryStats.length === 0" class="empty-mini">
+              Sin ventas registradas para clasificar
+            </div>
+          </section>
+
+          <!-- Productos más vendidos -->
+          <section class="top-products-section">
+            <h3>Productos más vendidos</h3>
+            <div class="top-list-figma">
+              <div *ngFor="let p of topProducts; let i = index" class="top-item-row">
+                <span class="rank">#{{ i + 1 }}</span>
+                <div class="item-info-stats">
+                  <div class="name-price">
+                    <span class="name">{{ p.name }}</span>
+                    <span class="total">S/ {{ p.total | number:'1.0-0' }}</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-fill" [style.width.%]="p.percent"></div>
+                    </div>
+                    <span class="qty">{{ p.qty }} unidades vendidas</span>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="topProducts.length === 0" class="empty-mini">Aún no hay ventas registradas</div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- 5. VISTA: MI NEGOCIO (FIGMA STYLE) -->
+      <div *ngIf="!showForm && activeView === 'business'" class="business-view-figma">
+        <header class="business-header-simple">
+          <h1>Mi negocio</h1>
+        </header>
+
+        <div class="business-scroll-area">
+          <div class="business-visuals">
+            <div class="banner-wrapper">
+              <img [src]="businessBannerUrl" alt="Banner">
+              <button class="edit-banner-btn" type="button" (click)="bannerInput.click()">
+                <ion-icon name="camera-outline"></ion-icon>
+              </button>
+              <input type="file" #bannerInput style="display: none;" (change)="onBannerSelected($event)" accept="image/*">
+            </div>
+            <div class="profile-pic-wrapper" (click)="avatarInput.click()">
+              <img [src]="businessAvatarUrl" alt="Perfil">
+              <div class="avatar-edit-overlay">
+                <ion-icon name="camera-outline"></ion-icon>
+              </div>
+              <input type="file" #avatarInput style="display: none;" (change)="onAvatarSelected($event)" accept="image/*">
+            </div>
+          </div>
+
+          <div class="business-card-figma">
+            <div class="input-group-figma">
+              <label>Nombre del negocio</label>
+              <input type="text" [(ngModel)]="bName">
+            </div>
+            <div class="divider-line"></div>
+            <div class="input-group-figma">
+              <label>Categoría</label>
+              <input type="text" [(ngModel)]="bCategory">
+            </div>
+            <div class="divider-line"></div>
+            <div class="input-group-figma">
+              <label>Descripción</label>
+              <textarea [(ngModel)]="bDescription" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="business-card-figma">
+            <div class="input-group-figma">
+              <label>Ubicación en el campus</label>
+              <input type="text" [(ngModel)]="bLocation">
+            </div>
+            <div class="divider-line"></div>
+            <div class="horario-group">
+              <label class="section-label">Horario de atención</label>
+              <div class="time-inputs-row">
+                <div class="time-field">
+                  <span>Apertura</span>
+                  <input type="time" [(ngModel)]="bOpenTime">
+                </div>
+                <div class="time-field">
+                  <span>Cierre</span>
+                  <input type="time" [(ngModel)]="bCloseTime">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="business-card-figma push-card">
+            <div class="push-info">
+              <h3>Notificaciones push</h3>
+              <p>Recibe alertas de nuevos pedidos</p>
+            </div>
+            <ion-toggle color="danger" [(ngModel)]="bPushEnabled"></ion-toggle>
+          </div>
+
+          <div class="footer-actions-business">
+            <button class="btn-save-business" (click)="saveBusinessInfo()">
+              Guardar cambios
+            </button>
+          </div>
         </div>
       </div>
 
@@ -246,24 +605,24 @@
 
 <ion-footer class="seller-footer ion-no-border ion-hide-lg-up">
   <nav class="bottom-navigation-figma">
-    <button type="button" class="nav-item-figma" [class.active]="!showForm" (click)="closeForm()">
-      <ion-icon name="stats-chart"></ion-icon>
+    <button type="button" class="nav-item-figma" [class.active]="activeView === 'dashboard' && !showForm" (click)="activeView = 'dashboard'; showForm = false">
+      <ion-icon [name]="activeView === 'dashboard' ? 'stats-chart' : 'stats-chart-outline'"></ion-icon>
       <span>Dashboard</span>
     </button>
     <button type="button" class="nav-item-figma" (click)="goToOrders()">
       <ion-icon name="bag-handle-outline"></ion-icon>
       <span>Pedidos</span>
     </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="pricetag-outline"></ion-icon>
+    <button type="button" class="nav-item-figma" [class.active]="activeView === 'products' || showForm" (click)="activeView = 'products'; showForm = false">
+      <ion-icon [name]="activeView === 'products' || showForm ? 'pricetag' : 'pricetag-outline'"></ion-icon>
       <span>Productos</span>
     </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="trending-up-outline"></ion-icon>
+    <button type="button" class="nav-item-figma" [class.active]="activeView === 'stats'" (click)="activeView = 'stats'; showForm = false">
+      <ion-icon [name]="activeView === 'stats' ? 'trending-up' : 'trending-up-outline'"></ion-icon>
       <span>Ventas</span>
     </button>
-    <button type="button" class="nav-item-figma">
-      <ion-icon name="business-outline"></ion-icon>
+    <button type="button" class="nav-item-figma" [class.active]="activeView === 'business'" (click)="activeView = 'business'; showForm = false">
+      <ion-icon [name]="activeView === 'business' ? 'business' : 'business-outline'"></ion-icon>
       <span>Negocio</span>
     </button>
   </nav>

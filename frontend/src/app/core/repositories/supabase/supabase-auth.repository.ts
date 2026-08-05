@@ -178,4 +178,28 @@ export class SupabaseAuthRepository implements AuthRepository {
     // Reuse confirmResetPassword logic
     return this.confirmResetPassword(token, newPassword);
   }
+
+  /** Upload business assets like avatar or banner to Supabase Storage public bucket */
+  uploadBusinessAsset(filePath: string, file: File): Observable<string> {
+    const promise = this.supabaseService.client.storage
+      .from('business-assets')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    return from(promise).pipe(
+      switchMap((response: any) => {
+        if (response.error) {
+          return throwError(() => new Error(response.error.message));
+        }
+        const publicUrlResponse = this.supabaseService.client.storage
+          .from('business-assets')
+          .getPublicUrl(filePath);
+
+        return of(publicUrlResponse.data.publicUrl);
+      }),
+      catchError(error => throwError(() => new Error(error.message)))
+    );
+  }
 }
