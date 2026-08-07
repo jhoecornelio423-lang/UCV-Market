@@ -1,0 +1,33 @@
+<ion-content [fullscreen]="true" class="order-confirmed-content">
+  <div class="main-container">
+    
+    <!-- Success Icon -->
+    <div class="icon-container">
+      <div class="circle-icon">
+        <ion-icon name="checkmark-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Title and Subtitle -->
+    <div class="text-container">
+      <h1 class="title">¡Pedido confirmado! <span class="emoji">🎉</span></h1>
+      <p class="subtitle">
+        El emprendedor recibió tu pedido. Te notificaremos cuando esté listo para recoger.
+      </p>
+    </div>
+
+    <!-- Order Card -->
+    <div class="order-card">
+      <p class="card-label">NÚMERO DE PEDIDO</p>
+      <h2 class="card-number">{{ orderNumber }}</h2>
+      <p class="card-details">{{ location }} · {{ time }}</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-container">
+      <button class="btn-primary" (click)="trackOrder()">Seguir mi pedido</button>
+      <button class="btn-secondary" (click)="goHome()">Volver al inicio</button>
+    </div>
+
+  </div>
+</ion-content>

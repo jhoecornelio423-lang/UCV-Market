@@ -1,12 +1,4 @@
-// ENTRY POINT DE ESTILOS - PANEL DE VENDEDOR
-// He separado cada vista en su propio archivo para evitar pérdida de diseño
-
-@import 'styles/shared';    // Variables, colores y animaciones globales
-@import 'styles/dashboard'; // Vista principal de resumen
-@import 'styles/products';  // Vista de lista de productos
-@import 'styles/stats';     // Vista de gráficos y métricas pro
-@import 'styles/business';  // Vista "Mi negocio" responsiva
-@import 'styles/form';      // Formulario de creación/edición
+@import 'shared';
 
 :host {
   display: block;
@@ -14,14 +6,71 @@
   width: 100%;
 }
 
-.seller-content {
-  --background: #{$bg};
-  --color: #{$navy};
-}
-
-.seller-shell {
+.seller-layout {
+  --background: #f4f6f9;
+  height: 100vh;
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-  width: 100%;
+}
+
+.main-content-wrapper {
+  flex: 1;
+  position: relative;
+  background-color: #f4f6f9;
+  overflow: hidden;
+}
+
+/* Base Footer Navbar (for Mobile & Web) */
+.bottom-navigation-figma {
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 calc(env(safe-area-inset-bottom) + 5px);
+  height: calc(64px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.02);
+  z-index: 100;
+
+  .nav-item-figma {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #9ca3af;
+    font-family: 'Inter', sans-serif;
+    width: 20%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    ion-icon {
+      font-size: 24px;
+      margin-bottom: 2px;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    span {
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    &.active {
+      color: $primary;
+
+      ion-icon {
+        transform: translateY(-2px);
+      }
+
+      span {
+        font-weight: 700;
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }

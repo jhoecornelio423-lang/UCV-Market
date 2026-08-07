@@ -13,6 +13,9 @@ export interface Profile {
   business_location?: string;
   open_time?: string;
   close_time?: string;
+  accepting_orders?: boolean;
+  push_notifications_enabled?: boolean;
+  show_in_explore?: boolean;
   banner_url?: string;
   avatar_url?: string;
   created_at?: string;

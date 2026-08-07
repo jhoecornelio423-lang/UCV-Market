@@ -1,8 +1,57 @@
-@use "./app/features/catalog/catalog.component";
-@use "./app/features/orders/orders.component";
-@use "./app/features/profile/profile.component";
+
 @use "./theme/market-login-loading";
 @use "./theme/market-logout-loading";
+
+:root {
+  /* UCV Market Primary Brand Colors */
+  --ion-color-primary: #E8432D;
+  --ion-color-primary-rgb: 232, 67, 45;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #cc3b28;
+  --ion-color-primary-tint: #ea5642;
+
+  --ion-color-secondary: #07152f;
+  --ion-color-secondary-rgb: 7, 21, 47;
+  --ion-color-secondary-contrast: #ffffff;
+  --ion-color-secondary-contrast-rgb: 255, 255, 255;
+  --ion-color-secondary-shade: #061229;
+  --ion-color-secondary-tint: #202c44;
+
+  --ion-color-light: #f8f9fb;
+  --ion-color-light-rgb: 248, 249, 251;
+  --ion-color-light-contrast: #07152f;
+  --ion-color-light-contrast-rgb: 7, 21, 47;
+  --ion-color-light-shade: #dadbe0;
+  --ion-color-light-tint: #f9fafb;
+}
+
+/* Global button text colors based on background */
+ion-button {
+  /* Default solid buttons (dark/colored backgrounds) get white text */
+  &::part(native) {
+    color: #ffffff;
+  }
+
+  /* Light backgrounds or outline/clear buttons get dark text */
+  &[color="light"],
+  &[fill="outline"],
+  &[fill="clear"] {
+    &::part(native) {
+      color: #07152f;
+    }
+  }
+
+  /* Specific override for explicit dark colors or danger/primary if needed */
+  &[color="primary"],
+  &[color="danger"],
+  &[color="dark"],
+  &[color="secondary"] {
+    &::part(native) {
+      color: #ffffff !important;
+    }
+  }
+}
 
 /*
  * App Global CSS
@@ -58,6 +107,13 @@
     text-align: center;
     padding-bottom: 8px;
     padding-top: 10px;
+    
+    &::before {
+      content: "⚠️";
+      display: block;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
   }
 
   .alert-title {
@@ -113,6 +169,7 @@
 
     &:not(.alert-button-role-cancel) {
       background: linear-gradient(100deg, #E8432D 0%, #FF7B5E 100%) !important;
+      color: #ffffff !important;
       --color: #ffffff !important;
       box-shadow: 0 8px 16px rgba(232, 67, 45, 0.2);
     }

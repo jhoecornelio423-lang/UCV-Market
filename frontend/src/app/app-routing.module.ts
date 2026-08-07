@@ -5,28 +5,13 @@ import { AuthGuard } from './core/auth/auth.guard';
 
 const routes: Routes = [
   {
+    path: 'buyer-panel',
+    loadChildren: () => import('./features/buyer-panel/buyer-panel.module').then(m => m.BuyerPanelModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'login',
     loadChildren: () => import('./features/auth/auth.module').then(m => m.AuthModule)
-  },
-  {
-    path: 'catalog',
-    loadChildren: () => import('./features/catalog/catalog.module').then(m => m.CatalogModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'cart',
-    loadChildren: () => import('./features/cart/cart.module').then(m => m.CartModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'orders',
-    loadChildren: () => import('./features/orders/orders.module').then(m => m.OrdersModule),
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'profile',
-    loadChildren: () => import('./features/profile/profile.module').then(m => m.ProfileModule),
-    canActivate: [AuthGuard]
   },
   {
     path: 'seller',
@@ -42,12 +27,12 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'catalog',
+    redirectTo: 'buyer-panel',
     pathMatch: 'full'
   },
   {
     path: '**',
-    redirectTo: 'catalog'
+    redirectTo: 'buyer-panel'
   }
 ];
 

@@ -13,7 +13,7 @@
         <button class="nav-item" [class.active]="currentPath.startsWith('/seller') && !currentPath.includes('view=')" (click)="goTo('/seller')">
           <ion-icon name="stats-chart-outline"></ion-icon> Dashboard
         </button>
-        <button class="nav-item" [class.active]="currentPath === '/orders'" (click)="goTo('/orders')">
+        <button class="nav-item" [class.active]="currentPath === '/buyer-panel/orders'" (click)="goTo('/buyer-panel/orders')">
           <ion-icon name="bag-handle-outline"></ion-icon> Ventas
         </button>
         <button class="nav-item" [class.active]="currentPath.includes('view=products')" (click)="goTo('/seller', {view: 'products'})">
@@ -29,15 +29,19 @@
 
       <!-- Navegación para Comprador -->
       <nav class="nav-links" *ngIf="userProfile?.role === 'comprador'">
-        <button class="nav-item" [class.active]="currentPath === '/catalog'" (click)="goTo('/catalog')">
+        <button class="nav-item" [class.active]="currentPath === '/buyer-panel/catalog'" (click)="goTo('/buyer-panel/catalog')">
           <ion-icon name="home-outline"></ion-icon> Inicio
         </button>
-        <button class="nav-item"><ion-icon name="compass-outline"></ion-icon> Explorar</button>
-        <button class="nav-item" [class.active]="currentPath === '/orders'" (click)="goTo('/orders')">
+        <button class="nav-item" [class.active]="currentPath.includes('/buyer-panel/explore')" (click)="goTo('/buyer-panel/explore')">
+          <ion-icon name="compass-outline"></ion-icon> Explorar
+        </button>
+        <button class="nav-item" [class.active]="currentPath === '/buyer-panel/orders'" (click)="goTo('/buyer-panel/orders')">
           <ion-icon name="receipt-outline"></ion-icon> Pedidos
         </button>
-        <button class="nav-item"><ion-icon name="heart-outline"></ion-icon> Favoritos</button>
-        <button class="nav-item" [class.active]="currentPath === '/profile'" (click)="goTo('/profile')">
+        <button class="nav-item" [class.active]="currentPath.includes('/buyer-panel/favorites')" (click)="goTo('/buyer-panel/favorites')">
+          <ion-icon name="heart-outline"></ion-icon> Favoritos
+        </button>
+        <button class="nav-item" [class.active]="currentPath === '/buyer-panel/profile'" (click)="goTo('/buyer-panel/profile')">
           <ion-icon name="person-outline"></ion-icon> Perfil
         </button>
       </nav>

@@ -202,4 +202,21 @@ export class SupabaseAuthRepository implements AuthRepository {
       catchError(error => throwError(() => new Error(error.message)))
     );
   }
+
+  getSellers(): Observable<Profile[]> {
+    const query = this.supabaseService.client
+      .from('profiles')
+      .select('*')
+      .eq('role', 'emprendedor')
+      .order('rating_average', { ascending: false });
+
+    return from(query).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return response.data as Profile[];
+      })
+    );
+  }
 }

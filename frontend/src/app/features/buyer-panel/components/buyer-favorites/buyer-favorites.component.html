@@ -1,0 +1,38 @@
+<ion-content [fullscreen]="true" class="favorites-content">
+  <div class="favorites-container">
+    <div class="header">
+      <h1 class="title">Favoritos</h1>
+      <p class="subtitle">{{ favorites.length }} {{ favorites.length === 1 ? 'producto guardado' : 'productos guardados' }}</p>
+    </div>
+
+    <div class="products-grid" *ngIf="favorites.length > 0">
+      <div class="product-card" *ngFor="let product of favorites" [routerLink]="['/buyer-panel/product', product.id]">
+        <div class="image-wrapper">
+          <img [src]="getProductImage(product)" [alt]="product.name" />
+          <button class="heart-btn" (click)="toggleFavorite(product, $event)">
+            <ion-icon name="heart" class="heart-icon active"></ion-icon>
+          </button>
+        </div>
+        
+        <div class="card-content">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="seller-name">{{ product.seller?.full_name || 'Vendedor' }}</p>
+          
+          <div class="meta">
+            <ion-icon name="star" class="star-icon"></ion-icon>
+            <span class="rating">{{ product.seller?.rating_average || '5.0' | number:'1.1-1' }}</span>
+            <span class="dot">•</span>
+            <span class="time">10 min</span>
+          </div>
+          
+          <div class="price">S/ {{ product.price | number:'1.2-2' }}</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="empty-state" *ngIf="favorites.length === 0">
+      <ion-icon name="heart-outline"></ion-icon>
+      <p>Aún no tienes productos favoritos.</p>
+    </div>
+  </div>
+</ion-content>

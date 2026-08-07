@@ -1,0 +1,47 @@
+<ion-content [fullscreen]="true" class="notifications-content">
+  <div class="notifications-main-shell">
+    <div class="main-content-wrapper">
+      <header class="notifications-header ion-no-border">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-back-button defaultHref="/buyer-panel/catalog" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Notificaciones</ion-title>
+          <ion-buttons slot="end">
+            <button type="button" class="mark-all-btn" (click)="markAllAsRead()">Marcar todo</button>
+          </ion-buttons>
+        </ion-toolbar>
+      </header>
+
+      <div class="notifications-list" *ngIf="notifications$ | async as notifications">
+        <div class="notification-card" *ngFor="let notif of notifications" [class.unread]="notif.unread">
+          <div class="unread-indicator" *ngIf="notif.unread"></div>
+          
+          <div class="notif-icon" [style.background]="notif.iconBg" [style.color]="notif.iconColor">
+            <ion-icon [name]="notif.icon"></ion-icon>
+          </div>
+
+          <div class="notif-content">
+            <div class="title-row">
+              <h4>
+                {{ notif.title }}
+                <ion-icon [name]="notif.icon" [style.color]="notif.iconColor" class="title-icon"></ion-icon>
+              </h4>
+              <span class="time">{{ notif.time }}</span>
+              <div class="red-dot" *ngIf="notif.unread"></div>
+            </div>
+            <p>{{ notif.body }}</p>
+          </div>
+        </div>
+
+        <div class="empty-state-figma" *ngIf="notifications.length === 0">
+          <div class="empty-icon-wrapper">
+            <ion-icon name="notifications-off-outline"></ion-icon>
+          </div>
+          <h2>No tienes notificaciones</h2>
+          <p>Te avisaremos cuando haya actualizaciones sobre tus pedidos o nuevas ofertas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

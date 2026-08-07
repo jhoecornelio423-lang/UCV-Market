@@ -1,0 +1,105 @@
+<ion-content [fullscreen]="true" class="profile-content">
+  <div class="profile-main-shell">
+    
+    <div class="page-header">
+      <h1>Mi perfil</h1>
+    </div>
+
+    <div class="profile-shell">
+      <!-- User Info Card -->
+      <div class="user-card">
+        <div class="avatar-container">
+          <img [src]="profile?.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar-img" />
+          <button class="camera-btn">
+            <ion-icon name="camera"></ion-icon>
+          </button>
+        </div>
+        <div class="user-data">
+          <h2>{{ profile?.full_name || 'Usuario' }}</h2>
+          <p class="email">{{ email }}</p>
+          <p class="code">Cód: {{ profile?.student_code || 'No registrado' }}</p>
+          <p class="career">{{ profile?.campus || 'Sede UCV' }}</p>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="stats-card">
+        <div class="stat-item" (click)="goToOrders()">
+          <span class="val">{{ ordersCount }}</span>
+          <span class="lbl">Pedidos</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item" routerLink="/buyer-panel/favorites">
+          <span class="val">{{ favoritesCount }}</span>
+          <span class="lbl">Favoritos</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="val">{{ reviewsCount }}</span>
+          <span class="lbl">Reseñas</span>
+        </div>
+      </div>
+
+      <!-- Seller Action Banner -->
+      <div class="seller-banner" (click)="openSellerSection()">
+        <div class="banner-left">
+          <ion-icon name="storefront-outline" class="store-icon"></ion-icon>
+          <div class="banner-text">
+            <h3>Quiero vender en UCV Market</h3>
+            <p>Activa tu emprendimiento ahora</p>
+          </div>
+        </div>
+        <div class="banner-right">
+          <div class="mode-text">
+            <span>MODO ACTUAL</span>
+            <span class="current-role"><span class="dot"></span> {{ roleLabel }}</span>
+          </div>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Menu Options -->
+      <div class="menu-list">
+        <button class="menu-item" (click)="goToOrders()">
+          <div class="icon-wrapper">
+            <ion-icon name="cube-outline"></ion-icon>
+          </div>
+          <span>Mis pedidos</span>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </button>
+
+        <button class="menu-item" routerLink="/buyer-panel/favorites">
+          <div class="icon-wrapper">
+            <ion-icon name="heart-outline"></ion-icon>
+          </div>
+          <span>Favoritos</span>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </button>
+
+        <button class="menu-item" routerLink="/buyer-panel/notifications">
+          <div class="icon-wrapper">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <span>Notificaciones</span>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </button>
+
+        <button class="menu-item" (click)="showPendingSection('Configuración')">
+          <div class="icon-wrapper">
+            <ion-icon name="settings-outline"></ion-icon>
+          </div>
+          <span>Configuración</span>
+          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
+        </button>
+
+        <button class="menu-item logout-item" (click)="confirmSignOut()">
+          <div class="icon-wrapper logout-wrapper">
+            <ion-icon name="close-outline"></ion-icon>
+          </div>
+          <span class="logout-text">Cerrar sesión</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ion-content>

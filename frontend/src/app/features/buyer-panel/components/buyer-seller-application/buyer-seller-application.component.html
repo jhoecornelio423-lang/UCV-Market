@@ -1,0 +1,104 @@
+<ion-content [fullscreen]="true" class="application-content">
+  <div class="application-container">
+    
+    <header class="page-header">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <div class="header-titles">
+        <h1>Quiero vender</h1>
+        <p>Aplica para ser Emprendedor UCV</p>
+      </div>
+    </header>
+
+    <div class="form-card">
+      <p class="intro-text">Completa este formulario. Tu solicitud será revisada por un administrador antes de activar tu perfil de emprendedor.</p>
+      
+      <form [formGroup]="applicationForm" (ngSubmit)="submitApplication()">
+        
+        <div class="form-group">
+          <label>DNI</label>
+          <input type="text" formControlName="dni" placeholder="Ej. 12345678" maxlength="8">
+          <span class="error-msg" *ngIf="applicationForm.get('dni')?.touched && applicationForm.get('dni')?.errors?.['required']">El DNI es obligatorio.</span>
+          <span class="error-msg" *ngIf="applicationForm.get('dni')?.touched && applicationForm.get('dni')?.errors?.['pattern']">El DNI debe tener exactamente 8 dígitos.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Nombres y Apellidos Completos</label>
+          <input type="text" formControlName="full_name" placeholder="Tus nombres y apellidos">
+          <span class="error-msg" *ngIf="applicationForm.get('full_name')?.touched && applicationForm.get('full_name')?.errors?.['required']">Tus nombres son obligatorios.</span>
+          <span class="error-msg" *ngIf="applicationForm.get('full_name')?.touched && applicationForm.get('full_name')?.errors?.['pattern']">Solo se permiten letras.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Nombre de Emprendimiento</label>
+          <input type="text" formControlName="business_name" placeholder="El nombre de tu tienda">
+          <span class="error-msg" *ngIf="applicationForm.get('business_name')?.touched && applicationForm.get('business_name')?.errors?.['required']">El nombre es obligatorio.</span>
+          <span class="error-msg" *ngIf="applicationForm.get('business_name')?.touched && applicationForm.get('business_name')?.errors?.['pattern']">Solo se permiten letras.</span>
+          <span class="hint-msg">Este nombre debe ser único.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Categoría</label>
+          <select formControlName="category">
+            <option value="" disabled selected>Selecciona una categoría</option>
+            <option value="Comidas">Comidas</option>
+            <option value="Postres">Postres</option>
+            <option value="Bebidas">Bebidas</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Papelería">Papelería</option>
+            <option value="Otros">Otros</option>
+          </select>
+          <span class="error-msg" *ngIf="applicationForm.get('category')?.touched && applicationForm.get('category')?.errors?.['required']">Selecciona una categoría.</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group half">
+            <label>Hora Apertura</label>
+            <input type="time" formControlName="open_time">
+          </div>
+          <div class="form-group half">
+            <label>Hora Cierre</label>
+            <input type="time" formControlName="close_time">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Logo o Foto del Emprendimiento</label>
+          <div class="file-upload-box" (click)="fileInput.click()">
+            <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" class="logo-preview">
+            <div *ngIf="!logoPreview" class="upload-placeholder">
+              <ion-icon name="cloud-upload-outline"></ion-icon>
+              <span>Sube una foto decente</span>
+            </div>
+            <input #fileInput type="file" accept="image/*" (change)="onLogoSelected($event)" style="display: none;">
+          </div>
+          <span class="hint-msg">Será revisado por el administrador.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea formControlName="description" rows="3" placeholder="¿Qué ofreces? Describe tu emprendimiento..."></textarea>
+          <span class="error-msg" *ngIf="applicationForm.get('description')?.touched && applicationForm.get('description')?.errors?.['required']">La descripción es obligatoria.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Número de Teléfono</label>
+          <input type="tel" formControlName="phone" placeholder="Ej. 987654321" maxlength="9">
+          <span class="error-msg" *ngIf="applicationForm.get('phone')?.touched && applicationForm.get('phone')?.errors?.['pattern']">Debe ser un número válido de 9 dígitos.</span>
+        </div>
+
+        <div class="form-group">
+          <label>Puntos de Entrega</label>
+          <input type="text" formControlName="delivery_points" placeholder="Ej. Pabellón A, Cafetería">
+          <span class="hint-msg">Lugares donde entregarás tus productos (modificable después).</span>
+        </div>
+
+        <button type="submit" class="submit-btn" [disabled]="applicationForm.invalid || !selectedLogo">
+          Enviar Solicitud
+        </button>
+      </form>
+    </div>
+
+  </div>
+</ion-content>

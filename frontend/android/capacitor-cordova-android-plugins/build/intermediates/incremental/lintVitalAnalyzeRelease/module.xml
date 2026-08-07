@@ -1,12 +1,12 @@
 <lint-module
     format="1"
-    dir="C:\Users\JuanPerezma\Documents\UCV-Market\frontend\android\capacitor-cordova-android-plugins"
+    dir="C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\capacitor-cordova-android-plugins"
     name=":capacitor-cordova-android-plugins"
     type="LIBRARY"
     maven="android:capacitor-cordova-android-plugins:unspecified"
     agpVersion="8.13.0"
     buildFolder="build"
-    bootClassPath="C:\Users\JuanPerezma\AppData\Local\Android\Sdk\platforms\android-36\android.jar;C:\Users\JuanPerezma\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
+    bootClassPath="C:\Users\djald\AppData\Local\Android\Sdk\platforms\android-36\android.jar;C:\Users\djald\AppData\Local\Android\Sdk\build-tools\35.0.0\core-lambda-stubs.jar"
     javaSourceLevel="21"
     compileTarget="android-36"
     neverShrinking="true">

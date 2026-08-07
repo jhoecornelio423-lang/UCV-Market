@@ -1,0 +1,131 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.order-confirmed-content {
+  --background: #f8f9fc;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.icon-container {
+  margin-bottom: 24px;
+  
+  .circle-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f75c44;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    box-shadow: 0 10px 20px rgba(247, 92, 68, 0.3);
+  }
+}
+
+.text-container {
+  margin-bottom: 32px;
+  
+  .title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    
+    .emoji {
+      font-size: 28px;
+    }
+  }
+  
+  .subtitle {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0 16px;
+  }
+}
+
+.order-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 100%;
+  max-width: 320px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+  
+  .card-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 8px;
+  }
+  
+  .card-number {
+    font-size: 28px;
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 8px;
+  }
+  
+  .card-details {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+  }
+}
+
+.actions-container {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  button {
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+  
+  .btn-primary {
+    background-color: #f75c44;
+    color: white;
+    box-shadow: 0 4px 12px rgba(247, 92, 68, 0.2);
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 1px solid #eee;
+  }
+}

@@ -26,6 +26,6 @@
       applicationId="io.ionic.starter"
       generatedSourceFolders="build\generated\ap_generated_sources\release\out"
       generatedResourceFolders="build\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\djald\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

@@ -44,9 +44,10 @@ export class SupabaseProductRepository implements ProductRepository {
   getActiveProducts(categoryId?: string, searchName?: string): Observable<Product[]> {
     let query = this.supabaseService.client
       .from('products')
-      .select('*, product_images(*), seller:profiles(*), category:categories(*)')
+      .select('*, product_images(*), seller:profiles!inner(*), category:categories(*)')
       .eq('is_active', true)
-      .gt('stock', 0);
+      .gt('stock', 0)
+      .eq('profiles.accepting_orders', true);
 
     if (categoryId) {
       query = query.eq('category_id', categoryId);

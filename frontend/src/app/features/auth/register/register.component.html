@@ -159,6 +159,88 @@
           </div>
         </fieldset>
 
+        <!-- SELLER APPLICATION FIELDS -->
+        <ng-container *ngIf="registerForm.get('role')?.value === 'emprendedor'">
+          <div class="field-group" [class.has-error]="registerForm.get('dni')?.touched && registerForm.get('dni')?.invalid">
+            <label>DNI</label>
+            <div class="field-control">
+              <input type="text" formControlName="dni" placeholder="Ej. 12345678" maxlength="8">
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('dni')?.touched && registerForm.get('dni')?.hasError('required')">El DNI es obligatorio.</span>
+            <span class="error-msg" *ngIf="registerForm.get('dni')?.touched && registerForm.get('dni')?.hasError('pattern')">El DNI debe tener exactamente 8 dígitos.</span>
+          </div>
+
+          <div class="field-group" [class.has-error]="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.invalid">
+            <label>Nombre de Emprendimiento</label>
+            <div class="field-control">
+              <input type="text" formControlName="business_name" placeholder="El nombre de tu tienda">
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.hasError('required')">El nombre es obligatorio.</span>
+            <span class="error-msg" *ngIf="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.hasError('pattern')">Solo se permiten letras.</span>
+          </div>
+
+          <div class="field-group" [class.has-error]="registerForm.get('category')?.touched && registerForm.get('category')?.invalid">
+            <label>Categoría</label>
+            <div class="field-control" style="padding: 0;">
+              <select formControlName="category" style="width: 100%; border: none; background: transparent; padding: 12px 16px; outline: none; font-family: inherit; font-size: 14px; color: #07152f;">
+                <option value="" disabled selected>Selecciona una categoría</option>
+                <option value="Comidas">Comidas</option>
+                <option value="Postres">Postres</option>
+                <option value="Bebidas">Bebidas</option>
+                <option value="Snacks">Snacks</option>
+                <option value="Papelería">Papelería</option>
+                <option value="Otros">Otros</option>
+              </select>
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('category')?.touched && registerForm.get('category')?.hasError('required')">Selecciona una categoría.</span>
+          </div>
+
+          <div class="field-group">
+            <div style="display: flex; gap: 12px;">
+              <div style="flex: 1;">
+                <label>Hora Apertura</label>
+                <div class="field-control">
+                  <input type="time" formControlName="open_time">
+                </div>
+              </div>
+              <div style="flex: 1;">
+                <label>Hora Cierre</label>
+                <div class="field-control">
+                  <input type="time" formControlName="close_time">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field-group" [class.has-error]="registerForm.get('description')?.touched && registerForm.get('description')?.invalid">
+            <label>Descripción</label>
+            <div class="field-control">
+              <textarea formControlName="description" rows="3" placeholder="¿Qué ofreces? Describe tu emprendimiento..."></textarea>
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('description')?.touched && registerForm.get('description')?.hasError('required')">La descripción es obligatoria.</span>
+          </div>
+
+          <div class="field-group" [class.has-error]="registerForm.get('delivery_points')?.touched && registerForm.get('delivery_points')?.invalid">
+            <label>Puntos de Entrega</label>
+            <div class="field-control">
+              <input type="text" formControlName="delivery_points" placeholder="Ej. Pabellón A, Cafetería">
+            </div>
+            <span class="error-msg" *ngIf="registerForm.get('delivery_points')?.touched && registerForm.get('delivery_points')?.hasError('required')">Los puntos de entrega son obligatorios.</span>
+          </div>
+
+          <div class="field-group">
+            <label>Logo o Foto del Emprendimiento</label>
+            <div class="file-upload-box" (click)="fileInput.click()" style="width: 100%; height: 140px; background: #f4f6f9; border: 2px dashed #e5e7eb; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; margin-top: 8px;">
+              <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" style="width: 100%; height: 100%; object-fit: cover;">
+              <div *ngIf="!logoPreview" style="display: flex; flex-direction: column; align-items: center; gap: 8px; color: #9ca3af;">
+                <ion-icon name="cloud-upload-outline" style="font-size: 32px;"></ion-icon>
+                <span style="font-size: 13px; font-weight: 600;">Sube una foto decente</span>
+              </div>
+              <input #fileInput type="file" accept="image/*" (change)="onLogoSelected($event)" style="display: none;">
+            </div>
+          </div>
+        </ng-container>
+
         <label class="legal-consent">
           <input type="checkbox" formControlName="acceptTerms" />
           <span class="legal-check"><ion-icon name="checkmark"></ion-icon></span>

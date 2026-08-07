@@ -6,7 +6,7 @@
     mergedManifest="build\intermediates\merged_manifest\release\processReleaseMainManifest\AndroidManifest.xml"
     proguardFiles="build\intermediates\default_proguard_files\global\proguard-android.txt-8.13.0;proguard-rules.pro"
     partialResultsDir="build\intermediates\lint_vital_partial_results\release\lintVitalAnalyzeRelease\out"
-    desugaredMethodsFiles="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
+    desugaredMethodsFiles="C:\Users\djald\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
   <buildFeatures
       namespacing="REQUIRED"/>
   <sourceProviders>
@@ -26,6 +26,6 @@
       applicationId="io.ionic.starter"
       generatedSourceFolders="build\generated\ap_generated_sources\release\out"
       generatedResourceFolders="build\generated\res\resValues\release"
-      desugaredMethodsFiles="C:\Users\JuanPerezma\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
+      desugaredMethodsFiles="C:\Users\djald\.gradle\caches\8.14.3\transforms\46d336b5bec704b07cfaf2ba18f4333c\transformed\D8BackportedDesugaredMethods.txt">
   </artifact>
 </variant>

@@ -1,0 +1,151 @@
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <!-- Cabecera Roja Fuerte -->
+  <div class="hero-header">
+    <div class="header-top">
+      <span class="subtitle">Dashboard vendedor</span>
+      <div class="actions">
+        <button class="icon-btn notif-btn" (click)="showNotifications()">
+          <ion-icon name="notifications-outline"></ion-icon>
+          <span class="badge" *ngIf="(stats$ | async)?.unreadNotifCount">{{ (stats$ | async)?.unreadNotifCount }}</span>
+        </button>
+        <!-- Notif Dropdown -->
+        <div class="notif-dropdown" *ngIf="showNotifDropdown">
+          <div class="dropdown-header">
+            <h4>Notificaciones</h4>
+            <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+          </div>
+          <div class="notif-list" *ngIf="(stats$ | async)?.notifications?.length; else emptyNotifs">
+            <div class="notif-item" *ngFor="let notif of (stats$ | async)?.notifications" [class.unread]="notif.unread" (click)="onNotificationClick(notif)" style="cursor: pointer;">
+              <div class="notif-icon" [style.color]="notif.color">
+                <ion-icon [name]="notif.icon"></ion-icon>
+              </div>
+              <div class="notif-content">
+                <strong>{{ notif.title }}</strong>
+                <p>{{ notif.desc }}</p>
+                <span class="time">{{ notif.time }}</span>
+              </div>
+            </div>
+          </div>
+          <ng-template #emptyNotifs>
+            <div class="empty-notifs">
+              <p>No tienes notificaciones</p>
+            </div>
+          </ng-template>
+        </div>
+        
+        <button class="icon-btn profile-btn" (click)="signOut()">
+          <ion-icon name="person-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+    
+    <div class="seller-info">
+      <h1>{{ (userProfile$ | async)?.full_name || 'Tu Negocio' }}</h1>
+      <div class="rating-info">
+        <ion-icon name="star"></ion-icon>
+        <span class="score">{{ (stats$ | async)?.rating }}</span>
+        <span class="reviews-count">· {{ (stats$ | async)?.reviewsCount }} reseñas</span>
+      </div>
+    </div>
+
+    <!-- Summary Cards (Top section overlapping hero) -->
+    <div class="summary-cards">
+      <div class="card card-sales">
+        <span class="title">S/ {{ (stats$ | async)?.totalSalesToday }}</span>
+        <span class="subtitle">Ventas hoy</span>
+        <span class="trend positive">+18% vs ayer</span>
+      </div>
+      <div class="card card-orders">
+        <span class="title">{{ (stats$ | async)?.todayOrdersCount }}</span>
+        <span class="subtitle">Pedidos</span>
+        <span class="active-count">{{ (activeOrders$ | async)?.length }} activos</span>
+      </div>
+      <div class="card card-rating">
+        <div class="title-with-icon">
+          <span class="title">{{ (stats$ | async)?.rating }}</span>
+          <ion-icon name="star"></ion-icon>
+        </div>
+        <span class="subtitle">Rating</span>
+        <span class="rating-label">{{ getReputationLabel((stats$ | async)?.rating || 0) }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <button class="action-btn new-product" (click)="goToProducts()">
+        <div class="icon-circle">
+          <ion-icon name="add-outline"></ion-icon>
+        </div>
+        <span>Nuevo<br>producto</span>
+      </button>
+      <button class="action-btn view-orders" (click)="goToOrders()">
+        <div class="icon-circle">
+          <ion-icon name="bag-handle-outline"></ion-icon>
+        </div>
+        <span>Ver pedidos</span>
+      </button>
+    </div>
+
+    <!-- Active Orders -->
+    <section class="dashboard-section active-orders-section">
+      <div class="section-header">
+        <h2>Pedidos activos</h2>
+        <a class="view-all" (click)="goToOrders()">Ver todo</a>
+      </div>
+      
+      <div class="orders-list" *ngIf="(activeOrders$ | async) as orders">
+        <div class="empty-state" *ngIf="orders.length === 0">
+          <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+          <p>No hay pedidos activos</p>
+        </div>
+
+        <div class="order-card" *ngFor="let order of orders.slice(0, 3)">
+          <div class="order-info">
+            <span class="order-title">#{{ order.id.substring(0,3) | uppercase }} · {{ order.order_items?.[0]?.product?.name }} <span *ngIf="(order.order_items?.length || 0) > 1">+ otros</span></span>
+            <span class="order-time">Hoy {{ order.created_at | date:'HH:mm' }}</span>
+          </div>
+          <div class="order-status" [ngClass]="order.status">
+            {{ getStatusLabel(order.status) }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sales Chart -->
+    <section class="dashboard-section sales-section">
+      <div class="section-header">
+        <h2>Ventas esta semana</h2>
+        <span class="trend positive"><ion-icon name="arrow-up"></ion-icon> 23%</span>
+      </div>
+      <div class="chart-container">
+        <!-- Pure CSS Bar Chart -->
+        <div class="bar-chart">
+          <div class="bar-wrapper" *ngFor="let data of (stats$ | async)?.salesData">
+            <div class="bar" [style.height.%]="(data.ventas / getMaxSales()) * 100" (click)="onChartBarClick(data)"></div>
+            <span class="day-label">{{ data.day }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Top Products -->
+    <section class="dashboard-section top-products-section">
+      <h2>Productos top esta semana</h2>
+      <div class="top-list">
+        <div class="top-item" *ngFor="let product of (stats$ | async)?.topProducts; let i = index">
+          <span class="rank">#{{ i + 1 }}</span>
+          <div class="prod-img">
+            <img [src]="product.image_url || 'assets/placeholder.png'" alt="Product">
+          </div>
+          <span class="prod-name">{{ product.name }}</span>
+          <div class="prod-stats">
+            <span class="amount">S/ {{ product.total }}</span>
+            <span class="sold">{{ product.qty }} vendidos</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</ion-content>

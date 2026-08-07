@@ -15,4 +15,5 @@ export interface AuthRepository {
   generateResetToken(email: string): Observable<string>;
   resetPasswordWithToken(token: string, newPassword: string): Observable<boolean>;
   uploadBusinessAsset(filePath: string, file: File): Observable<string>;
+  getSellers(): Observable<Profile[]>;
 }

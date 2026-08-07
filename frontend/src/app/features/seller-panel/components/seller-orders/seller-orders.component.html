@@ -1,0 +1,115 @@
+<ion-content [fullscreen]="true" class="seller-orders-content">
+  <div class="header-container">
+    <h1>Pedidos</h1>
+
+    <div class="custom-segment">
+      <button class="segment-btn" [class.active]="currentTab === 'nuevos'" (click)="setTab('nuevos')">
+        Nuevos
+        <span class="badge" *ngIf="(nuevosOrders$ | async)?.length">{{ (nuevosOrders$ | async)?.length }}</span>
+      </button>
+      <button class="segment-btn" [class.active]="currentTab === 'activos'" (click)="setTab('activos')">
+        Activos
+        <span class="badge" *ngIf="(activosOrders$ | async)?.length">{{ (activosOrders$ | async)?.length }}</span>
+      </button>
+      <button class="segment-btn" [class.active]="currentTab === 'listos'" (click)="setTab('listos')">
+        Listos
+        <span class="badge" *ngIf="(listosOrders$ | async)?.length">{{ (listosOrders$ | async)?.length }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="orders-container">
+    <!-- Nuevos Orders -->
+    <ng-container *ngIf="currentTab === 'nuevos'">
+      <div class="empty-state" *ngIf="(nuevosOrders$ | async)?.length === 0">
+        <p>No tienes pedidos nuevos.</p>
+      </div>
+      <div class="order-card type-nuevos" *ngFor="let order of nuevosOrders$ | async">
+        <div class="order-header">
+          <div class="order-meta">
+            <span class="order-id">#{{ order.id.substring(0,3) | uppercase }}</span>
+            <span class="separator">·</span>
+            <span class="order-time">{{ order.created_at | date:'shortTime' }}</span>
+          </div>
+          <div class="order-price">S/ {{ order.total_price | number:'1.2-2' }}</div>
+        </div>
+        
+        <div class="order-body">
+          <h3 class="product-name">{{ order.order_items?.[0]?.product?.name }} x{{ order.order_items?.[0]?.quantity }} <span *ngIf="(order.order_items?.length || 0) > 1">+ otros</span></h3>
+          <p class="buyer-name">de {{ order.buyer?.full_name || 'Comprador' }}</p>
+        </div>
+
+        <div class="order-actions">
+          <button class="btn-accept" (click)="acceptOrder(order)">
+            <ion-icon name="checkmark"></ion-icon>
+            Aceptar pedido
+          </button>
+          <button class="btn-reject" (click)="rejectOrder(order)">
+            <ion-icon name="close"></ion-icon>
+            Rechazar
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Activos Orders -->
+    <ng-container *ngIf="currentTab === 'activos'">
+      <div class="empty-state" *ngIf="(activosOrders$ | async)?.length === 0">
+        <p>No tienes pedidos activos en preparación.</p>
+      </div>
+      <div class="order-card type-activos" *ngFor="let order of activosOrders$ | async">
+        <div class="order-header">
+          <div class="order-meta">
+            <span class="order-id">#{{ order.id.substring(0,3) | uppercase }}</span>
+            <span class="separator">·</span>
+            <span class="order-time">{{ order.status === 'accepted' ? 'Aceptado' : 'Preparando' }}</span>
+          </div>
+          <div class="order-price">S/ {{ order.total_price | number:'1.2-2' }}</div>
+        </div>
+        
+        <div class="order-body">
+          <h3 class="product-name">{{ order.order_items?.[0]?.product?.name }} x{{ order.order_items?.[0]?.quantity }}</h3>
+          <p class="buyer-name">de {{ order.buyer?.full_name || 'Comprador' }}</p>
+        </div>
+
+        <div class="order-actions">
+          <button class="btn-accept" *ngIf="order.status === 'accepted'" (click)="markPreparing(order)">
+            Empezar a preparar
+          </button>
+          <button class="btn-accept" *ngIf="order.status === 'preparing'" (click)="markReady(order)">
+            Marcar como Listo
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Listos Orders -->
+    <ng-container *ngIf="currentTab === 'listos'">
+      <div class="empty-state" *ngIf="(listosOrders$ | async)?.length === 0">
+        <p>No hay pedidos listos para entregar.</p>
+      </div>
+      <div class="order-card type-listos" *ngFor="let order of listosOrders$ | async">
+        <div class="order-header">
+          <div class="order-meta">
+            <span class="order-id">#{{ order.id.substring(0,3) | uppercase }}</span>
+            <span class="separator">·</span>
+            <span class="order-time">Listo para entrega</span>
+          </div>
+          <div class="order-price">S/ {{ order.total_price | number:'1.2-2' }}</div>
+        </div>
+        
+        <div class="order-body">
+          <h3 class="product-name">{{ order.order_items?.[0]?.product?.name }} x{{ order.order_items?.[0]?.quantity }}</h3>
+          <p class="buyer-name">Entregar a {{ order.buyer?.full_name || 'Comprador' }}</p>
+        </div>
+
+        <div class="order-actions">
+          <button class="btn-accept" (click)="markCompleted(order)">
+            Marcar como Entregado
+          </button>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</ion-content>

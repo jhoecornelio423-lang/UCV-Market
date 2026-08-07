@@ -1,0 +1,129 @@
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { SellerStateService } from '../../services/seller-state.service';
+import { ToastController } from '@ionic/angular';
+import { AuthService } from '../../../../core/auth/auth.service';
+
+@Component({
+  selector: 'app-seller-dashboard',
+  templateUrl: './seller-dashboard.component.html',
+  styleUrls: ['./seller-dashboard.component.scss'],
+  standalone: false
+})
+export class SellerDashboardComponent {
+  private sellerState = inject(SellerStateService);
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
+  private authService = inject(AuthService);
+
+  stats$ = this.sellerState.stats$;
+  userProfile$ = this.sellerState.userProfile$;
+  activeOrders$ = this.sellerState.activeOrders$;
+  
+  showNotifDropdown = false;
+
+  showNotifications() {
+    this.showNotifDropdown = !this.showNotifDropdown;
+  }
+
+  markAllRead() {
+    this.sellerState.markAllNotificationsAsRead();
+  }
+
+  onNotificationClick(notif: any) {
+    if (notif.unread) {
+      this.sellerState.markNotificationAsRead(notif.id);
+    }
+
+    this.showNotifDropdown = false;
+
+    if (notif.id === 'p-orders') {
+      this.router.navigate(['/seller/orders']);
+    } else if (notif.id.startsWith('sys-')) {
+      this.router.navigate(['/seller/stats']);
+    }
+  }
+
+  getReputationLabel(rating: number): string {
+    if (rating >= 4.5) return 'Excelente';
+    if (rating >= 4.0) return 'Buena';
+    return 'Regular';
+  }
+
+  getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      pending: 'Pendiente',
+      accepted: 'Aceptado',
+      preparing: 'Preparando',
+      ready: 'Listo',
+      completed: 'Entregado',
+      cancelled: 'Cancelado'
+    };
+    return labels[status] || status;
+  }
+
+  getMaxSales(): number {
+    const stats = this.sellerState['statsSubject'].value;
+    if (!stats.salesData) return 10;
+    const max = Math.max(...stats.salesData.map((d: any) => d.ventas));
+    return max > 0 ? max : 10;
+  }
+
+  get svgLinePath(): string {
+    const stats = this.sellerState['statsSubject'].value;
+    if (!stats.salesData) return '';
+    const max = this.getMaxSales();
+    const points = stats.salesData.map((d: any, i: number) => {
+      const x = 50 + i * 100;
+      const y = 140 - (d.ventas / max) * 110;
+      return `${x},${y}`;
+    });
+    return `M ${points.join(' L ')}`;
+  }
+
+  get svgAreaPath(): string {
+    const stats = this.sellerState['statsSubject'].value;
+    if (!stats.salesData) return '';
+    const max = this.getMaxSales();
+    const points = stats.salesData.map((d: any, i: number) => {
+      const x = 50 + i * 100;
+      const y = 140 - (d.ventas / max) * 110;
+      return `${x},${y}`;
+    });
+    if (points.length === 0) return '';
+    return `M 50,140 L ${points.join(' L ')} L 650,140 Z`;
+  }
+
+  getChartPointX(index: number): number {
+    return 50 + index * 100;
+  }
+
+  getChartPointY(val: number): number {
+    const max = this.getMaxSales();
+    return 140 - (val / max) * 110;
+  }
+
+  async onChartBarClick(data: any) {
+    const toast = await this.toastCtrl.create({
+      message: `Ventas del ${data.day}: ${data.ventas} pedidos realizados.`,
+      duration: 2000,
+      color: 'primary',
+      position: 'bottom'
+    });
+    await toast.present();
+  }
+
+  goToProducts() {
+    this.router.navigate(['/seller/products']);
+  }
+
+  goToOrders() {
+    this.router.navigate(['/seller/orders']);
+  }
+
+  signOut() {
+    this.authService.signOut().subscribe(() => {
+      this.router.navigate(['/login']);
+    });
+  }
+}

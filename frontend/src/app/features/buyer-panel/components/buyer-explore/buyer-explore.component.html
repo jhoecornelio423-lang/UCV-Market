@@ -1,0 +1,112 @@
+<ion-content [fullscreen]="true" class="explore-content">
+<div class="explore-view">
+  <!-- Header Title -->
+  <div class="page-header">
+    <h1>Explorar</h1>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="search-section">
+    <div class="search-bar">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Busca productos o emprendedores..." (input)="onSearch($event)">
+    </div>
+    <button class="filter-btn">
+      <ion-icon name="filter-outline"></ion-icon>
+    </button>
+  </div>
+
+  <!-- Categories Chips -->
+  <div class="categories-scroll">
+    <div class="chip" 
+         [class.active]="(selectedCategoryId$ | async) === null"
+         (click)="selectCategory(null)">
+      <ion-icon name="restaurant-outline"></ion-icon>
+      <span>Todo</span>
+    </div>
+    <div class="chip" *ngFor="let cat of categories"
+         [class.active]="(selectedCategoryId$ | async) === cat.id"
+         (click)="selectCategory(cat.id)">
+      <ion-icon [name]="getCategoryIcon(cat.name)"></ion-icon>
+      <span>{{ cat.name }}</span>
+    </div>
+  </div>
+
+  <!-- Results Count -->
+  <div class="results-count" *ngIf="filteredProducts$ | async as products">
+    {{ products.length }} resultados
+  </div>
+
+  <!-- Emprendimientos (Sellers) -->
+  <div class="section-title">
+    <h2>EMPRENDIMIENTOS</h2>
+  </div>
+  <div class="sellers-scroll">
+    <div class="seller-card" *ngFor="let seller of sellers">
+      <div class="seller-image-wrapper">
+        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="seller" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
+      </div>
+      <div class="seller-info">
+        <h3>{{ seller.full_name }}</h3>
+        <p class="s-category">{{ seller.business_category || 'Emprendimiento' }}</p>
+        <div class="s-meta">
+          <ion-icon name="star" class="star-icon"></ion-icon>
+          <span class="rating">{{ seller.rating_average || '5.0' | number:'1.1-1' }}</span>
+          <span class="dot">•</span>
+          <ion-icon name="location-outline" class="loc-icon"></ion-icon>
+          <span class="distance">{{ getSimulatedDistance(seller.id) }}</span>
+        </div>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Productos -->
+  <div class="section-title">
+    <h2>PRODUCTOS</h2>
+  </div>
+  <div class="products-list" *ngIf="filteredProducts$ | async as products">
+    <div class="product-card" *ngFor="let product of products" [routerLink]="['/buyer-panel/product', product.id]">
+      <div class="product-image">
+        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png'" alt="product" onerror="this.src='https://ionicframework.com/docs/img/demos/thumbnail.svg'" />
+      </div>
+      <div class="product-details">
+        <div class="p-header">
+          <h3>{{ product.name }}</h3>
+          <ion-icon 
+            name="heart" 
+            class="heart-icon" 
+            [class.active]="isFavorite(product.id)"
+            (click)="toggleFavorite(product, $event)">
+          </ion-icon>
+        </div>
+        <p class="p-seller">{{ product.seller?.full_name || 'Vendedor' }}</p>
+        <div class="p-meta">
+          <ion-icon name="star" class="star-icon"></ion-icon>
+          <span class="rating">{{ product.seller?.rating_average || '5.0' | number:'1.1-1' }}</span>
+          <span class="dot">•</span>
+          <ion-icon name="location-outline"></ion-icon>
+          <span class="distance">{{ getSimulatedDistance(product.seller_id) }}</span>
+          <span class="dot">•</span>
+          <ion-icon name="time-outline"></ion-icon>
+          <span class="time">{{ getSimulatedTime(product.id) }}</span>
+        </div>
+        <div class="p-footer">
+          <span class="price">S/ {{ product.price | number:'1.2-2' }}</span>
+          <div class="badges-inline">
+            <span class="badge-available" *ngIf="product.stock > 2">Disponible</span>
+            <span class="badge-last" *ngIf="product.stock <= 2 && product.stock > 0">Últimas unidades</span>
+            <span class="out-label" *ngIf="product.stock <= 0">Agotado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="products.length === 0">
+      <ion-icon name="search-outline"></ion-icon>
+      <p>No se encontraron productos</p>
+    </div>
+  </div>
+</div>
+</ion-content>

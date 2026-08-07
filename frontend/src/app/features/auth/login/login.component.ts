@@ -31,7 +31,7 @@ export class LoginComponent implements OnInit {
 
     // Redirigir si ya está autenticado
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/catalog']);
+      this.router.navigate(['/buyer-panel/catalog']);
     }
   }
 
@@ -115,7 +115,7 @@ export class LoginComponent implements OnInit {
         } else if (profile.role === 'emprendedor') {
           this.router.navigate(['/seller']);
         } else {
-          this.router.navigate(['/catalog']);
+          this.router.navigate(['/buyer-panel/catalog']);
         }
       },
       error: async (err) => {

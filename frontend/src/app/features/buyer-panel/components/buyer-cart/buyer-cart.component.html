@@ -1,0 +1,82 @@
+<ion-content [fullscreen]="true" class="cart-content">
+  <div class="cart-main-shell">
+
+    <div class="main-content-wrapper">
+      <header class="cart-header ion-no-border">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-back-button defaultHref="/buyer-panel/catalog" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Mi carrito <span class="item-count">({{ cartCount }} items)</span></ion-title>
+        </ion-toolbar>
+      </header>
+
+      <div class="cart-shell">
+        <!-- Figma Empty State -->
+        <div *ngIf="cartItems.length === 0" class="empty-cart-figma">
+          <div class="empty-icon-wrapper">
+            <ion-icon name="cart-outline"></ion-icon>
+          </div>
+          <h2>Tu carrito está vacío</h2>
+          <p>Explora los productos del campus y agrega lo que más te guste.</p>
+          <button class="btn-primary-figma" (click)="goToExplore()">Explorar productos</button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div *ngIf="cartItems.length > 0" class="cart-items-figma">
+          <article *ngFor="let item of cartItems" class="cart-card-figma">
+            <div class="item-img">
+              <img [src]="item.product.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="">
+            </div>
+            <div class="item-info">
+              <div class="title-row">
+                <h4>{{ item.product.name }}</h4>
+                <button class="remove-btn" (click)="removeItem(item.product.id)">
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
+              </div>
+              <p class="seller">{{ item.product.seller?.full_name || 'Sweet Corner' }}</p>
+              <div class="price-qty-row">
+                <strong class="price">S/ {{ item.product.price.toFixed(2) }}</strong>
+                <div class="qty-control">
+                  <button (click)="updateQuantity(item.product.id, item.quantity - 1)"><ion-icon name="remove-outline"></ion-icon></button>
+                  <span>{{ item.quantity }}</span>
+                  <button (click)="updateQuantity(item.product.id, item.quantity + 1)"><ion-icon name="add-outline"></ion-icon></button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+
+
+          <!-- Order Summary -->
+          <div class="summary-card-figma">
+            <h3 class="resumen-title">Resumen <span class="red-dot"></span></h3>
+            <div class="summary-row">
+              <span>Subtotal</span>
+              <strong>S/ {{ cartTotal.toFixed(2) }}</strong>
+            </div>
+            <div class="summary-row">
+              <span>Servicio de entrega</span>
+              <strong class="free">Gratis</strong>
+            </div>
+            <div class="divider"></div>
+            <div class="summary-row total">
+              <span>Total</span>
+              <strong class="total-price">S/ {{ cartTotal.toFixed(2) }}</strong>
+            </div>
+          </div>
+
+          <!-- Checkout Button -->
+          <div class="footer-actions">
+            <button class="btn-checkout-figma" (click)="goToCheckout()">
+              Continuar al pago · S/ {{ cartTotal.toFixed(2) }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+

@@ -1,0 +1,81 @@
+<div class="form-container-figma">
+  <header class="form-header-figma">
+    <button class="back-circle" (click)="closeForm()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </button>
+    <h2>{{ formMode === 'create' ? 'Nuevo producto' : 'Editar producto' }}</h2>
+  </header>
+
+  <div class="form-scroll-area">
+    <!-- Foto del producto -->
+    <section class="form-card-figma">
+      <h3>Foto del producto</h3>
+      <div class="upload-zone"
+           (click)="fileInput.click()"
+           (drop)="onFileDropped($event)"
+           (dragover)="onDragOver($event)">
+        <input #fileInput type="file" hidden (change)="onFileChange($event)" accept="image/*">
+
+        <div class="upload-content" *ngIf="!previewImageUrl">
+          <div class="camera-icon"><ion-icon name="camera-outline"></ion-icon></div>
+          <p class="upload-text">Subir foto</p>
+          <p class="upload-hint">Arrastra una imagen o haz clic aquí</p>
+        </div>
+
+        <div class="preview-container" *ngIf="previewImageUrl">
+          <img [src]="previewImageUrl" class="preview-img" alt="Vista previa">
+          <div class="preview-overlay">
+            <ion-icon name="sync-outline"></ion-icon>
+            <span>Cambiar foto</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Datos Principales -->
+    <section class="form-card-figma">
+      <div class="input-group-figma">
+        <label>Nombre del producto *</label>
+        <input type="text" [(ngModel)]="pName" placeholder="Ej: Brownie Oreo">
+      </div>
+      <div class="divider-line"></div>
+      <div class="input-group-figma">
+        <label>Descripción</label>
+        <textarea [(ngModel)]="pDescription" placeholder="Describe tu producto, ingredientes, tamaño..." rows="2"></textarea>
+      </div>
+    </section>
+
+    <!-- Precio y Stock -->
+    <section class="form-card-figma row-layout">
+      <div class="input-group-figma flex-1">
+        <label>Precio (S/) *</label>
+        <input type="number" [(ngModel)]="pPrice" placeholder="6.00" class="highlight-orange">
+      </div>
+      <div class="input-group-figma flex-1">
+        <label>Stock</label>
+        <input type="number" [(ngModel)]="pStock" placeholder="20">
+      </div>
+    </section>
+
+    <!-- Categoría -->
+    <section class="form-card-figma">
+      <label class="label-figma">Categoría *</label>
+      <div class="chips-grid">
+        <button *ngFor="let cat of (categories$ | async)"
+                class="chip-item"
+                [class.active]="pCategoryId === cat.id"
+                (click)="pCategoryId = cat.id">
+          <span class="emoji">{{ cat.icon }}</span>
+          {{ cat.name }}
+        </button>
+      </div>
+    </section>
+
+    <!-- Botón Publicar -->
+    <div class="footer-actions-figma">
+      <button class="btn-publish-figma" (click)="saveProduct()">
+        {{ formMode === 'create' ? 'Publicar producto' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </div>
+</div>
