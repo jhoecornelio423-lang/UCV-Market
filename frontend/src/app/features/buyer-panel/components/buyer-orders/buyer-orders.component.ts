@@ -265,8 +265,8 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
 
     const orderHash = order.id.substring(0, 8);
     const message = type === 'compras'
-      ? `Hola ${partnerName}, te escribo por el pedido *#${orderHash}* de UCV Market.\n\nElegí el punto *${order.delivery_place}*. ¿Me confirmas cuándo nos reunimos?`
-      : `Hola ${partnerName}, soy el emprendedor de UCV Market. Te escribo por tu pedido *#${orderHash}*.\n\nEstaré en *${order.delivery_place}* para entregarte tu pedido.`;
+      ? `Hola ${partnerName}, te escribo por el pedido *#${orderHash}* de VALLE-GO.\n\nElegí el punto *${order.delivery_place}*. ¿Me confirmas cuándo nos reunimos?`
+      : `Hola ${partnerName}, soy el emprendedor de VALLE-GO. Te escribo por tu pedido *#${orderHash}*.\n\nEstaré en *${order.delivery_place}* para entregarte tu pedido.`;
 
     const waUrl = `https://wa.me/51${partnerPhone}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, '_blank');

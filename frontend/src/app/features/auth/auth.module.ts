@@ -7,15 +7,17 @@ import { IonicModule } from '@ionic/angular';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { OnboardingComponent } from './onboarding/onboarding.component';
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: OnboardingComponent },
+  { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'reset-password', component: ResetPasswordComponent }
 ];
 
 @NgModule({
-  declarations: [LoginComponent, RegisterComponent, ResetPasswordComponent],
+  declarations: [LoginComponent, RegisterComponent, ResetPasswordComponent, OnboardingComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

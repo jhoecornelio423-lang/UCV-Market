@@ -196,7 +196,7 @@ export class SellerBusinessComponent implements OnInit {
         {
           text: 'Otro motivo',
           icon: 'ellipsis-horizontal-outline',
-          handler: () => this.sendSupportEmail('Soporte UCV Market')
+          handler: () => this.sendSupportEmail('Soporte VALLE-GO')
         },
         {
           text: 'Cancelar',

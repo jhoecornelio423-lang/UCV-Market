@@ -234,7 +234,7 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
     this.productRepository.incrementWhatsAppClicks(product.id).subscribe();
 
     const buyerName = this.userProfile?.full_name || 'Estudiante UCV';
-    const message = `Hola, te escribo desde UCV Market.\n\nSoy el comprador *${buyerName}* y vi tu publicación de *${product.name}* (S/. ${product.price.toFixed(2)}). ¿Sigue disponible?`;
+    const message = `Hola, te escribo desde VALLE-GO.\n\nSoy el comprador *${buyerName}* y vi tu publicación de *${product.name}* (S/. ${product.price.toFixed(2)}). ¿Sigue disponible?`;
     const waUrl = `https://wa.me/51${product.seller.phone}?text=${encodeURIComponent(message)}`;
 
     window.open(waUrl, '_blank');

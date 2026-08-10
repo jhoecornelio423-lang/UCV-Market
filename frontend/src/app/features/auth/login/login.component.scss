@@ -369,35 +369,37 @@ $surface: #f7f8fa;
 
 .input-group {
   position: relative;
-  margin-bottom: 14px;
-  padding: 15px 17px 14px;
-  border: 1px solid $line;
-  border-radius: 17px;
-  background: $surface;
-  transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease, transform 180ms ease;
-}
-
-.input-group:focus-within {
-  border-color: rgba(244, 81, 63, 0.62);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(244, 81, 63, 0.1);
-  transform: translateY(-1px);
+  margin-bottom: 18px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 6px;
-  color: #8d96a8;
-  font-size: 9px;
-  font-weight: 850;
-  letter-spacing: 0.55px;
-  text-transform: uppercase;
+  margin-bottom: 8px;
+  color: #24324c;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
+  border: 1px solid #dce0e7;
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 14px 16px;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: rgba(244, 81, 63, 0.62);
+  box-shadow: 0 0 0 4px rgba(244, 81, 63, 0.1);
+}
+
+.input-icon {
+  font-size: 20px;
+  color: #a0aec0;
+  margin-right: 10px;
 }
 
 .input-wrapper input {
@@ -426,7 +428,7 @@ $surface: #f7f8fa;
 
 .password-toggle {
   position: absolute;
-  right: -5px;
+  right: 8px;
   top: 50%;
   width: 36px;
   height: 36px;
@@ -500,13 +502,15 @@ $surface: #f7f8fa;
 }
 
 .divider {
-  grid-area: divider;
   position: relative;
   display: flex;
   justify-content: center;
-  margin: 21px 0 15px;
+  align-items: center;
+  margin: 20px 0;
   color: #9da5b3;
-  font-size: 11px;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
 }
 
 .divider::before {
@@ -516,13 +520,32 @@ $surface: #f7f8fa;
   left: 0;
   right: 0;
   height: 1px;
-  background: $line;
+  background: #dfe2e7;
+  z-index: 0;
 }
 
 .divider span {
   position: relative;
   padding: 0 14px;
   background: #ffffff;
+  z-index: 1;
+}
+
+.footer-links {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #7d879a;
+  
+  a {
+    color: #E62020;
+    font-weight: 700;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 }
 
 .ucv-code-btn {
@@ -582,101 +605,143 @@ $surface: #f7f8fa;
     flex-direction: column;
     margin: 0 auto;
     padding: max(28px, env(safe-area-inset-top)) 25px max(22px, env(safe-area-inset-bottom));
-    overflow: visible;
+    overflow: hidden;
     border: 0;
     border-radius: 0;
     box-shadow: 0 0 34px rgba(7, 21, 47, 0.07);
+    background-color: #ffffff;
   }
 
-  .brand-mark {
-    width: 56px;
-    height: 56px;
-    flex-basis: 56px;
-    border-radius: 15px;
+  .top-shape {
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background-color: #E62020;
+    border-radius: 50%;
+    z-index: 0;
   }
 
-  .brand-name {
-    font-size: 19px;
+  .topbar {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+    .back-button {
+      color: #000;
+      font-size: 24px;
+      text-decoration: none;
+    }
   }
 
-  .brand-tagline {
-    font-size: 10px;
+  .brand-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 30px;
+  }
+
+  .brand-logo-text {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-mark-vallego {
+    width: 140px;
+    height: auto;
+    
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+  }
+
+  .brand-mascot {
+    width: 60px;
+    height: 60px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .bottom-left-shape {
+    position: fixed;
+    bottom: -60px;
+    left: -40px;
+    width: 150px;
+    height: 150px;
+    background-color: #07152f;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .bottom-right-shape {
+    position: fixed;
+    bottom: -40px;
+    right: -40px;
+    width: 100px;
+    height: 100px;
+    background-color: #E62020;
+    border-radius: 50%;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* Adjust z-index of main content to stay above shapes */
+  .login-form, .divider, .google-btn, .footer-links, .welcome-copy {
+    position: relative;
+    z-index: 1;
   }
 
   .welcome-copy {
-    margin-top: 34px;
+    margin-top: 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
   }
 
   .welcome-copy h1 {
-    font-size: clamp(31px, 9vw, 38px);
-    line-height: 1;
-    letter-spacing: -1.5px;
-  }
-
-  .welcome-copy h1 span {
-    font-size: 26px;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+    color: #030e25;
   }
 
   .welcome-copy p {
-    margin-top: 11px;
     font-size: 14px;
+    color: #7d879a;
+    margin: 0;
   }
 
-  .campus-banner {
-    order: initial;
+  .google-btn {
     width: 100%;
-    min-height: 0;
-    height: 156px;
-    margin-top: 22px;
-    border-radius: 22px;
-    box-shadow: 0 13px 27px rgba(108, 52, 40, 0.16);
-  }
-
-  .desktop-banner-copy {
-    display: none;
-  }
-
-  .banner-shade {
-    background: linear-gradient(180deg, transparent 38%, rgba(15, 8, 7, 0.64) 100%);
-  }
-
-  .campus-badge,
-  .buyer-badge {
-    bottom: 14px;
-    font-size: 11px;
-  }
-
-  .campus-badge {
-    left: 15px;
-  }
-
-  .buyer-badge {
-    right: 13px;
-    bottom: 10px;
-    padding: 6px 8px;
-  }
-
-  .banner-pages {
-    position: absolute;
-    z-index: 3;
-    left: 50%;
-    bottom: 7px;
+    min-height: 52px;
     display: flex;
-    gap: 4px;
-    transform: translateX(-50%);
-  }
-
-  .banner-pages span {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.55);
-  }
-
-  .banner-pages .active {
-    width: 13px;
-    border-radius: 4px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid #dce0e7;
+    border-radius: 16px;
+    color: #1d2a43;
     background: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+
+  .google-btn ion-icon {
+    font-size: 20px;
+    color: #DB4437; /* Google red */
   }
 
   .login-form {
@@ -688,8 +753,7 @@ $surface: #f7f8fa;
   }
 
   .input-group {
-    margin-bottom: 12px;
-    padding: 14px 16px 13px;
+    margin-bottom: 14px;
   }
 
   .divider {

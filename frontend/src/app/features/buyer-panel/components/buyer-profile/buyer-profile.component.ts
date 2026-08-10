@@ -149,7 +149,7 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
   async confirmSignOut() {
     const alert = await this.alertCtrl.create({
       header: '¿Cerrar sesión?',
-      subHeader: 'UCV Market',
+      subHeader: 'VALLE-GO',
       message: 'Tendrás que ingresar nuevamente para acceder a tu cuenta.',
       buttons: [
         { text: 'Cancelar', role: 'cancel', cssClass: 'market-signout-cancel' },

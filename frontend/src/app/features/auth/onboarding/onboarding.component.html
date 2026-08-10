@@ -1,0 +1,34 @@
+<ion-content [fullscreen]="true" class="onboarding-content">
+  <main class="onboarding-shell">
+    <header class="brand-header">
+      <img src="assets/valle-go-assets/logo_vallego.png" alt="Logo VALLE-GO" class="brand-logo" />
+    </header>
+
+    <div class="mascot-container">
+      <img src="assets/valle-go-assets/mascota_carrito.png" alt="Mascota en carrito" class="mascot-img" />
+    </div>
+
+    <div class="welcome-text">
+      <h2>VALLE-GO</h2>
+      <p class="tagline">El marketplace universitario</p>
+      
+      <h3 class="highlight-title">Compra, vende y conecta dentro de tu comunidad.</h3>
+      
+      <p class="description">
+        Encuentra emprendimientos, comida y productos cerca de ti dentro de la comunidad UCV.
+      </p>
+    </div>
+
+    <div class="bottom-actions">
+      <div class="dots-indicator">
+        <span class="active"></span>
+        <span></span>
+        <span></span>
+      </div>
+      
+      <button class="continue-btn" (click)="goToLogin()">
+        Continuar
+      </button>
+    </div>
+  </main>
+</ion-content>
