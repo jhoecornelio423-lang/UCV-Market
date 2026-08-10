@@ -71,14 +71,13 @@ $surface: #f7f8fa;
 }
 
 .brand-mark {
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   display: block;
-  flex: 0 0 54px;
+  flex: 0 0 64px;
   border-radius: 17px;
   overflow: hidden;
-  background: #5ab7ef;
-  box-shadow: 0 12px 25px rgba(244, 81, 63, 0.28);
+  background: transparent;
 }
 
 .brand-mark img {
@@ -590,9 +589,9 @@ $surface: #f7f8fa;
   }
 
   .brand-mark {
-    width: 48px;
-    height: 48px;
-    flex-basis: 48px;
+    width: 56px;
+    height: 56px;
+    flex-basis: 56px;
     border-radius: 15px;
   }
 
