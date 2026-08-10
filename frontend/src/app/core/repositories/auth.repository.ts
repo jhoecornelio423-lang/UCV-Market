@@ -5,11 +5,15 @@ import { Profile, UserRole } from '../models/profile.model';
 export const AUTH_REPOSITORY = new InjectionToken<AuthRepository>('AuthRepository');
 
 export interface AuthRepository {
-  signUp(email: string, password: string, fullName: string, phone: string, role: UserRole, campus: string): Observable<Profile>;
+  signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile>;
   signIn(email: string, password: string): Observable<{ user: any; session: any }>;
   signOut(): Observable<void>;
   getCurrentUser(): Observable<any>;
   getProfile(id: string): Observable<Profile>;
   updateProfile(profile: Partial<Profile>): Observable<Profile>;
   resetPassword(email: string): Observable<boolean>;
+  generateResetToken(email: string): Observable<string>;
+  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean>;
+  uploadBusinessAsset(filePath: string, file: File): Observable<string>;
+  getSellers(): Observable<Profile[]>;
 }

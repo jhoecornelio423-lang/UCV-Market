@@ -20,6 +20,8 @@ export interface Product {
   is_active: boolean;
   pickup_location: string;
   whatsapp_clicks?: number;
+  rating_average?: number; // Nueva columna para calificar el producto directamente
+  review_count?: number;
   created_at?: string;
   updated_at?: string;
 

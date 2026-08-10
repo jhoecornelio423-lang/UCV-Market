@@ -1,0 +1,99 @@
+<ion-content [fullscreen]="true" class="product-detail-content">
+  <div *ngIf="loading" class="loading-state">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && product" class="detail-container">
+    
+    <!-- Header Image & Floating Buttons -->
+    <div class="image-header">
+      <img [src]="getProductImage()" [alt]="product.name" />
+      
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+
+      <div class="top-actions">
+        <button class="action-btn" (click)="toggleFavorite()">
+          <ion-icon name="heart" [class.active]="isFavorite()"></ion-icon>
+        </button>
+        <button class="action-btn" routerLink="/buyer-panel/cart">
+          <ion-icon name="cart-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Product Info Card -->
+    <div class="info-card">
+      <div class="badges-row">
+        <div class="badges">
+          <span class="badge-category">{{ product.category?.name || 'Comida' }}</span>
+          <span class="badge-status" *ngIf="product.stock > 0">Disponible</span>
+          <span class="badge-status-out" *ngIf="product.stock <= 0">Agotado</span>
+        </div>
+        <h2 class="product-price">S/ {{ product.price | number:'1.2-2' }}</h2>
+      </div>
+      
+      <h1 class="product-name">{{ product.name }}</h1>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-item">
+          <ion-icon name="star" class="star-icon"></ion-icon>
+          <div class="stat-value">{{ product.seller?.rating_average || '4.9' }}</div>
+          <div class="stat-label">Rating</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <ion-icon name="location-outline" class="loc-icon"></ion-icon>
+          <div class="stat-value">120 m</div>
+          <div class="stat-label">Distancia</div>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <ion-icon name="time-outline" class="time-icon"></ion-icon>
+          <div class="stat-value">10 min</div>
+          <div class="stat-label">Prepara</div>
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="description-section">
+        <h3>Descripción</h3>
+        <p>{{ product.description || 'Sin descripción.' }}</p>
+      </div>
+
+      <!-- Seller Info -->
+      <div class="seller-card">
+        <img [src]="product.seller?.avatar_url || 'assets/images/default-avatar.png'" alt="Vendedor" />
+        <div class="seller-details">
+          <span class="s-label">Vendedor</span>
+          <h4 class="s-name">{{ product.seller?.full_name || 'Vendedor' }}</h4>
+          <span class="s-loc">Pabellón A, 1er piso</span>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+      </div>
+
+      <!-- Quantity -->
+      <div class="quantity-section" *ngIf="product.stock > 0">
+        <h3>Cantidad</h3>
+        <div class="qty-selector">
+          <button (click)="decreaseQty()" [disabled]="quantity <= 1">
+            <ion-icon name="remove-outline"></ion-icon>
+          </button>
+          <span class="qty-value">{{ quantity }}</span>
+          <button (click)="increaseQty()" [disabled]="quantity >= product.stock" class="add">
+            <ion-icon name="add-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Add to Cart Button -->
+      <button class="add-cart-btn" (click)="addToCart()" [disabled]="product.stock <= 0">
+        <ion-icon name="cart-outline"></ion-icon>
+        Agregar al carrito · S/ {{ (product.price * quantity) | number:'1.2-2' }}
+      </button>
+
+    </div>
+  </div>
+</ion-content>

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -14,17 +14,17 @@ export class AuthGuard implements CanActivate {
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
-  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    return this.authService.currentProfile$.pipe(
+  ): Observable<boolean | UrlTree> {
+    // Esperar a que AuthService haya evaluado la sesión inicial
+    return this.authService.isInitialized$.pipe(
+      filter(initialized => initialized),
       take(1),
+      switchMap(() => this.authService.currentProfile$.pipe(take(1))),
       map(profile => {
-        // 1. Validar si el usuario está autenticado
         if (!profile) {
           // No hay sesión, redirige al login
           return this.router.createUrlTree(['/login']);
         }
-
-        // 2. Validar restricciones de roles (si existen en la ruta)
         const expectedRoles: string[] = route.data['expectedRoles'];
         if (expectedRoles && expectedRoles.length > 0) {
           const hasRole = expectedRoles.includes(profile.role);
@@ -33,7 +33,6 @@ export class AuthGuard implements CanActivate {
             return this.router.createUrlTree(['/home']);
           }
         }
-
         return true;
       })
     );

@@ -18,7 +18,7 @@ enabled = true
 enabled = true
 site_url = "http://localhost:8100"
 additional_redirect_urls = ["https://ucvmarket.pe"]
-jwt_expiry = 86400 -- 24 horas
+jwt_expiry = 86400 # 24 horas
 
 [functions]
 enabled = true

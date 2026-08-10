@@ -1,0 +1,70 @@
+<div class="products-list-view">
+  <header class="products-header-figma">
+    <h1>Mis productos</h1>
+    <button class="btn-new-product" (click)="openCreateForm()">
+      <ion-icon name="add"></ion-icon>
+      Nuevo
+    </button>
+  </header>
+
+  <div class="products-grid-figma">
+
+    <!-- SKELETON LOADER -->
+    <ng-container *ngIf="loading$ | async">
+      <div *ngFor="let i of [1,2,3]" class="product-item-card skeleton">
+          <div class="card-main-content">
+              <div class="product-img skeleton-box"></div>
+              <div class="product-details">
+                  <div class="skeleton-line w-60"></div>
+                  <div class="skeleton-line w-40 mt-10"></div>
+              </div>
+          </div>
+      </div>
+    </ng-container>
+
+    <article *ngFor="let product of products$ | async" class="product-item-card" [hidden]="loading$ | async">
+      <div class="card-main-content">
+        <div class="product-img">
+          <img [src]="product.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="">
+        </div>
+        <div class="product-details">
+          <div class="title-status">
+            <h3>{{ product.name }}</h3>
+            <div class="status-indicator"
+                 [class.active]="product.is_active && product.stock > 0"
+                 [class.out-of-stock]="product.stock <= 0"
+                 (click)="product.stock > 0 ? toggleStatus(product) : null">
+              <span class="dot"></span>
+              {{ product.stock <= 0 ? 'Agotado' : (product.is_active ? 'Activo' : 'Pausado') }}
+            </div>
+          </div>
+          <p class="category-text">{{ getCategoryName(product.category_id) }}</p>
+          <div class="price-rating">
+            <span class="price">S/ {{ product.price.toFixed(2) }}</span>
+            <div class="rating">
+              <ion-icon name="star" class="star-gold-mini"></ion-icon>
+              <span>{{ product.rating_average || '5.0' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-actions-row">
+        <button class="btn-edit" (click)="openEditForm(product)">
+          <ion-icon name="create-outline"></ion-icon>
+          Editar
+        </button>
+        <div class="v-divider"></div>
+        <button class="btn-delete" (click)="deleteProduct(product)">
+          <ion-icon name="trash-outline"></ion-icon>
+          Eliminar
+        </button>
+      </div>
+    </article>
+
+    <div *ngIf="(loading$ | async) === false && (products$ | async)?.length === 0" class="empty-state-products">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <p>Aún no tienes productos publicados.</p>
+      <button (click)="openCreateForm()">Publicar mi primer producto</button>
+    </div>
+  </div>
+</div>

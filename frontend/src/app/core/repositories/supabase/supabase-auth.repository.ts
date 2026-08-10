@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AuthRepository } from '../auth.repository';
 import { SupabaseClientService } from '../../database/supabase.client';
 import { Profile, UserRole } from '../../models/profile.model';
-import { from, Observable, of, throwError } from 'rxjs';
+import { from, Observable, of, throwError, delay } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -11,7 +11,7 @@ import { map, switchMap, catchError } from 'rxjs/operators';
 export class SupabaseAuthRepository implements AuthRepository {
   constructor(private supabaseService: SupabaseClientService) {}
 
-  signUp(email: string, password: string, fullName: string, phone: string, role: UserRole, campus: string): Observable<Profile> {
+  signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile> {
     // 1. Validar dominio de correo UCV en el cliente
     const ucvRegex = /^[a-zA-Z0-9._%+-]+@ucv(virtual)?\.edu\.pe$/;
     if (!ucvRegex.test(email)) {
@@ -26,6 +26,7 @@ export class SupabaseAuthRepository implements AuthRepository {
         data: {
           full_name: fullName,
           phone: phone,
+          student_code: studentCode,
           role: role,
           campus: campus
         }
@@ -131,17 +132,90 @@ export class SupabaseAuthRepository implements AuthRepository {
     );
   }
 
-  resetPassword(email: string): Observable<boolean> {
-    const promise = this.supabaseService.client.auth.resetPasswordForEmail(email, {
-      redirectTo: 'https://ucvmarket.pe/reset-password'
+  confirmResetPassword(token: string, newPassword: string): Observable<boolean> {
+    // Set the session using the token received from the reset link
+    const setSessionPromise = this.supabaseService.client.auth.setSession({
+      access_token: token,
+      refresh_token: ''
     });
 
+    const resetPromise = setSessionPromise.then(() => {
+      return this.supabaseService.client.auth.updateUser({ password: newPassword });
+    });
+
+    return from(resetPromise).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return true;
+      })
+    );
+  }
+
+  resetPassword(email: string): Observable<boolean> {
+    const promise = this.supabaseService.client.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login/reset-password`
+    });
     return from(promise).pipe(
       map(response => {
         if (response.error) {
           throw new Error(response.error.message);
         }
         return true;
+      })
+    );
+  }
+
+  /** Generate a simple JWT-like token for password reset */
+  generateResetToken(email: string): Observable<string> {
+    const token = btoa(`${email}:${Date.now()}`);
+    return of(token).pipe(delay(500));
+  }
+
+  /** Reset password using token */
+  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean> {
+    // Reuse confirmResetPassword logic
+    return this.confirmResetPassword(token, newPassword);
+  }
+
+  /** Upload business assets like avatar or banner to Supabase Storage public bucket */
+  uploadBusinessAsset(filePath: string, file: File): Observable<string> {
+    const promise = this.supabaseService.client.storage
+      .from('business-assets')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    return from(promise).pipe(
+      switchMap((response: any) => {
+        if (response.error) {
+          return throwError(() => new Error(response.error.message));
+        }
+        const publicUrlResponse = this.supabaseService.client.storage
+          .from('business-assets')
+          .getPublicUrl(filePath);
+
+        return of(publicUrlResponse.data.publicUrl);
+      }),
+      catchError(error => throwError(() => new Error(error.message)))
+    );
+  }
+
+  getSellers(): Observable<Profile[]> {
+    const query = this.supabaseService.client
+      .from('profiles')
+      .select('*')
+      .eq('role', 'emprendedor')
+      .order('rating_average', { ascending: false });
+
+    return from(query).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return response.data as Profile[];
       })
     );
   }

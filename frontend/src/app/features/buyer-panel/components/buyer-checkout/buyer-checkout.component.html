@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="checkout-content">
+  <div class="checkout-main-shell">
+    <div class="main-content-wrapper">
+      <header class="checkout-header ion-no-border">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-back-button defaultHref="/buyer-panel/cart" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Confirmar pedido</ion-title>
+        </ion-toolbar>
+      </header>
+
+      <div class="checkout-shell">
+        
+        <!-- Punto de entrega -->
+        <section class="checkout-section">
+          <h3><ion-icon name="location-outline"></ion-icon> Punto de entrega</h3>
+          
+          <div class="radio-card" 
+               *ngFor="let spot of deliverySpots" 
+               [class.active]="selectedSpotId === spot"
+               (click)="selectedSpotId = spot">
+            
+            <div class="radio-circle">
+              <div class="inner-dot" *ngIf="selectedSpotId === spot"></div>
+            </div>
+            <div class="radio-info">
+              <h4>{{ spot }}</h4>
+            </div>
+          </div>
+        </section>
+
+        <!-- Hora de recojo -->
+        <section class="checkout-section">
+          <h3><ion-icon name="time-outline"></ion-icon> Hora de recojo</h3>
+          
+          <div class="time-pills">
+            <button class="time-pill" 
+                    *ngFor="let time of pickupTimes"
+                    [class.active]="selectedTime === time"
+                    (click)="selectedTime = time">
+              {{ time }}
+            </button>
+          </div>
+        </section>
+
+        <!-- Método de pago -->
+        <section class="checkout-section">
+          <h3><span class="dollar-sign">$</span> Método de pago</h3>
+          
+          <div class="radio-card" 
+               *ngFor="let method of paymentMethods"
+               [class.active]="selectedPayment === method.id"
+               (click)="selectedPayment = method.id">
+            
+            <div class="radio-circle">
+              <div class="inner-dot" *ngIf="selectedPayment === method.id"></div>
+            </div>
+            
+            <ion-icon *ngIf="method.icon.includes('outline')" [name]="method.icon" [style.color]="method.color" class="method-icon"></ion-icon>
+            <img *ngIf="!method.icon.includes('outline')" [src]="method.icon" class="method-icon-img" alt="">
+
+            <div class="radio-info">
+              <h4>{{ method.title }}</h4>
+            </div>
+
+            <div class="badge-recommended" *ngIf="method.id === 'yape'">
+              Recomendado
+            </div>
+          </div>
+        </section>
+
+        <!-- Total estático -->
+        <div class="total-row">
+          <span class="label">Total a pagar</span>
+          <span class="amount">S/ {{ cartTotal.toFixed(2) }}</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</ion-content>
+
+<!-- Checkout Button (Fixed bottom) -->
+<footer class="checkout-footer">
+  <button class="btn-checkout-figma" (click)="confirmOrder()">
+    Confirmar pedido · S/ {{ cartTotal.toFixed(2) }}
+  </button>
+</footer>

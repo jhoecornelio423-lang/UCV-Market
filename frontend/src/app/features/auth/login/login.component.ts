@@ -1,8 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, ToastController } from '@ionic/angular';
 import { AuthService } from '../../../core/auth/auth.service';
+import { SupabaseAuthRepository } from '../../../core/repositories/supabase/supabase-auth.repository';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,11 @@ export class LoginComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private supabaseRepo = inject(SupabaseAuthRepository);
   private router = inject(Router);
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
+  private toastCtrl = inject(ToastController);
 
   ngOnInit() {
     this.loginForm = this.fb.group({
@@ -28,12 +31,65 @@ export class LoginComponent implements OnInit {
 
     // Redirigir si ya está autenticado
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/catalog']);
+      this.router.navigate(['/buyer-panel/catalog']);
     }
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword;
+  }
+
+  async onForgotPassword() {
+    const email = this.loginForm.get('email')?.value;
+    if (!email) {
+      await this.showToast('Ingresa tu email');
+      return;
+    }
+    const loading = await this.loadingCtrl.create({
+      message: 'Enviando correo...',
+      spinner: 'crescent',
+      cssClass: 'custom-loading'
+    });
+    await loading.present();
+    this.authService.resetPassword(email).subscribe({
+      next: async () => {
+        await loading.dismiss();
+        
+        const alert = await this.alertCtrl.create({
+          header: 'Correo Enviado',
+          subHeader: 'Token de recuperación enviado',
+          message: 'Hemos enviado un correo a tu cuenta UCV con el token de recuperación. Copia el token del mensaje e ingrésalo en la pantalla de restablecimiento.',
+          buttons: [
+            {
+              text: 'Cancelar',
+              role: 'cancel'
+            },
+            {
+              text: 'Restablecer',
+              handler: () => {
+                this.router.navigate(['/login/reset-password']);
+              }
+            }
+          ],
+          cssClass: 'custom-alert'
+        });
+        await alert.present();
+      },
+      error: async (err: any) => {
+        await loading.dismiss();
+        await this.showToast(err.message || 'Error al enviar el correo');
+      }
+    });
+  }
+
+  private async showToast(message: string, color: string = 'danger') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      position: 'top',
+      color
+    });
+    await toast.present();
   }
 
   async onSubmit() {
@@ -47,7 +103,7 @@ export class LoginComponent implements OnInit {
     const loading = await this.loadingCtrl.create({
       message: 'Iniciando sesión...',
       spinner: 'crescent',
-      cssClass: 'custom-loading'
+      cssClass: 'market-login-loading'
     });
     await loading.present();
 
@@ -59,7 +115,7 @@ export class LoginComponent implements OnInit {
         } else if (profile.role === 'emprendedor') {
           this.router.navigate(['/seller']);
         } else {
-          this.router.navigate(['/catalog']);
+          this.router.navigate(['/buyer-panel/catalog']);
         }
       },
       error: async (err) => {

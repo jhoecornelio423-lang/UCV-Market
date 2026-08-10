@@ -1,0 +1,139 @@
+<ion-content [fullscreen]="true" class="tracking-content">
+  <div class="tracking-container" *ngIf="!loading && order">
+    
+    <header class="page-header">
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+      <div class="header-titles">
+        <h1>Seguimiento</h1>
+        <p>Pedido #UCM-{{ shortOrderId }}</p>
+      </div>
+    </header>
+
+    <div class="order-summary-card">
+      <div class="img-wrapper">
+        <img [src]="getProductImage()" alt="Producto">
+      </div>
+      <div class="details">
+        <h3>{{ getProductName() }}</h3>
+        <p>{{ getSellerName() }} · {{ getLocation() }}</p>
+        <div class="price">S/ {{ getOrderTotal() | number:'1.2-2' }}</div>
+      </div>
+      <div class="status-badge" [class.completed]="order.status === 'completed'" [class.cancelled]="order.status === 'cancelled'">
+        {{ order.status === 'completed' ? 'Entregado' : order.status === 'cancelled' ? 'Cancelado' : 'En proceso' }}
+      </div>
+    </div>
+
+    <div class="tracking-card">
+      <h2>Estado del pedido</h2>
+
+      <div class="timeline" [class.is-cancelled]="isCancelled()">
+        
+        <!-- Pendiente -->
+        <div class="step" [class.active]="currentStatusIndex === 0 && !isCancelled()" [class.completed]="currentStatusIndex > 0 && !isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="cube-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Pendiente</h4>
+              <span class="dot" *ngIf="currentStatusIndex === 0 && !isCancelled()"></span>
+            </div>
+            <p>Esperando confirmación del vendedor</p>
+            <p class="current-indicator" *ngIf="currentStatusIndex === 0 && !isCancelled()">Ahora · en proceso...</p>
+          </div>
+        </div>
+
+        <!-- Aceptado -->
+        <div class="step" [class.active]="currentStatusIndex === 1 && !isCancelled()" [class.completed]="currentStatusIndex > 1 && !isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="checkmark-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Aceptado</h4>
+              <span class="dot" *ngIf="currentStatusIndex === 1 && !isCancelled()"></span>
+            </div>
+            <p>El emprendedor aceptó tu pedido</p>
+            <p class="current-indicator" *ngIf="currentStatusIndex === 1 && !isCancelled()">Ahora · en proceso...</p>
+          </div>
+        </div>
+
+        <!-- Preparando -->
+        <div class="step" [class.active]="currentStatusIndex === 2 && !isCancelled()" [class.completed]="currentStatusIndex > 2 && !isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="storefront-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Preparando</h4>
+              <span class="dot" *ngIf="currentStatusIndex === 2 && !isCancelled()"></span>
+            </div>
+            <p>Están preparando tu pedido ahora</p>
+            <p class="current-indicator" *ngIf="currentStatusIndex === 2 && !isCancelled()">Ahora · en proceso...</p>
+          </div>
+        </div>
+
+        <!-- Listo -->
+        <div class="step" [class.active]="currentStatusIndex === 3 && !isCancelled()" [class.completed]="currentStatusIndex > 3 && !isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Listo</h4>
+              <span class="dot" *ngIf="currentStatusIndex === 3 && !isCancelled()"></span>
+            </div>
+            <p>Tu pedido está listo para recoger</p>
+            <p class="current-indicator" *ngIf="currentStatusIndex === 3 && !isCancelled()">Ahora · esperando recojo...</p>
+          </div>
+        </div>
+
+        <!-- Entregado -->
+        <div class="step last-step" [class.active]="currentStatusIndex === 4 && !isCancelled()" [class.completed]="currentStatusIndex === 4 && !isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="ribbon-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Entregado</h4>
+              <span class="dot" *ngIf="currentStatusIndex === 4 && !isCancelled()"></span>
+            </div>
+            <p>¡Pedido entregado con éxito!</p>
+            <p class="current-indicator" *ngIf="currentStatusIndex === 4 && !isCancelled()">Completado</p>
+          </div>
+        </div>
+        
+        <!-- Cancelado (if applicable) -->
+        <div class="step cancelled-step" *ngIf="isCancelled()">
+          <div class="icon-container">
+            <ion-icon name="close-circle-outline"></ion-icon>
+          </div>
+          <div class="step-content">
+            <div class="step-header">
+              <h4>Cancelado</h4>
+            </div>
+            <p>El pedido fue cancelado.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="time-card" *ngIf="!isCancelled() && currentStatusIndex < 4">
+      <div class="icon-wrapper">
+        <ion-icon name="time-outline"></ion-icon>
+      </div>
+      <div class="time-info">
+        <p>Tiempo estimado</p>
+        <h2>{{ getEstimatedTime() }}</h2>
+      </div>
+    </div>
+
+  </div>
+  
+  <div class="loading-state" *ngIf="loading && !order">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+</ion-content>

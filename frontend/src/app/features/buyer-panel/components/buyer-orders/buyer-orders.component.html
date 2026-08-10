@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="orders-content">
+  <header class="orders-header ion-no-border">
+    <ion-toolbar class="header-toolbar">
+      <ion-title>{{ activeTab === 'ventas' ? 'Pedidos Recibidos' : 'Mis Compras' }}</ion-title>
+    </ion-toolbar>
+
+    <!-- TABS: VENDEDOR (Nuevos, Activos, Listos) -->
+    <div class="orders-tabs-figma" *ngIf="activeTab === 'ventas'">
+      <button class="tab-item" [class.active]="sellerFilter === 'new'" (click)="setSellerFilter('new')">
+        Nuevos
+        <span class="dot-badge" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
+      </button>
+      <button class="tab-item" [class.active]="sellerFilter === 'active'" (click)="setSellerFilter('active')">
+        Activos
+      </button>
+      <button class="tab-item" [class.active]="sellerFilter === 'ready'" (click)="setSellerFilter('ready')">
+        Listos
+      </button>
+    </div>
+
+    <!-- TABS: COMPRADOR (Activos, Historial) -->
+    <div class="orders-tabs-figma buyer-tabs" *ngIf="activeTab === 'compras'">
+      <button class="tab-item" [class.active]="buyerFilter === 'active'" (click)="setBuyerFilter('active')">
+        Activos
+      </button>
+      <button class="tab-item" [class.active]="buyerFilter === 'history'" (click)="setBuyerFilter('history')">
+        Historial
+      </button>
+    </div>
+  </header>
+
+  <ion-refresher slot="fixed" (ionRefresh)="refreshOrders($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="orders-shell">
+    <!-- Empty State -->
+    <div *ngIf="!loading && visibleOrders.length === 0" class="empty-state">
+      <ion-icon name="bag-handle-outline"></ion-icon>
+      <p>No hay pedidos en esta sección</p>
+    </div>
+
+    <!-- Orders List -->
+    <div class="orders-list-figma" *ngIf="!loading">
+      <article *ngFor="let order of visibleOrders" class="order-card-figma" [class.buyer-card]="activeTab === 'compras'">
+        <div class="card-body" [style.cursor]="activeTab === 'compras' ? 'pointer' : 'default'" (click)="goToTracking(order)">
+          <div class="card-left">
+            <p class="order-id">#{{ order.id.substring(0, 4) | uppercase }} · {{ getOrderDateLabel(order.created_at) }}</p>
+            <h4 class="product-title">
+              <span *ngFor="let item of order.order_items; let last = last">
+                {{ item.product?.name }} x{{ item.quantity }}{{ !last ? ', ' : '' }}
+              </span>
+            </h4>
+            <p class="customer-name">
+              {{ activeTab === 'ventas' ? 'de ' + order.buyer?.full_name : 'Vendido por ' + order.seller?.full_name }}
+            </p>
+          </div>
+          <div class="card-right">
+            <p class="price">S/ {{ order.total_price.toFixed(2) }}</p>
+            <span class="status-label" [class]="order.status">
+              {{ getStatusLabel(order.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="card-actions-figma" *ngIf="activeTab === 'ventas'">
+          <button *ngIf="order.status === 'pending'" class="btn-accept" (click)="changeStatus(order, getNextStatus(order.status))">
+            {{ getNextActionLabel(order.status) }}
+          </button>
+          <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
+            {{ getNextActionLabel(order.status) }}
+          </button>
+        </div>
+
+        <div class="card-actions-figma" *ngIf="activeTab === 'compras'">
+          <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-wa" (click)="contactPartnerViaWhatsApp(order, 'compras')">
+            Contactar vendedor
+          </button>
+          <button *ngIf="order.status === 'completed'" class="btn-rate" (click)="qualifySeller(order)">
+            Calificar
+          </button>
+        </div>
+      </article>
+    </div>
+  </div>
+</ion-content>
+
+
+

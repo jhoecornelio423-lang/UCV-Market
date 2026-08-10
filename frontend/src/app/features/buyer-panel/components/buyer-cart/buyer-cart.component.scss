@@ -1,0 +1,270 @@
+$primary: #E8432D;
+$primary-light: #FFF2F0;
+$navy: #07152f;
+$muted: #818a9b;
+$bg: #f8f9fb;
+$sidebar-width: 280px;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .cart-content {
+    --background: #{$bg};
+    --color: #{$navy};
+  }
+
+  .cart-main-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+
+    @media (min-width: 1024px) {
+      flex-direction: row;
+    }
+  }
+
+  /* Sidebar Desktop */
+  .desktop-sidebar {
+    display: none;
+
+    @media (min-width: 1024px) {
+      display: flex;
+      flex-direction: column;
+      width: $sidebar-width;
+      background: white;
+      border-right: 1px solid #F3F4F6;
+      padding: 30px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      flex-shrink: 0;
+      z-index: 1000;
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 40px;
+        .logo {
+          width: 40px;
+          height: 40px;
+          background: $primary;
+          border-radius: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 900;
+          font-size: 20px;
+        }
+        h2 { font-size: 18px; font-weight: 900; color: $navy; margin: 0; }
+      }
+
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        .nav-item {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          border-radius: 14px;
+          color: $muted;
+          font-weight: 700;
+          font-size: 14px;
+          transition: all 0.2s;
+          border: none;
+          background: transparent;
+          text-align: left;
+          cursor: pointer;
+
+          ion-icon { font-size: 20px; }
+
+          &.active {
+            background: $primary-light;
+            color: $primary;
+          }
+
+          &:hover:not(.active) {
+            background: #F9FAFB;
+            color: $navy;
+          }
+        }
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        .logout-btn {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 14px 16px;
+          color: #EF4444;
+          font-weight: 700;
+          cursor: pointer;
+          background: transparent;
+          border: none;
+        }
+      }
+    }
+  }
+
+  .main-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .cart-header {
+    --background: white;
+    border-bottom: none;
+    .header-toolbar {
+      --background: white;
+      --color: #{$navy};
+      --padding-start: 12px;
+      --padding-end: 12px;
+      padding-top: calc(env(safe-area-inset-top) + 10px);
+      ion-title {
+        font-weight: 900;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        .item-count {
+          color: #9CA3AF;
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+      .back-btn {
+        color: $navy;
+      }
+    }
+  }
+
+  .cart-shell {
+    padding: 24px 20px 100px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .empty-cart-figma {
+    text-align: center;
+    padding: 60px 20px;
+    .empty-icon-wrapper {
+      width: 80px; height: 80px; border-radius: 50%; background: #F3F4F6;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px; font-size: 32px; color: $muted;
+    }
+    h2 { font-size: 20px; font-weight: 900; color: $navy; }
+    p { font-size: 14px; color: $muted; margin: 8px 0 24px; }
+    .btn-primary-figma {
+      background: $primary; color: white; border: none; padding: 14px 28px;
+      border-radius: 16px; font-weight: 800; font-size: 14px;
+    }
+  }
+
+  .cart-card-figma {
+    background: white; border-radius: 24px; padding: 15px;
+    display: flex; gap: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    border: 1px solid #F3F4F6; margin-bottom: 12px;
+
+    .item-img {
+      width: 72px; height: 72px; border-radius: 16px; overflow: hidden;
+      background: #F3F4F6; flex-shrink: 0;
+      img { width: 100%; height: 100%; object-fit: cover; }
+    }
+
+    .item-info {
+      flex: 1; min-width: 0;
+      .title-row {
+        display: flex; justify-content: space-between; align-items: flex-start;
+        h4 { font-size: 15px; font-weight: 800; color: $navy; margin: 0; }
+        .remove-btn { background: transparent; border: none; color: #D1D5DB; font-size: 20px; padding: 0; }
+      }
+      .seller { font-size: 12px; font-weight: 500; color: #9CA3AF; margin: 4px 0 12px; }
+      .price-qty-row {
+        display: flex; justify-content: space-between; align-items: center;
+        .price { font-size: 16px; font-weight: 800; color: $primary; }
+        .qty-control {
+          display: flex; align-items: center; gap: 8px;
+          background: $primary-light; border-radius: 20px; padding: 4px 6px;
+          button {
+            width: 24px; height: 24px; border-radius: 50%; background: transparent;
+            border: none; display: flex; align-items: center; justify-content: center;
+            color: $primary; font-size: 16px;
+          }
+          span { font-size: 14px; font-weight: 900; color: $navy; width: 14px; text-align: center; }
+        }
+      }
+    }
+  }
+
+  .delivery-card-figma {
+    background: white; border-radius: 24px; padding: 20px;
+    margin-top: 24px; border: 1px solid #F3F4F6;
+    h3 {
+        font-size: 14px; font-weight: 900; color: $navy; margin: 0 0 15px 0;
+        display: flex; align-items: center; gap: 8px;
+        ion-icon { color: $primary; }
+    }
+    .select-wrapper-figma {
+        position: relative;
+        select {
+            width: 100%; padding: 12px 16px; border-radius: 14px; border: 1.5px solid #F3F4F6;
+            background: #F9FAFB; color: $navy; font-size: 13px; font-weight: 700;
+            appearance: none; outline: none;
+        }
+        .chevron { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: $muted; pointer-events: none; }
+    }
+  }
+
+  .summary-card-figma {
+    background: white; border-radius: 20px; padding: 20px;
+    margin-top: 12px; border: 1px solid #F3F4F6;
+    .resumen-title {
+      font-size: 16px; font-weight: 800; color: $navy; margin: 0 0 16px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      .red-dot {
+        width: 6px; height: 6px; background: $primary; border-radius: 50%;
+      }
+    }
+    .summary-row {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px; font-size: 14px;
+        span { color: $muted; font-weight: 500; }
+        strong { color: $navy; font-weight: 700; }
+        .free { color: #10B981; font-weight: 700; }
+        &.total { 
+          margin-bottom: 0; margin-top: 16px;
+          span { color: $navy; font-weight: 800; font-size: 16px; } 
+          .total-price { font-size: 18px; font-weight: 800; color: $primary; }
+        }
+    }
+    .divider { height: 1px; background: #F3F4F6; margin: 15px 0; display: none; }
+  }
+
+  .footer-actions {
+    position: fixed; bottom: 0; left: 0; right: 0; padding: 15px 20px 30px;
+    background: linear-gradient(to top, rgba(248, 249, 251, 1) 70%, rgba(248, 249, 251, 0));
+    .btn-checkout-figma {
+        width: 100%; max-width: 600px; margin: 0 auto; display: block;
+        background: #F45741;
+        color: white; border: none; border-radius: 16px; padding: 18px;
+        font-size: 16px; font-weight: 700; box-shadow: 0 8px 20px rgba(232, 67, 45, 0.2);
+        cursor: pointer;
+    }
+  }
+
+
+
+}

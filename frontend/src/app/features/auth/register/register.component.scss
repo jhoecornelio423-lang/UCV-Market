@@ -1,276 +1,421 @@
-// Variables de diseño compartidas
-$primary-color: #0C4A6E;
-$accent-color: #E11D48;
-$text-light: #F8FAFC;
-$text-muted: #94A3B8;
-$background-dark: #0B0F19;
-$input-bg: rgba(255, 255, 255, 0.05);
-$input-focus-border: #38BDF8;
+$coral: #f4513f;
+$coral-light: #ff715b;
+$navy: #07152f;
+$muted: #7b8698;
+$line: #e8eaee;
+$surface: #f7f8fa;
+
+:host {
+  display: block;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 .register-content {
-  --background: #{$background-dark};
-  --color: #{$text-light};
+  --background: #eef1f5;
+  --color: #{$navy};
 }
 
-.register-wrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.register-shell {
   min-height: 100%;
-  padding: 2rem 1.5rem;
-  background: radial-gradient(circle at 10% 20%, rgba(12, 74, 110, 0.2) 0%, rgba(11, 15, 25, 1) 90%);
-}
-
-.register-card-container {
-  width: 100%;
-  max-width: 440px;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-// Cabecera
-.logo-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-
-  .app-title {
-    font-size: 2.25rem;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: white;
-    margin: 0;
-
-    span {
-      background: linear-gradient(135deg, #38BDF8 0%, $accent-color 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-  }
-
-  .app-subtitle {
-    font-size: 0.9rem;
-    color: $text-muted;
-    margin: 0.25rem 0 0 0;
-  }
-}
-
-// Card Glassmorphic
-.glass-card {
-  background: rgba(30, 41, 59, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 24px;
-  padding: 2rem 1.75rem;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-}
-
-// Inputs de Formulario
-.input-group {
   display: flex;
-  flex-direction: column;
-  margin-bottom: 1.25rem;
-
-  label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #E2E8F0;
-    margin-bottom: 0.4rem;
-  }
-
-  .input-wrapper, .select-wrapper {
-    display: flex;
-    align-items: center;
-    position: relative;
-    background: $input-bg;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 0.75rem 0.9rem;
-    transition: all 0.3s ease;
-
-    &:focus-within {
-      border-color: $input-focus-border;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .input-icon {
-      font-size: 1.15rem;
-      color: $text-muted;
-      margin-right: 0.65rem;
-    }
-
-    input, select {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: white;
-      width: 100%;
-      font-size: 0.9rem;
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.35);
-      }
-    }
-
-    select {
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      
-      option {
-        background-color: $background-dark;
-        color: white;
-      }
-    }
-  }
-
-  .eye-icon {
-    font-size: 1.15rem;
-    color: $text-muted;
-    cursor: pointer;
-    position: absolute;
-    right: 0.9rem;
-    z-index: 10;
-
-    &:hover {
-      color: white;
-    }
-  }
-
-  &.has-error {
-    .input-wrapper {
-      border-color: #EF4444;
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
-    }
-  }
-
-  .error-msg {
-    font-size: 0.7rem;
-    color: #F87171;
-    margin-top: 0.3rem;
-    animation: fadeIn 0.3s ease;
-  }
+  align-items: flex-start;
+  justify-content: center;
+  padding: 32px 20px;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 113, 91, 0.15), transparent 24%),
+    linear-gradient(145deg, #f8f9fb 0%, #e9edf3 100%);
 }
 
-// Selector de Rol Segmentado
-.role-selector-group {
-  margin-bottom: 1.5rem;
-
-  label {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #E2E8F0;
-    margin-bottom: 0.5rem;
-  }
-
-  .segmented-control {
-    display: flex;
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    overflow: hidden;
-    padding: 2px;
-
-    input[type="radio"] {
-      display: none;
-    }
-
-    .role-option {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.75rem 0.5rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: $text-muted;
-      cursor: pointer;
-      transition: all 0.3s ease;
-
-      ion-icon {
-        font-size: 1.1rem;
-      }
-
-      &:hover {
-        color: white;
-      }
-    }
-
-    // Efecto cuando el radio está chequeado
-    input[type="radio"]#role-comprador:checked ~ label[for="role-comprador"],
-    input[type="radio"]#role-emprendedor:checked ~ label[for="role-emprendedor"] {
-      background: linear-gradient(135deg, $primary-color 0%, rgba(2, 132, 199, 0.8) 100%);
-      color: white;
-      box-shadow: 0 4px 10px rgba(2, 132, 199, 0.2);
-    }
-  }
+.register-panel {
+  width: 100%;
+  max-width: 540px;
+  padding: 28px 34px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 30px;
+  background: #ffffff;
+  box-shadow: 0 24px 65px rgba(22, 32, 55, 0.14);
 }
 
-// Botón de Registro
+.topbar {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+}
+
+.back-button {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #38445a;
+  background: #f6f7f9;
+  font-size: 21px;
+  text-decoration: none;
+}
+
+.register-header {
+  margin-top: 20px;
+}
+
+.register-header h1 {
+  margin: 0;
+  color: $navy;
+  font-size: 34px;
+  font-weight: 880;
+  line-height: 1;
+  letter-spacing: -1.4px;
+}
+
+.register-header h1 span {
+  display: inline-block;
+  margin-left: 3px;
+  font-size: 27px;
+  transform: translateY(-2px) rotate(6deg);
+}
+
+.register-header p {
+  margin: 11px 0 0;
+  color: $muted;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.register-form {
+  display: block;
+  margin-top: 25px;
+}
+
+.field-group {
+  width: 100%;
+  min-height: 64px;
+  margin-bottom: 12px;
+  padding: 13px 16px 12px;
+  border: 1px solid $line;
+  border-radius: 17px;
+  background: $surface;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.field-group:focus-within {
+  border-color: rgba(244, 81, 63, 0.65);
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(244, 81, 63, 0.09);
+}
+
+.field-group > label,
+.account-type legend {
+  display: block;
+  margin-bottom: 6px;
+  padding: 0;
+  color: #8f98a9;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.field-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.field-control input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  color: #2e3b55;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.field-control input::placeholder {
+  color: #9da6b5;
+  opacity: 0.78;
+  font-weight: 500;
+}
+
+.phone-prefix {
+  flex: 0 0 auto;
+  margin-right: 10px;
+  padding-right: 10px;
+  border-right: 1px solid #dfe2e7;
+  color: $navy;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.password-field input {
+  padding-right: 42px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #929bab;
+  background: transparent;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-toggle ion-icon {
+  font-size: 18px;
+}
+
+.field-group.has-error {
+  border-color: #dc493a;
+  background: #fffafa;
+}
+
+.error-msg,
+.terms-error {
+  display: block;
+  margin-top: 7px;
+  color: #d43f32;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.account-type {
+  width: 100%;
+  margin: 18px 0 0;
+  padding: 0;
+  border: 0;
+}
+
+.account-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.account-options label {
+  min-width: 0;
+  cursor: pointer;
+}
+
+.account-options input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.account-options label > span {
+  min-height: 66px;
+  display: grid;
+  grid-template-columns: 27px minmax(0, 1fr) 18px;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid $line;
+  border-radius: 16px;
+  color: #8b94a5;
+  background: $surface;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.account-options label > span > ion-icon:first-child {
+  font-size: 22px;
+}
+
+.account-options strong,
+.account-options small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-options strong {
+  color: #27344e;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.account-options small {
+  margin-top: 3px;
+  color: #97a0af;
+  font-size: 9px;
+}
+
+.selected-icon {
+  color: transparent;
+  font-size: 18px;
+}
+
+.account-options input:checked + span {
+  border-color: rgba(244, 81, 63, 0.68);
+  color: $coral;
+  background: rgba(244, 81, 63, 0.07);
+  box-shadow: 0 0 0 3px rgba(244, 81, 63, 0.08);
+}
+
+.account-options input:checked + span .selected-icon {
+  color: $coral;
+}
+
+.account-options input:focus-visible + span,
+.legal-consent input:focus-visible + .legal-check,
+.submit-btn:focus-visible,
+.back-button:focus-visible {
+  outline: 3px solid rgba(244, 81, 63, 0.25);
+  outline-offset: 2px;
+}
+
+.legal-consent {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: start;
+  gap: 10px;
+  margin-top: 17px;
+  color: #707a8c;
+  font-size: 11px;
+  line-height: 1.55;
+  cursor: pointer;
+}
+
+.legal-consent input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.legal-check {
+  width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  margin-top: 1px;
+  border: 1px solid #d8dce4;
+  border-radius: 50%;
+  color: transparent;
+  background: #ffffff;
+}
+
+.legal-consent input:checked + .legal-check {
+  border-color: $coral;
+  color: #ffffff;
+  background: $coral;
+}
+
+.legal-check ion-icon {
+  font-size: 13px;
+}
+
+.legal-consent a {
+  color: $coral;
+  font-weight: 750;
+  text-decoration: none;
+}
+
 .submit-btn {
   width: 100%;
-  background: linear-gradient(135deg, #0284C7 0%, $accent-color 100%);
-  border: none;
-  color: white;
-  padding: 0.9rem;
-  border-radius: 12px;
-  font-size: 0.95rem;
-  font-weight: 700;
+  min-height: 52px;
+  margin-top: 18px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(100deg, #ef4937, $coral-light);
+  box-shadow: 0 13px 24px rgba(244, 81, 63, 0.23);
+  font-size: 14px;
+  font-weight: 850;
   cursor: pointer;
-  margin-top: 0.5rem;
-  box-shadow: 0 4px 15px rgba(225, 29, 72, 0.25);
-  transition: all 0.3s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(225, 29, 72, 0.35);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
 }
 
-// Footer
 .footer-links {
+  margin-top: 20px;
   text-align: center;
-  margin-top: 1.25rem;
+}
 
-  p {
-    font-size: 0.85rem;
-    color: $text-muted;
-    margin: 0;
+.footer-links p {
+  margin: 0;
+  color: #7d8594;
+  font-size: 12px;
+}
 
-    a {
-      color: #38BDF8;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s;
+.footer-links a {
+  color: #ef4938;
+  font-weight: 850;
+  text-decoration: none;
+}
 
-      &:hover {
-        color: #7DD3FC;
-        text-decoration: underline;
-      }
-    }
+@media (max-width: 600px) {
+  .register-shell {
+    display: block;
+    padding: 0;
+    background: #ffffff;
+  }
+
+  .register-panel {
+    max-width: 100%;
+    min-height: 100vh;
+    padding: max(22px, env(safe-area-inset-top)) 20px max(26px, env(safe-area-inset-bottom));
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .back-button {
+    width: 36px;
+    height: 36px;
+    background: transparent;
+  }
+
+  .register-header {
+    margin-top: 17px;
+  }
+
+  .register-header h1 {
+    font-size: 29px;
+  }
+
+  .register-form {
+    margin-top: 22px;
   }
 }
 
-// Animaciones
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(15px);
+@media (max-width: 350px) {
+  .register-panel {
+    padding-right: 16px;
+    padding-left: 16px;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  .account-options {
+    gap: 7px;
+  }
+
+  .account-options label > span {
+    grid-template-columns: 22px minmax(0, 1fr) 15px;
+    gap: 5px;
+    padding: 8px;
+  }
+
+  .account-options label > span > ion-icon:first-child {
+    font-size: 18px;
+  }
 }

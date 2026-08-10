@@ -1,0 +1,113 @@
+$sidebar-width: 280px;
+$primary: #E8432D;
+$primary-light: #FFF2F0;
+$navy: #07152f;
+$muted: #818a9b;
+
+.app-main-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+
+  &.with-sidebar {
+    @media (min-width: 1024px) {
+      flex-direction: row;
+    }
+  }
+}
+
+.router-content-wrapper {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* SIDEBAR GLOBAL ESTÁTICO */
+.global-desktop-sidebar {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: flex;
+    flex-direction: column;
+    width: $sidebar-width;
+    background: white;
+    border-right: 1px solid #F3F4F6;
+    padding: 30px 20px;
+    height: 100vh;
+    flex-shrink: 0;
+    z-index: 2000;
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+      .logo {
+        width: 40px;
+        height: 40px;
+        background: $primary;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 900;
+        font-size: 20px;
+      }
+      h2 { font-size: 18px; font-weight: 900; color: $navy; margin: 0; }
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        color: $muted;
+        font-weight: 700;
+        font-size: 14px;
+        transition: all 0.2s;
+        border: none;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        width: 100%;
+
+        ion-icon { font-size: 20px; }
+
+        &.active {
+          background: $primary-light;
+          color: $primary;
+        }
+
+        &:hover:not(.active) {
+          background: #F9FAFB;
+          color: $navy;
+        }
+      }
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      .logout-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+        color: #EF4444;
+        font-weight: 700;
+        cursor: pointer;
+        background: transparent;
+        border: none;
+      }
+    }
+  }
+}
