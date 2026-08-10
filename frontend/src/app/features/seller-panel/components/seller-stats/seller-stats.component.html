@@ -1,172 +1,174 @@
-<div class="stats-view-figma">
-  <header class="stats-header-orange">
-    <h1>Estadísticas</h1>
-    <p>{{ currentMonthYear | titlecase }} · {{ (userProfile$ | async)?.full_name || 'Sweet Corner' }}</p>
-  </header>
+<ion-content [fullscreen]="true">
+  <div class="stats-view-figma">
+    <header class="stats-header-orange">
+      <h1>Estadísticas</h1>
+      <p>{{ currentMonthYear | titlecase }} · {{ (userProfile$ | async)?.full_name || 'Sweet Corner' }}</p>
+    </header>
 
-  <div class="stats-shell-figma">
-    <!-- Summary Grid -->
-    <div class="stats-summary-grid">
-      <div class="summary-card">
-        <p class="lbl">Ingresos totales</p>
-        <h2 class="val">S/ {{ (stats$ | async)?.totalSales | number:'1.0-0' }}</h2>
-        <span class="trend" [class.up]="(stats$ | async)?.incomeGrowth! >= 0" [class.down]="(stats$ | async)?.incomeGrowth! < 0">
-          <ion-icon [name]="(stats$ | async)?.incomeGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
-          {{ (stats$ | async)?.incomeGrowth === 100 ? 'Récord' : ((stats$ | async)?.incomeGrowth! >= 0 ? '+' : '') + (stats$ | async)?.incomeGrowth + '%' }}
-        </span>
+    <div class="stats-shell-figma">
+      <!-- Summary Grid -->
+      <div class="stats-summary-grid">
+        <div class="summary-card">
+          <p class="lbl">Ingresos totales</p>
+          <h2 class="val">S/ {{ (stats$ | async)?.totalSales | number:'1.0-0' }}</h2>
+          <span class="trend" [class.up]="(stats$ | async)?.incomeGrowth! >= 0" [class.down]="(stats$ | async)?.incomeGrowth! < 0">
+            <ion-icon [name]="(stats$ | async)?.incomeGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+            {{ (stats$ | async)?.incomeGrowth === 100 ? 'Récord' : ((stats$ | async)?.incomeGrowth! >= 0 ? '+' : '') + (stats$ | async)?.incomeGrowth + '%' }}
+          </span>
+        </div>
+        <div class="summary-card">
+          <p class="lbl">Pedidos totales</p>
+          <h2 class="val">{{ (products$ | async)?.length }}</h2>
+          <span class="trend" [class.up]="(stats$ | async)?.ordersGrowth! >= 0" [class.down]="(stats$ | async)?.ordersGrowth! < 0">
+            <ion-icon [name]="(stats$ | async)?.ordersGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+            {{ (stats$ | async)?.ordersGrowth === 100 ? 'Récord' : ((stats$ | async)?.ordersGrowth! >= 0 ? '+' : '') + (stats$ | async)?.ordersGrowth + '%' }}
+          </span>
+        </div>
+        <div class="summary-card">
+          <p class="lbl">Ticket promedio</p>
+          <h2 class="val">S/ {{ (stats$ | async)?.avgTicket | number:'1.2-2' }}</h2>
+          <span class="trend" [class.up]="(stats$ | async)?.ticketGrowth! >= 0" [class.down]="(stats$ | async)?.ticketGrowth! < 0">
+            <ion-icon [name]="(stats$ | async)?.ticketGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+            {{ (stats$ | async)?.ticketGrowth! >= 0 ? '+' : '' }}{{ (stats$ | async)?.ticketGrowth }}%
+          </span>
+        </div>
+        <div class="summary-card">
+          <p class="lbl">Clientes nuevos</p>
+          <h2 class="val">{{ (stats$ | async)?.newCustomersCount }}</h2>
+          <span class="trend" [class.up]="(stats$ | async)?.customerGrowth! >= 0" [class.down]="(stats$ | async)?.customerGrowth! < 0">
+            <ion-icon [name]="(stats$ | async)?.customerGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
+            {{ (stats$ | async)?.customerGrowth! >= 0 ? '+' : '' }}{{ (stats$ | async)?.customerGrowth }}%
+          </span>
+        </div>
       </div>
-      <div class="summary-card">
-        <p class="lbl">Pedidos totales</p>
-        <h2 class="val">{{ (products$ | async)?.length }}</h2>
-        <span class="trend" [class.up]="(stats$ | async)?.ordersGrowth! >= 0" [class.down]="(stats$ | async)?.ordersGrowth! < 0">
-          <ion-icon [name]="(stats$ | async)?.ordersGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
-          {{ (stats$ | async)?.ordersGrowth === 100 ? 'Récord' : ((stats$ | async)?.ordersGrowth! >= 0 ? '+' : '') + (stats$ | async)?.ordersGrowth + '%' }}
-        </span>
-      </div>
-      <div class="summary-card">
-        <p class="lbl">Ticket promedio</p>
-        <h2 class="val">S/ {{ (stats$ | async)?.avgTicket | number:'1.2-2' }}</h2>
-        <span class="trend" [class.up]="(stats$ | async)?.ticketGrowth! >= 0" [class.down]="(stats$ | async)?.ticketGrowth! < 0">
-          <ion-icon [name]="(stats$ | async)?.ticketGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
-          {{ (stats$ | async)?.ticketGrowth! >= 0 ? '+' : '' }}{{ (stats$ | async)?.ticketGrowth }}%
-        </span>
-      </div>
-      <div class="summary-card">
-        <p class="lbl">Clientes nuevos</p>
-        <h2 class="val">{{ (stats$ | async)?.newCustomersCount }}</h2>
-        <span class="trend" [class.up]="(stats$ | async)?.customerGrowth! >= 0" [class.down]="(stats$ | async)?.customerGrowth! < 0">
-          <ion-icon [name]="(stats$ | async)?.customerGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
-          {{ (stats$ | async)?.customerGrowth! >= 0 ? '+' : '' }}{{ (stats$ | async)?.customerGrowth }}%
-        </span>
-      </div>
-    </div>
 
-    <!-- Ventas Diarias (SVG Area Chart) -->
-    <section class="chart-section-figma">
-      <div class="chart-header">
-        <h3>Ventas diarias</h3>
-        <span class="period">Esta semana</span>
-      </div>
-      <div class="chart-container-pro">
-        <svg viewBox="0 0 700 180" width="100%" height="100%" class="svg-chart-pro">
-          <defs>
-            <linearGradient id="areaGradStats" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#E8432D" stop-opacity="0.25" />
-              <stop offset="100%" stop-color="#E8432D" stop-opacity="0.0" />
-            </linearGradient>
-            <linearGradient id="lineGradStats" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#E8432D" />
-              <stop offset="100%" stop-color="#FF7B5E" />
-            </linearGradient>
-          </defs>
+      <!-- Ventas Diarias (SVG Area Chart) -->
+      <section class="chart-section-figma">
+        <div class="chart-header">
+          <h3>Ventas diarias</h3>
+          <span class="period">Esta semana</span>
+        </div>
+        <div class="chart-container-pro">
+          <svg viewBox="0 0 700 180" width="100%" height="100%" class="svg-chart-pro">
+            <defs>
+              <linearGradient id="areaGradStats" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#E8432D" stop-opacity="0.25" />
+                <stop offset="100%" stop-color="#E8432D" stop-opacity="0.0" />
+              </linearGradient>
+              <linearGradient id="lineGradStats" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#E8432D" />
+                <stop offset="100%" stop-color="#FF7B5E" />
+              </linearGradient>
+            </defs>
 
-          <!-- Grid lines -->
-          <line x1="50" y1="30" x2="650" y2="30" stroke="#F3F4F6" stroke-width="1" />
-          <line x1="50" y1="85" x2="650" y2="85" stroke="#F3F4F6" stroke-dasharray="4" stroke-width="1" />
-          <line x1="50" y1="140" x2="650" y2="140" stroke="#E5E7EB" stroke-width="1.5" />
+            <!-- Grid lines -->
+            <line x1="50" y1="30" x2="650" y2="30" stroke="#F3F4F6" stroke-width="1" />
+            <line x1="50" y1="85" x2="650" y2="85" stroke="#F3F4F6" stroke-dasharray="4" stroke-width="1" />
+            <line x1="50" y1="140" x2="650" y2="140" stroke="#E5E7EB" stroke-width="1.5" />
 
-          <!-- Area -->
-          <path [attr.d]="svgAreaPath" fill="url(#areaGradStats)" />
+            <!-- Area -->
+            <path [attr.d]="svgAreaPath" fill="url(#areaGradStats)" />
 
-          <!-- Line -->
-          <path [attr.d]="svgLinePath" fill="none" stroke="url(#lineGradStats)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- Line -->
+            <path [attr.d]="svgLinePath" fill="none" stroke="url(#lineGradStats)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
 
-          <!-- Data points -->
-          <g *ngFor="let item of (stats$ | async)?.salesData; let i = index">
-            <circle [attr.cx]="getChartPointX(i)"
-                    [attr.cy]="getChartPointY(item.ventas)"
-                    r="6"
-                    fill="#ffffff"
-                    stroke="#E8432D"
-                    stroke-width="3.5"
-                    class="chart-node-circle"
-                    (click)="onChartBarClick(item)">
-            </circle>
-            <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.ventas) - 20) + ')'">
-              <rect x="-20" y="-18" width="40" height="20" rx="6" fill="#07152f" />
-              <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.ventas }}</text>
+            <!-- Data points -->
+            <g *ngFor="let item of (stats$ | async)?.salesData; let i = index">
+              <circle [attr.cx]="getChartPointX(i)"
+                      [attr.cy]="getChartPointY(item.ventas)"
+                      r="6"
+                      fill="#ffffff"
+                      stroke="#E8432D"
+                      stroke-width="3.5"
+                      class="chart-node-circle"
+                      (click)="onChartBarClick(item)">
+              </circle>
+              <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.ventas) - 20) + ')'">
+                <rect x="-20" y="-18" width="40" height="20" rx="6" fill="#07152f" />
+                <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.ventas }}</text>
+              </g>
+              <text [attr.x]="getChartPointX(i)" y="165" fill="#9CA3AF" font-size="11" font-weight="800" text-anchor="middle">{{ item.day }}</text>
             </g>
-            <text [attr.x]="getChartPointX(i)" y="165" fill="#9CA3AF" font-size="11" font-weight="800" text-anchor="middle">{{ item.day }}</text>
-          </g>
 
-          <!-- Y-axis -->
-          <text x="40" y="34" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">{{ getMaxSales() }}</text>
-          <text x="40" y="144" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">0</text>
-        </svg>
-      </div>
-    </section>
-
-    <!-- Distribución de Ventas (SVG Donut Chart) -->
-    <section class="chart-section-figma">
-      <div class="chart-header">
-        <h3>Distribución</h3>
-        <span class="trend-tag"><ion-icon name="pie-chart-outline"></ion-icon> por categoría</span>
-      </div>
-      
-      <div class="distribution-shell-figma" *ngIf="((stats$ | async)?.categoryStats?.length || 0) > 0">
-        <!-- SVG Donut Chart -->
-        <div class="donut-chart-wrapper">
-          <svg viewBox="0 0 140 140" width="100%" height="100%">
-            <!-- Background Circle -->
-            <circle cx="70" cy="70" r="50" fill="transparent" stroke="#F3F4F6" stroke-width="14"></circle>
-            
-            <!-- Slices -->
-            <circle *ngFor="let cat of (stats$ | async)?.categoryStats"
-                    cx="70" cy="70" r="50"
-                    fill="transparent"
-                    [attr.stroke]="cat.color"
-                    stroke-width="14"
-                    stroke-dasharray="314.159"
-                    [attr.stroke-dashoffset]="cat.dashOffset"
-                    [style.transform]="'rotate(' + cat.cumAngle + 'deg)'"
-                    style="transform-origin: 70px 70px; transition: stroke-dashoffset 0.8s ease;">
-            </circle>
-            
-            <!-- Center hole -->
-            <circle cx="70" cy="70" r="41" fill="#ffffff"></circle>
-            <text x="70" y="68" text-anchor="middle" font-size="10" font-weight="900" fill="#07152f">Categorías</text>
-            <text x="70" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#818a9b">Ventas</text>
+            <!-- Y-axis -->
+            <text x="40" y="34" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">{{ getMaxSales() }}</text>
+            <text x="40" y="144" fill="#9CA3AF" font-size="10" font-weight="800" text-anchor="end">0</text>
           </svg>
         </div>
+      </section>
 
-        <!-- Legend List -->
-        <div class="category-dist-list">
-          <div *ngFor="let cat of (stats$ | async)?.categoryStats" class="cat-stat-row-figma">
-            <div class="color-dot" [style.background-color]="cat.color"></div>
-            <div class="cat-details">
-              <span class="cat-name">{{ cat.name }}</span>
-              <span class="cat-share">{{ cat.percent }}% ({{ cat.count }} uds)</span>
-            </div>
-          </div>
+      <!-- Distribución de Ventas (SVG Donut Chart) -->
+      <section class="chart-section-figma">
+        <div class="chart-header">
+          <h3>Distribución</h3>
+          <span class="trend-tag"><ion-icon name="pie-chart-outline"></ion-icon> por categoría</span>
         </div>
-      </div>
+        
+        <div class="distribution-shell-figma" *ngIf="((stats$ | async)?.categoryStats?.length || 0) > 0">
+          <!-- SVG Donut Chart -->
+          <div class="donut-chart-wrapper">
+            <svg viewBox="0 0 140 140" width="100%" height="100%">
+              <!-- Background Circle -->
+              <circle cx="70" cy="70" r="50" fill="transparent" stroke="#F3F4F6" stroke-width="14"></circle>
+              
+              <!-- Slices -->
+              <circle *ngFor="let cat of (stats$ | async)?.categoryStats"
+                      cx="70" cy="70" r="50"
+                      fill="transparent"
+                      [attr.stroke]="cat.color"
+                      stroke-width="14"
+                      stroke-dasharray="314.159"
+                      [attr.stroke-dashoffset]="cat.dashOffset"
+                      [style.transform]="'rotate(' + cat.cumAngle + 'deg)'"
+                      style="transform-origin: 70px 70px; transition: stroke-dashoffset 0.8s ease;">
+              </circle>
+              
+              <!-- Center hole -->
+              <circle cx="70" cy="70" r="41" fill="#ffffff"></circle>
+              <text x="70" y="68" text-anchor="middle" font-size="10" font-weight="900" fill="#07152f">Categorías</text>
+              <text x="70" y="82" text-anchor="middle" font-size="9" font-weight="800" fill="#818a9b">Ventas</text>
+            </svg>
+          </div>
 
-      <div *ngIf="((stats$ | async)?.categoryStats?.length || 0) === 0" class="empty-mini">
-        Sin ventas registradas para clasificar
-      </div>
-    </section>
-
-    <!-- Productos más vendidos -->
-    <section class="top-products-section">
-      <h3>Productos más vendidos</h3>
-      <div class="top-list-figma">
-        <div *ngFor="let p of (stats$ | async)?.topProducts; let i = index" class="top-item-row">
-          <span class="rank">#{{ i + 1 }}</span>
-          <div class="item-info-stats">
-            <div class="name-price">
-              <span class="name">{{ p.name }}</span>
-              <span class="total">S/ {{ p.total | number:'1.0-0' }}</span>
-            </div>
-            <div class="progress-bar-container">
-              <div class="progress-bar-wrapper">
-                  <div class="progress-fill" [style.width.%]="p.percent"></div>
+          <!-- Legend List -->
+          <div class="category-dist-list">
+            <div *ngFor="let cat of (stats$ | async)?.categoryStats" class="cat-stat-row-figma">
+              <div class="color-dot" [style.background-color]="cat.color"></div>
+              <div class="cat-details">
+                <span class="cat-name">{{ cat.name }}</span>
+                <span class="cat-share">{{ cat.percent }}% ({{ cat.count }} unidades)</span>
               </div>
-              <span class="qty">{{ p.qty }} unidades vendidas</span>
             </div>
           </div>
         </div>
-        <div *ngIf="((stats$ | async)?.topProducts?.length || 0) === 0" class="empty-mini">Aún no hay ventas registradas</div>
-      </div>
-    </section>
+
+        <div *ngIf="((stats$ | async)?.categoryStats?.length || 0) === 0" class="empty-mini">
+          Sin ventas registradas para clasificar
+        </div>
+      </section>
+
+      <!-- Productos más vendidos -->
+      <section class="top-products-section">
+        <h3>Productos más vendidos</h3>
+        <div class="top-list-figma">
+          <div *ngFor="let p of (stats$ | async)?.topProducts; let i = index" class="top-item-row">
+            <span class="rank">#{{ i + 1 }}</span>
+            <div class="item-info-stats">
+              <div class="name-price">
+                <span class="name">{{ p.name }}</span>
+                <span class="total">S/ {{ p.total | number:'1.0-0' }}</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar-wrapper">
+                    <div class="progress-fill" [style.width.%]="p.percent"></div>
+                </div>
+                <span class="qty">{{ p.qty }} unidades vendidas</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="((stats$ | async)?.topProducts?.length || 0) === 0" class="empty-mini">Aún no hay ventas registradas</div>
+        </div>
+      </section>
+    </div>
   </div>
-</div>
+</ion-content>

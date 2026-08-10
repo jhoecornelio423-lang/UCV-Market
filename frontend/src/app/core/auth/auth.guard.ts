@@ -29,8 +29,8 @@ export class AuthGuard implements CanActivate {
         if (expectedRoles && expectedRoles.length > 0) {
           const hasRole = expectedRoles.includes(profile.role);
           if (!hasRole) {
-            // El usuario no tiene el rol necesario, redirige al home
-            return this.router.createUrlTree(['/home']);
+            // El usuario no tiene el rol necesario, redirige al catálogo
+            return this.router.createUrlTree(['/buyer-panel']);
           }
         }
         return true;

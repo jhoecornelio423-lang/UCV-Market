@@ -1,8 +1,10 @@
 import { Injectable, inject, Inject } from '@angular/core';
-import { BehaviorSubject, forkJoin, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, forkJoin, Observable, Subject, from, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { PRODUCT_REPOSITORY, ProductRepository } from '../../../core/repositories/product.repository';
 import { ORDER_REPOSITORY, OrderRepository } from '../../../core/repositories/order.repository';
 import { AuthService } from '../../../core/auth/auth.service';
+import { SupabaseClientService } from '../../../core/database/supabase.client';
 import { Product } from '../../../core/models/product.model';
 import { Category } from '../../../core/models/category.model';
 import { Profile } from '../../../core/models/profile.model';
@@ -40,6 +42,7 @@ export class SellerStateService {
   private productRepository = inject(PRODUCT_REPOSITORY);
   private orderRepository = inject(ORDER_REPOSITORY);
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseClientService);
 
   private productsSubject = new BehaviorSubject<Product[]>([]);
   public products$ = this.productsSubject.asObservable();
@@ -97,14 +100,23 @@ export class SellerStateService {
 
     const products$ = this.productRepository.getSellerProducts(sellerId);
     const orders$ = this.orderRepository.getSellerOrders(sellerId);
+    const reviews$ = from(this.supabaseService.client
+      .from('reviews')
+      .select('id', { count: 'exact', head: true })
+      .eq('reviewee_id', sellerId)
+    ).pipe(
+      map((res: any) => res.count || 0),
+      catchError(() => of(0))
+    );
 
-    forkJoin([products$, orders$]).subscribe({
+    forkJoin([products$, orders$, reviews$]).subscribe({
       next: (results: any) => {
         const products = results[0] as Product[];
         const orders = results[1] as Order[];
+        const reviewsCount = results[2] as number;
         this.productsSubject.next(products);
         this.allOrdersSubject.next(orders);
-        this.processData(products, orders);
+        this.processData(products, orders, reviewsCount);
         this.loading$.next(false);
       },
       error: (err) => {
@@ -114,15 +126,15 @@ export class SellerStateService {
     });
   }
 
-  private processData(products: Product[], orders: Order[]) {
+  private processData(products: Product[], orders: Order[], reviewsCount: number = 0) {
     let stats: Partial<SellerStats> = {};
 
     stats.activeProductsCount = products.filter(p => p.is_active).length;
     stats.totalClicks = products.reduce((acc, p) => acc + (p.whatsapp_clicks || 0), 0);
 
     stats.pendingOrdersCount = orders.filter(o => o.status === 'pending').length;
-    stats.rating = 4.8; // Simulated rating
-    stats.reviewsCount = orders.filter(o => o.status === 'completed').length * 2 || 12; // Simulated reviews based on completed orders
+    stats.rating = this.userProfileSubject.value?.rating_average || 5.0;
+    stats.reviewsCount = reviewsCount;
 
     // Generar Notificaciones Dinámicas
     const newNotifs = [];

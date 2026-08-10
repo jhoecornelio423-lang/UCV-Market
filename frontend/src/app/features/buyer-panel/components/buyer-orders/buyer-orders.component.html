@@ -1,25 +1,11 @@
 <ion-content [fullscreen]="true" class="orders-content">
   <header class="orders-header ion-no-border">
     <ion-toolbar class="header-toolbar">
-      <ion-title>{{ activeTab === 'ventas' ? 'Pedidos Recibidos' : 'Mis Compras' }}</ion-title>
+      <ion-title>Mis Compras</ion-title>
     </ion-toolbar>
 
-    <!-- TABS: VENDEDOR (Nuevos, Activos, Listos) -->
-    <div class="orders-tabs-figma" *ngIf="activeTab === 'ventas'">
-      <button class="tab-item" [class.active]="sellerFilter === 'new'" (click)="setSellerFilter('new')">
-        Nuevos
-        <span class="dot-badge" *ngIf="newOrdersCount > 0">{{ newOrdersCount }}</span>
-      </button>
-      <button class="tab-item" [class.active]="sellerFilter === 'active'" (click)="setSellerFilter('active')">
-        Activos
-      </button>
-      <button class="tab-item" [class.active]="sellerFilter === 'ready'" (click)="setSellerFilter('ready')">
-        Listos
-      </button>
-    </div>
-
     <!-- TABS: COMPRADOR (Activos, Historial) -->
-    <div class="orders-tabs-figma buyer-tabs" *ngIf="activeTab === 'compras'">
+    <div class="orders-tabs-figma buyer-tabs">
       <button class="tab-item" [class.active]="buyerFilter === 'active'" (click)="setBuyerFilter('active')">
         Activos
       </button>
@@ -42,8 +28,8 @@
 
     <!-- Orders List -->
     <div class="orders-list-figma" *ngIf="!loading">
-      <article *ngFor="let order of visibleOrders" class="order-card-figma" [class.buyer-card]="activeTab === 'compras'">
-        <div class="card-body" [style.cursor]="activeTab === 'compras' ? 'pointer' : 'default'" (click)="goToTracking(order)">
+      <article *ngFor="let order of visibleOrders" class="order-card-figma buyer-card">
+        <div class="card-body" style="cursor: pointer;" (click)="goToTracking(order)">
           <div class="card-left">
             <p class="order-id">#{{ order.id.substring(0, 4) | uppercase }} · {{ getOrderDateLabel(order.created_at) }}</p>
             <h4 class="product-title">
@@ -52,7 +38,7 @@
               </span>
             </h4>
             <p class="customer-name">
-              {{ activeTab === 'ventas' ? 'de ' + order.buyer?.full_name : 'Vendido por ' + order.seller?.full_name }}
+              Vendido por {{ order.seller?.full_name }}
             </p>
           </div>
           <div class="card-right">
@@ -63,16 +49,7 @@
           </div>
         </div>
 
-        <div class="card-actions-figma" *ngIf="activeTab === 'ventas'">
-          <button *ngIf="order.status === 'pending'" class="btn-accept" (click)="changeStatus(order, getNextStatus(order.status))">
-            {{ getNextActionLabel(order.status) }}
-          </button>
-          <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-ready" (click)="changeStatus(order, getNextStatus(order.status))">
-            {{ getNextActionLabel(order.status) }}
-          </button>
-        </div>
-
-        <div class="card-actions-figma" *ngIf="activeTab === 'compras'">
+        <div class="card-actions-figma">
           <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-wa" (click)="contactPartnerViaWhatsApp(order, 'compras')">
             Contactar vendedor
           </button>

@@ -10,19 +10,19 @@
 
       <!-- Navegación para Emprendedor -->
       <nav class="nav-links" *ngIf="userProfile?.role === 'emprendedor'">
-        <button class="nav-item" [class.active]="currentPath.startsWith('/seller') && !currentPath.includes('view=')" (click)="goTo('/seller')">
+        <button class="nav-item" [class.active]="currentPath === '/seller/dashboard' || currentPath === '/seller'" (click)="goTo('/seller/dashboard')">
           <ion-icon name="stats-chart-outline"></ion-icon> Dashboard
         </button>
-        <button class="nav-item" [class.active]="currentPath === '/buyer-panel/orders'" (click)="goTo('/buyer-panel/orders')">
-          <ion-icon name="bag-handle-outline"></ion-icon> Ventas
+        <button class="nav-item" [class.active]="currentPath === '/seller/orders'" (click)="goTo('/seller/orders')">
+          <ion-icon name="bag-handle-outline"></ion-icon> Pedidos
         </button>
-        <button class="nav-item" [class.active]="currentPath.includes('view=products')" (click)="goTo('/seller', {view: 'products'})">
+        <button class="nav-item" [class.active]="currentPath === '/seller/products'" (click)="goTo('/seller/products')">
           <ion-icon name="pricetag-outline"></ion-icon> Productos
         </button>
-        <button class="nav-item" [class.active]="currentPath.includes('view=stats')" (click)="goTo('/seller', {view: 'stats'})">
+        <button class="nav-item" [class.active]="currentPath === '/seller/stats'" (click)="goTo('/seller/stats')">
           <ion-icon name="trending-up-outline"></ion-icon> Estadísticas
         </button>
-        <button class="nav-item" [class.active]="currentPath.includes('view=business')" (click)="goTo('/seller', {view: 'business'})">
+        <button class="nav-item" [class.active]="currentPath === '/seller/business'" (click)="goTo('/seller/business')">
           <ion-icon name="business-outline"></ion-icon> Mi negocio
         </button>
       </nav>

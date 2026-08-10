@@ -16,44 +16,16 @@ import { Profile } from '../../../../core/models/profile.model';
 })
 export class BuyerOrdersComponent implements OnInit, OnDestroy {
   buyerOrders: Order[] = [];
-  sellerOrders: Order[] = [];
-
-  activeTab: 'compras' | 'ventas' = 'compras';
-
-  // Filtros para Comprador
+  activeTab: 'compras' | 'ventas' = 'compras'; // Mantener campo para compatibilidad con la firma del componente
   buyerFilter: 'active' | 'history' = 'active';
-
-  // Filtros para Vendedor
-  sellerFilter: 'new' | 'active' | 'ready' = 'new';
-
   userProfile: Profile | null = null;
   loading = false;
 
   get visibleOrders(): Order[] {
-    // Seguridad de Rol: Si el usuario es comprador, forzar vista de compras
-    if (this.userProfile && this.userProfile.role === 'comprador') {
-      this.activeTab = 'compras';
-    }
-
-    if (this.activeTab === 'compras') {
-      const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
-      return this.buyerOrders.filter(order => this.buyerFilter === 'history'
-        ? historicalStatuses.includes(order.status)
-        : !historicalStatuses.includes(order.status));
-    }
-
-    // Filtros para Vendedor según Figma
-    if (this.sellerFilter === 'new') {
-      return this.sellerOrders.filter(o => o.status === 'pending');
-    } else if (this.sellerFilter === 'active') {
-      return this.sellerOrders.filter(o => ['accepted', 'preparing'].includes(o.status));
-    } else {
-      return this.sellerOrders.filter(o => ['ready', 'completed', 'cancelled'].includes(o.status));
-    }
-  }
-
-  get newOrdersCount(): number {
-    return this.sellerOrders.filter(o => o.status === 'pending').length;
+    const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
+    return this.buyerOrders.filter(order => this.buyerFilter === 'history'
+      ? historicalStatuses.includes(order.status)
+      : !historicalStatuses.includes(order.status));
   }
 
   private subscriptions = new Subscription();
@@ -63,23 +35,14 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
-
-  constructor(
-    @Inject(ORDER_REPOSITORY) private orderRepository: OrderRepository
-  ) {}
+  private orderRepository = inject(ORDER_REPOSITORY);
 
   ngOnInit() {
     this.subscriptions.add(
       this.authService.currentProfile$.subscribe(profile => {
         this.userProfile = profile;
         if (profile) {
-          // Si el usuario es emprendedor, mostrar ventas por defecto
-          this.activeTab = profile.role === 'emprendedor' ? 'ventas' : 'compras';
-
           this.loadBuyerOrders(profile.id);
-          if (profile.role === 'emprendedor') {
-            this.loadSellerOrders(profile.id);
-          }
         }
       })
     );
@@ -103,23 +66,9 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
     });
   }
 
-  loadSellerOrders(sellerId: string) {
-    this.orderRepository.getSellerOrders(sellerId).subscribe({
-      next: (orders) => {
-        this.sellerOrders = orders;
-      },
-      error: (err) => {
-        console.error('Error al cargar ventas:', err);
-      }
-    });
-  }
-
   refreshOrders(event: any) {
     if (this.userProfile) {
       this.loadBuyerOrders(this.userProfile.id);
-      if (this.userProfile.role === 'emprendedor') {
-        this.loadSellerOrders(this.userProfile.id);
-      }
     }
     setTimeout(() => {
       event.target.complete();
@@ -128,48 +77,6 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
 
   setBuyerFilter(filter: 'active' | 'history') {
     this.buyerFilter = filter;
-  }
-
-  setSellerFilter(filter: 'new' | 'active' | 'ready') {
-    this.sellerFilter = filter;
-  }
-
-  selectOrderType(type: 'compras' | 'ventas') {
-    if (type === 'ventas' && this.userProfile?.role !== 'emprendedor') {
-      this.activeTab = 'compras';
-      return;
-    }
-    this.activeTab = type;
-  }
-
-  getNextStatus(status: OrderStatus): OrderStatus {
-    const flow: Record<string, OrderStatus> = {
-      'pending': 'accepted',
-      'accepted': 'preparing',
-      'preparing': 'ready',
-      'ready': 'completed'
-    };
-    return flow[status] || status;
-  }
-
-  getNextActionLabel(status: OrderStatus): string {
-    const labels: Record<string, string> = {
-      'pending': 'Aceptar pedido',
-      'accepted': 'Comenzar preparación',
-      'preparing': 'Marcar como listo',
-      'ready': 'Confirmar entrega'
-    };
-    return labels[status] || 'Actualizar';
-  }
-
-  getNextActionIcon(status: OrderStatus): string {
-    const icons: Record<string, string> = {
-      'pending': 'checkmark',
-      'accepted': 'restaurant-outline',
-      'preparing': 'checkmark',
-      'ready': 'checkmark-done'
-    };
-    return icons[status] || 'sync-outline';
   }
 
   getStatusLabel(status: OrderStatus): string {
@@ -186,10 +93,6 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   }
 
   getPartnerName(order: Order): string {
-    if (this.activeTab === 'ventas') {
-      return order.buyer?.full_name || 'Comprador UCV';
-    }
-
     return order.seller?.full_name || 'Emprendedor UCV';
   }
 
@@ -249,36 +152,6 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   /**
    * Permite al emprendedor cambiar el estado del pedido.
    */
-  async changeStatus(order: Order, newStatus: OrderStatus) {
-    const statusLabels: { [key in OrderStatus]: string } = {
-      pending: 'Pendiente',
-      accepted: 'Aceptado',
-      preparing: 'En Preparación',
-      ready: 'Listo para Entregar',
-      completed: 'Entregado/Completado',
-      cancelled: 'Cancelado'
-    };
-
-    const confirmAlert = await this.alertCtrl.create({
-      header: 'Actualizar Estado',
-      message: `¿Deseas marcar el pedido como "${statusLabels[newStatus]}"?`,
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Confirmar',
-          handler: () => {
-            this.executeStatusUpdate(order.id, newStatus);
-          }
-        }
-      ],
-      cssClass: 'custom-alert'
-    });
-    await confirmAlert.present();
-  }
-
   private async executeStatusUpdate(orderId: string, status: OrderStatus) {
     const loading = await this.loadingCtrl.create({
       message: 'Actualizando pedido...',
@@ -292,9 +165,6 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
         this.showToast('Pedido actualizado con éxito.', 'success');
         if (this.userProfile) {
           this.loadBuyerOrders(this.userProfile.id);
-          if (this.userProfile.role === 'emprendedor') {
-            this.loadSellerOrders(this.userProfile.id);
-          }
         }
       },
       error: async (err) => {
@@ -425,9 +295,7 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   }
 
   goToTracking(order: Order) {
-    if (this.activeTab === 'compras') {
-      this.router.navigate(['/buyer-panel/tracking', order.id]);
-    }
+    this.router.navigate(['/buyer-panel/tracking', order.id]);
   }
 
   signOut() {
