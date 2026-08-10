@@ -1,25 +1,25 @@
 @import '../../shared';
 
 .form-container-figma {
-    background: #f8f9fb; min-height: 100%; display: flex; flex-direction: column;
+    background: #f8f9fb; display: flex; flex-direction: column;
     
     .form-header-figma { 
-        padding: calc(env(safe-area-inset-top) + 20px) 20px 20px; 
+        padding: calc(env(safe-area-inset-top) + 16px) 16px 12px; 
         display: flex; 
         align-items: center; 
-        gap: 16px; 
+        gap: 12px; 
         background: white; 
         border-bottom: 1px solid #f3f4f6;
 
         @media (min-width: 1024px) { 
             background: transparent; 
-            padding: 0 0 30px; 
+            padding: 0 0 24px; 
             border-bottom: none;
         }
 
         .back-circle { 
-            width: 40px; 
-            height: 40px; 
+            width: 36px; 
+            height: 36px; 
             border-radius: 50%; 
             background: #F3F4F6; 
             border: none; 
@@ -35,14 +35,14 @@
                 background: #e5e7eb;
             }
         }
-        h2 { font-size: 22px; font-weight: 900; color: $navy; }
+        h2 { font-size: 20px; font-weight: 900; color: $navy; margin: 0; }
     }
 
     .form-scroll-area { 
-        padding: 20px; 
+        padding: 16px; 
         display: flex; 
         flex-direction: column; 
-        gap: 20px; 
+        gap: 16px; 
         
         @media (min-width: 1024px) { 
             padding: 0; 
@@ -54,14 +54,14 @@
 
     .form-card-figma { 
         background: white; 
-        border-radius: 24px; 
-        padding: 24px; 
-        border: 1.5px solid #F3F4F6;
-        box-shadow: 0 4px 15px rgba(7, 21, 47, 0.02);
+        border-radius: 16px; 
+        padding: 16px; 
+        border: 1px solid #F3F4F6;
+        box-shadow: 0 2px 8px rgba(7, 21, 47, 0.02);
         
         &.row-layout { 
             display: flex; 
-            gap: 20px; 
+            gap: 16px; 
         }
 
         .upload-zone { 

@@ -86,7 +86,7 @@ export class SellerProductFormComponent implements OnInit {
   }
 
   closeForm() {
-    this.router.navigate(['/seller-panel/products']);
+    this.router.navigate(['/seller/products']);
   }
 
   onFileChange(event: any) {

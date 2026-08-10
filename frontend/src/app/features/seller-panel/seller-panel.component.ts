@@ -8,4 +8,9 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class SellerPanelComponent {
+  private router = inject(Router);
+
+  get showBottomNav(): boolean {
+    return !this.router.url.includes('/product-form');
+  }
 }

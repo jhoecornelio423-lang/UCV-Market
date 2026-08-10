@@ -23,11 +23,11 @@ export class SellerProductsComponent {
   loading$ = this.sellerState.loading$;
 
   openCreateForm() {
-    this.router.navigate(['/seller-panel/product-form']);
+    this.router.navigate(['/seller/product-form']);
   }
 
   openEditForm(product: Product) {
-    this.router.navigate(['/seller-panel/product-form'], { queryParams: { id: product.id } });
+    this.router.navigate(['/seller/product-form'], { queryParams: { id: product.id } });
   }
 
   getCategoryName(categoryId: string): string {

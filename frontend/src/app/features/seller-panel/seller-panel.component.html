@@ -3,7 +3,7 @@
     <ion-router-outlet></ion-router-outlet>
   </div>
 
-  <nav class="bottom-navigation-figma">
+  <nav class="bottom-navigation-figma" *ngIf="showBottomNav">
     <button type="button" class="nav-item-figma" routerLink="/seller/dashboard" routerLinkActive="active">
       <ion-icon name="stats-chart-outline"></ion-icon>
       <span>Dashboard</span>
