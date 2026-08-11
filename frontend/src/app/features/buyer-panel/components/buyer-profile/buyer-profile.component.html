@@ -8,11 +8,12 @@
     <div class="profile-shell">
       <!-- User Info Card -->
       <div class="user-card">
-        <div class="avatar-container">
+        <div class="avatar-container" (click)="fileInput.click()" style="cursor: pointer;">
           <img [src]="profile?.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar-img" />
           <button class="camera-btn">
             <ion-icon name="camera"></ion-icon>
           </button>
+          <input type="file" #fileInput accept="image/*" style="display: none" (change)="onAvatarSelected($event)" />
         </div>
         <div class="user-data">
           <h2>{{ profile?.full_name || 'Usuario' }}</h2>

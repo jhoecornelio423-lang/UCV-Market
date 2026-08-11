@@ -28,11 +28,60 @@
   justify-content: center;
   align-items: center;
   margin-top: 20px;
+  position: relative;
   
+  .background-decorations {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+
+    .decor-icon {
+      position: absolute;
+      color: #E62020;
+      opacity: 0.12;
+      filter: blur(2px);
+    }
+
+    .decor-1 {
+      top: 5%;
+      left: 10%;
+      font-size: 80px;
+      transform: rotate(-15deg);
+    }
+
+    .decor-2 {
+      bottom: 15%;
+      right: 5%;
+      font-size: 100px;
+      transform: rotate(25deg);
+    }
+
+    .decor-3 {
+      top: 30%;
+      right: 15%;
+      font-size: 60px;
+      transform: rotate(45deg);
+    }
+
+    .decor-4 {
+      bottom: 25%;
+      left: 8%;
+      font-size: 70px;
+      transform: rotate(-25deg);
+    }
+  }
+
   .mascot-img {
     width: 100%;
     max-width: 320px;
     object-fit: contain;
+    position: relative;
+    z-index: 1;
   }
 }
 

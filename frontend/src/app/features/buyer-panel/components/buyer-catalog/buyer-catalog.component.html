@@ -2,13 +2,18 @@
   <main class="catalog-shell">
     <header class="home-header">
       <div class="identity-block">
-        <p class="welcome-line">{{ greeting }}</p>
-        <h1>{{ displayName }}</h1>
-        <button type="button" class="campus-selector">
-          <ion-icon name="location" aria-hidden="true"></ion-icon>
-          <span>UCV · Campus Lima Norte</span>
-          <ion-icon name="chevron-down" class="chevron"></ion-icon>
-        </button>
+        <div class="user-avatar-small" (click)="goToProfile()">
+          <img [src]="userProfile?.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" />
+        </div>
+        <div class="user-text">
+          <p class="welcome-line">{{ greeting }}</p>
+          <h1>{{ displayName }}</h1>
+          <button type="button" class="campus-selector">
+            <ion-icon name="location" aria-hidden="true"></ion-icon>
+            <span>UCV · Campus Lima Norte</span>
+            <ion-icon name="chevron-down" class="chevron"></ion-icon>
+          </button>
+        </div>
       </div>
 
       <div class="header-actions">

@@ -146,6 +146,42 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
     await toast.present();
   }
 
+  async onAvatarSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file || !this.profile) return;
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Actualizando foto...',
+      spinner: 'crescent'
+    });
+    await loading.present();
+
+    const timestamp = new Date().getTime();
+    const extension = file.name.split('.').pop() || 'png';
+    const filePath = `avatars/${this.profile.id}_${timestamp}.${extension}`;
+
+    this.authService.uploadBusinessAsset(filePath, file).subscribe({
+      next: (url) => {
+        this.authService.updateProfile({ avatar_url: url }).subscribe({
+          next: () => {
+            this.showToast('Foto de perfil actualizada', 'success');
+            loading.dismiss();
+          },
+          error: (err) => {
+            console.error(err);
+            this.showToast('Error al guardar la foto en el perfil', 'danger');
+            loading.dismiss();
+          }
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.showToast('Error al subir la imagen', 'danger');
+        loading.dismiss();
+      }
+    });
+  }
+
   async confirmSignOut() {
     const alert = await this.alertCtrl.create({
       header: '¿Cerrar sesión?',

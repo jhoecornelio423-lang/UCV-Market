@@ -137,9 +137,12 @@ export class SupabaseAuthRepository implements AuthRepository {
         }
 
         const fullName = user.user_metadata?.['full_name'] || 'Estudiante UCV';
+        const avatarUrl = user.user_metadata?.['avatar_url'] || user.user_metadata?.['picture'] || null;
+
         const profileData = {
           id: id,
           full_name: fullName,
+          avatar_url: avatarUrl,
           phone: '',
           role: 'comprador',
           campus: 'UCV - Lima Norte',

@@ -46,7 +46,9 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
 
     if (parts.length === 0) return 'Estudiante UCV';
     if (parts.length === 1) return parts[0];
-    return `${parts[0]} ${parts[parts.length - 1]}`;
+    if (parts.length === 3) return `${parts[0]} ${parts[1]}`;
+    if (parts.length >= 4) return `${parts[0]} ${parts[2]}`;
+    return `${parts[0]} ${parts[1]}`; // Default for 2 words
   }
 
   get featuredProduct(): Product | null {
@@ -119,6 +121,8 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+
+
 
   /**
    * Carga la lista completa de categorías desde Supabase.

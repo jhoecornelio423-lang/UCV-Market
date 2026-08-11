@@ -28,8 +28,33 @@ $surface: #f5f6f8;
   align-items: flex-start;
   margin-bottom: 20px;
 
-  .welcome-line { font-size: 13px; font-weight: 500; color: $muted; margin: 0; }
-  h1 { font-size: 24px; font-weight: 900; color: $navy; margin: 4px 0; letter-spacing: -1px; }
+  .identity-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    .user-avatar-small {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      border: 2px solid white;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .user-text {
+      .welcome-line { font-size: 13px; font-weight: 500; color: $muted; margin: 0; margin-bottom: 2px; }
+      h1 { font-size: 20px; font-weight: 900; color: $navy; margin: 0; letter-spacing: -0.5px; }
+    }
+  }
 
   .campus-selector {
     display: flex;

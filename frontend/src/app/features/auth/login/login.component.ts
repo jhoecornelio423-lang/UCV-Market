@@ -113,8 +113,10 @@ export class LoginComponent implements OnInit {
         if (profile.role === 'admin') {
           this.router.navigate(['/admin']);
         } else if (profile.role === 'emprendedor') {
+          sessionStorage.removeItem('banner_shown');
           this.router.navigate(['/seller']);
         } else {
+          sessionStorage.removeItem('banner_shown');
           this.router.navigate(['/buyer-panel/catalog']);
         }
       },
