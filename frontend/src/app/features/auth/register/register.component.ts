@@ -17,6 +17,26 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   selectedLogo: File | null = null;
   logoPreview: string | null = null;
+  isTermsModalOpen = false;
+  isPrivacyModalOpen = false;
+
+  openTermsModal(event: Event) {
+    event.preventDefault();
+    this.isTermsModalOpen = true;
+  }
+
+  closeTermsModal() {
+    this.isTermsModalOpen = false;
+  }
+
+  openPrivacyModal(event: Event) {
+    event.preventDefault();
+    this.isPrivacyModalOpen = true;
+  }
+
+  closePrivacyModal() {
+    this.isPrivacyModalOpen = false;
+  }
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -193,5 +213,30 @@ export class RegisterComponent implements OnInit {
       cssClass: 'custom-alert'
     });
     await alert.present();
+  }
+
+  async onGoogleLogin() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Redirigiendo a Google...',
+      spinner: 'crescent',
+      cssClass: 'market-login-loading'
+    });
+    await loading.present();
+
+    this.authService.signInWithGoogle().subscribe({
+      next: () => {
+        loading.dismiss();
+      },
+      error: async (err) => {
+        loading.dismiss();
+        const alert = await this.alertCtrl.create({
+          header: 'Fallo al registrarse',
+          message: err.message || 'No se pudo iniciar el flujo de registro con Google.',
+          buttons: ['Entendido'],
+          cssClass: 'custom-alert'
+        });
+        await alert.present();
+      }
+    });
   }
 }

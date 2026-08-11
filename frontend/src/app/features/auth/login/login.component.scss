@@ -39,28 +39,18 @@ $surface: #f7f8fa;
 .login-panel {
   position: relative;
   z-index: 1;
-  width: min(1120px, 100%);
-  min-height: 720px;
-  display: grid;
-  grid-template-columns: minmax(390px, 0.84fr) minmax(440px, 1.16fr);
-  grid-template-areas:
-    "brand banner"
-    "welcome banner"
-    "role banner"
-    "form banner"
-    "divider banner"
-    "code banner"
-    "footer banner";
-  grid-template-rows: auto auto auto auto auto 1fr;
-  column-gap: 58px;
-  padding: 52px 52px 36px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.86);
   border-radius: 34px;
   background: rgba(255, 255, 255, 0.97);
   box-shadow:
-    0 30px 80px rgba(22, 32, 55, 0.16),
-    0 4px 16px rgba(22, 32, 55, 0.05);
+    0 30px 80px rgba(22, 32, 55, 0.12),
+    0 4px 16px rgba(22, 32, 55, 0.04);
 }
 
 .brand-header {
@@ -106,7 +96,7 @@ $surface: #f7f8fa;
 }
 
 .welcome-copy {
-  grid-area: welcome;
+  display: none;
   margin-top: 42px;
 }
 
@@ -501,6 +491,42 @@ $surface: #f7f8fa;
   transform: translateY(0);
 }
 
+.google-btn {
+  width: 100%;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 1px solid #e1e5ee;
+  border-radius: 16px;
+  color: #1d2a43;
+  background: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: all 200ms ease;
+  box-shadow: 0 4px 12px rgba(7, 21, 47, 0.03);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #f8f9fb;
+    border-color: #d0d6e2;
+    box-shadow: 0 6px 16px rgba(7, 21, 47, 0.06);
+  }
+
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(7, 21, 47, 0.02);
+  }
+}
+
 .divider {
   position: relative;
   display: flex;
@@ -701,6 +727,7 @@ $surface: #f7f8fa;
   }
 
   .welcome-copy {
+    display: block;
     margin-top: 20px;
     text-align: center;
     position: relative;
@@ -722,27 +749,7 @@ $surface: #f7f8fa;
     margin: 0;
   }
 
-  .google-btn {
-    width: 100%;
-    min-height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 1px solid #dce0e7;
-    border-radius: 16px;
-    color: #1d2a43;
-    background: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 20px;
-  }
 
-  .google-btn ion-icon {
-    font-size: 20px;
-    color: #DB4437; /* Google red */
-  }
 
   .login-form {
     margin-top: 17px;

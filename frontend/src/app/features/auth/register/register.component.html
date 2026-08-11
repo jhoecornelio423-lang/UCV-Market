@@ -180,8 +180,8 @@
           <input type="checkbox" formControlName="acceptTerms" />
           <span class="legal-check"><ion-icon name="checkmark"></ion-icon></span>
           <span>
-            Acepto los <a href="#">Términos de uso</a> y la
-            <a href="#">Política de privacidad</a> de VALLE-GO.
+            Acepto los <a href="#" (click)="openTermsModal($event)">Términos de uso</a> y la
+            <a href="#" (click)="openPrivacyModal($event)">Política de privacidad</a> de VALLE-GO.
           </span>
         </label>
         <span class="terms-error" *ngIf="registerForm.get('acceptTerms')?.touched && registerForm.get('acceptTerms')?.invalid">
@@ -193,8 +193,13 @@
 
       <div class="divider"><span>o continúa con</span></div>
 
-      <button type="button" class="google-btn">
-        <ion-icon name="logo-google"></ion-icon>
+      <button type="button" class="google-btn" (click)="onGoogleLogin()">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22c-.23-.67-.35-1.37-.35-2.09z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
         Registrarme con Google
       </button>
 
@@ -205,6 +210,86 @@
       <!-- Bottom Shapes -->
       <div class="bottom-left-shape"></div>
       <div class="bottom-right-shape"></div>
+
+      <!-- Términos de Uso Modal -->
+      <ion-modal [isOpen]="isTermsModalOpen" (didDismiss)="closeTermsModal()">
+        <ng-template>
+          <ion-header class="ion-no-border">
+            <ion-toolbar style="--background: #f4513f; --color: white;">
+              <ion-title style="font-weight: 800; font-size: 16px;">Términos de Uso</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="closeTermsModal()" style="font-weight: 700; --color: white;">Cerrar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding" style="--background: #ffffff; color: #07152f; font-family: 'Inter', sans-serif;">
+            <div style="padding: 10px 5px;">
+              <h2 style="font-weight: 900; font-size: 22px; color: #f4513f; margin-top: 0;">Términos de Uso de VALLE-GO</h2>
+              <p style="font-size: 12px; color: #7d879a; margin-bottom: 20px;">Última actualización: Agosto de 2026</p>
+              
+              <p style="line-height: 1.6; font-size: 14px;">Bienvenido a VALLE-GO, la plataforma de marketplace universitario para la comunidad de la Universidad César Vallejo (UCV). Al registrarte y utilizar esta aplicación, aceptas regirte por los siguientes términos y condiciones para garantizar un entorno seguro y de confianza:</p>
+              
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">1. Registro e Identificación Obligatoria</h3>
+              <p style="line-height: 1.6; font-size: 14px;">El acceso a VALLE-GO es exclusivo para alumnos, egresados y personal activo de la UCV. Para registrarte, debes validar tu identidad con tu correo institucional (@ucvvirtual.edu.pe o @ucv.edu.pe), número de teléfono celular de contacto real y tu código de estudiante o colaborador. Las cuentas falsas o con información alterada serán canceladas de inmediato.</p>
+              
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">2. Seguridad en las Entregas (Campus Seguro)</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Para velar por tu integridad física y seguridad, la coordinación y entrega de pedidos deberá realizarse exclusivamente en puntos de encuentro oficiales, concurridos y vigilados dentro del campus universitario (por ejemplo, el área exterior de la Biblioteca, la Cafetería Principal o el Hall de Ingreso). Queda terminantemente prohibido acordar encuentros en zonas aisladas o fuera de los horarios de atención autorizados por el campus.</p>
+              
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">3. Transacciones Seguras y Prevención de Estafas</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Queda prohibido exigir adelantos o transferencias bancarias anticipadas. Las transacciones financieras deberán realizarse únicamente bajo el método de <strong>pago contra entrega</strong>, es decir, enviando la transferencia o entregando el efectivo al momento en que el comprador verifique físicamente el estado y la calidad del producto. VALLE-GO no interviene en disputas de dinero.</p>
+              
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">4. Higiene y Salubridad Alimentaria</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Los emprendedores de alimentos asumen la total responsabilidad legal y sanitaria de los productos que ofrecen. Los alimentos deben ser elaborados bajo estrictos estándares de higiene, estar empaquetados herméticamente y entregarse frescos en recipientes limpios. Cualquier reporte verificado de malestar estomacal o intoxicación causará el veto permanente de la tienda.</p>
+
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">5. Reportes de Conducta e Infracciones</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Todo comportamiento de fraude, acoso, robo de productos o falta de respeto hacia otros miembros de la comunidad escolar resultará en la expulsión definitiva de la plataforma. Adicionalmente, las infracciones graves serán reportadas a la Oficina de Bienestar Universitario y al área de Seguridad de la UCV para las acciones disciplinarias y legales pertinentes.</p>
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
+
+      <!-- Política de Privacidad Modal -->
+      <ion-modal [isOpen]="isPrivacyModalOpen" (didDismiss)="closePrivacyModal()">
+        <ng-template>
+          <ion-header class="ion-no-border">
+            <ion-toolbar style="--background: #f4513f; --color: white;">
+              <ion-title style="font-weight: 800; font-size: 16px;">Política de Privacidad</ion-title>
+              <ion-buttons slot="end">
+                <ion-button (click)="closePrivacyModal()" style="font-weight: 700; --color: white;">Cerrar</ion-button>
+              </ion-buttons>
+            </ion-toolbar>
+          </ion-header>
+          <ion-content class="ion-padding" style="--background: #ffffff; color: #07152f; font-family: 'Inter', sans-serif;">
+            <div style="padding: 10px 5px;">
+              <h2 style="font-weight: 900; font-size: 22px; color: #f4513f; margin-top: 0;">Política de Privacidad de VALLE-GO</h2>
+              <p style="font-size: 12px; color: #7d879a; margin-bottom: 20px;">Última actualización: Agosto de 2026</p>
+              
+              <p style="line-height: 1.6; font-size: 14px;">VALLE-GO se compromete a resguardar la privacidad y seguridad de la información personal de los miembros de la comunidad UCV. A continuación, detallamos cómo tratamos tus datos:</p>
+              
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">1. Información Recopilada</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Al registrarte en VALLE-GO, recopilamos los siguientes datos personales:</p>
+              <ul style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
+                <li>Nombre completo.</li>
+                <li>Correo electrónico institucional de la UCV.</li>
+                <li>Código de estudiante.</li>
+                <li>Número de teléfono celular (para enlace directo de ventas vía WhatsApp).</li>
+                <li>Nombre, descripción, horario y logotipo/foto de tu emprendimiento (si te registras como Emprendedor).</li>
+              </ul>
+
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">2. Uso de la Información</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Utilizamos tus datos estrictamente para:</p>
+              <ul style="padding-left: 20px; line-height: 1.6; font-size: 14px;">
+                <li>Autenticar tu identidad y asegurar que eres un miembro legítimo de la comunidad UCV.</li>
+                <li>Habilitar el canal de contacto inmediato: los compradores podrán iniciar un chat de WhatsApp con el número que registraste para coordinar el pedido.</li>
+                <li>Gestionar las notificaciones internas sobre el estado de tus compras y ventas en la plataforma.</li>
+              </ul>
+
+              <h3 style="font-weight: 800; font-size: 16px; margin-top: 24px;">3. Almacenamiento y Protección de Datos</h3>
+              <p style="line-height: 1.6; font-size: 14px;">Tus datos son almacenados de forma segura mediante los servicios de infraestructura en la nube de Supabase (PostgreSQL), protegidos con altos estándares industriales de encriptación de datos. No comercializamos, vendemos ni transferimos tu información personal a terceras empresas o entidades externas a la comunidad UCV.</p>
+            </div>
+          </ion-content>
+        </ng-template>
+      </ion-modal>
     </section>
   </main>
 </ion-content>

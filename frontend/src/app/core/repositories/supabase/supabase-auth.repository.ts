@@ -67,6 +67,24 @@ export class SupabaseAuthRepository implements AuthRepository {
     );
   }
 
+  signInWithGoogle(): Observable<any> {
+    const promise = this.supabaseService.client.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/buyer-panel`
+      }
+    });
+
+    return from(promise).pipe(
+      map(response => {
+        if (response.error) {
+          throw new Error(response.error.message);
+        }
+        return response.data;
+      })
+    );
+  }
+
   signOut(): Observable<void> {
     const promise = this.supabaseService.client.auth.signOut();
     return from(promise).pipe(
@@ -97,11 +115,50 @@ export class SupabaseAuthRepository implements AuthRepository {
       .single();
 
     return from(query).pipe(
-      map(response => {
+      switchMap(response => {
         if (response.error) {
+          // Si el perfil no existe (PGRST116 es el código de row not found en postgrest)
+          if (response.error.code === 'PGRST116' || response.status === 406) {
+            return this.createProfileForUser(id);
+          }
           throw new Error(response.error.message);
         }
-        return response.data as Profile;
+        return of(response.data as Profile);
+      })
+    );
+  }
+
+  private createProfileForUser(id: string): Observable<Profile> {
+    return from(this.supabaseService.client.auth.getUser()).pipe(
+      switchMap(userResponse => {
+        const user = userResponse.data.user;
+        if (!user) {
+          return throwError(() => new Error('Usuario de autenticación no encontrado.'));
+        }
+
+        const fullName = user.user_metadata?.['full_name'] || 'Estudiante UCV';
+        const profileData = {
+          id: id,
+          full_name: fullName,
+          phone: '',
+          role: 'comprador',
+          campus: 'UCV - Lima Norte',
+          rating_average: 5.00
+        };
+
+        const insertQuery = this.supabaseService.client
+          .from('profiles')
+          .insert(profileData)
+          .select()
+          .single();
+
+        return from(insertQuery);
+      }),
+      map(insertResponse => {
+        if (insertResponse.error) {
+          throw new Error(insertResponse.error.message);
+        }
+        return insertResponse.data as Profile;
       })
     );
   }

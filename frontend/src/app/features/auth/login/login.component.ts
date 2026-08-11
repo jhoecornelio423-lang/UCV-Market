@@ -130,4 +130,29 @@ export class LoginComponent implements OnInit {
       }
     });
   }
+
+  async onGoogleLogin() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Redirigiendo a Google...',
+      spinner: 'crescent',
+      cssClass: 'market-login-loading'
+    });
+    await loading.present();
+
+    this.authService.signInWithGoogle().subscribe({
+      next: () => {
+        loading.dismiss();
+      },
+      error: async (err) => {
+        loading.dismiss();
+        const alert = await this.alertCtrl.create({
+          header: 'Fallo al autenticar',
+          message: err.message || 'No se pudo iniciar el flujo de autenticación con Google.',
+          buttons: ['Entendido'],
+          cssClass: 'custom-alert'
+        });
+        await alert.present();
+      }
+    });
+  }
 }

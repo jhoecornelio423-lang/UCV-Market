@@ -29,23 +29,44 @@ export class AuthService {
    * Inicializa la sesión del usuario al cargar la aplicación leyendo el estado de Supabase.
    */
   private initializeSession(): void {
+    const isOAuthCallback = window.location.hash.includes('access_token=') || window.location.search.includes('code=');
+    let hasSkippedInitialNull = false;
+
+    // Fallback: si es callback pero no se inicializa en 3.5 segundos, forzar inicialización
+    if (isOAuthCallback) {
+      setTimeout(() => {
+        if (!this.isInitializedSubject.value) {
+          console.warn('DEBUG: Timeout de inicialización de callback OAuth alcanzado.');
+          this.isInitializedSubject.next(true);
+        }
+      }, 3500);
+    }
+
     // Escuchar los cambios en el estado de autenticación (login, logout, token refresh)
     this.supabaseService.client.auth.onAuthStateChange((event, session) => {
+      console.log('DEBUG: Evento Auth:', event, 'Sesión activa:', !!session);
+
       if (session?.user) {
         this.authRepository.getProfile(session.user.id).pipe(
-          tap(profile => this.currentProfileSubject.next(profile)),
+          tap(profile => {
+            this.currentProfileSubject.next(profile);
+            this.isInitializedSubject.next(true);
+          }),
           catchError(err => {
             console.error('Error al recuperar el perfil del usuario:', err);
             this.currentProfileSubject.next(null);
+            this.isInitializedSubject.next(true);
             return of(null);
           })
-        ).subscribe(() => {
-          // Marca que la inicialización ya está completa
-          this.isInitializedSubject.next(true);
-        });
+        ).subscribe();
       } else {
+        // Si es callback de OAuth y es el primer evento (que es null), esperamos a que se procese
+        if (isOAuthCallback && !hasSkippedInitialNull) {
+          hasSkippedInitialNull = true;
+          console.log('DEBUG: Omitiendo estado null inicial porque se detectó redirección OAuth en la URL.');
+          return;
+        }
         this.currentProfileSubject.next(null);
-        // Si no hay sesión, la inicialización también termina
         this.isInitializedSubject.next(true);
       }
     });
@@ -78,6 +99,13 @@ export class AuthService {
         this.currentProfileSubject.next(profile);
       })
     );
+  }
+
+  /**
+   * Inicia sesión o registro con Google.
+   */
+  signInWithGoogle(): Observable<any> {
+    return this.authRepository.signInWithGoogle();
   }
 
   /**

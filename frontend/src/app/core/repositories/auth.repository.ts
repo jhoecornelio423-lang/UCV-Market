@@ -7,6 +7,7 @@ export const AUTH_REPOSITORY = new InjectionToken<AuthRepository>('AuthRepositor
 export interface AuthRepository {
   signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile>;
   signIn(email: string, password: string): Observable<{ user: any; session: any }>;
+  signInWithGoogle(): Observable<any>;
   signOut(): Observable<void>;
   getCurrentUser(): Observable<any>;
   getProfile(id: string): Observable<Profile>;
