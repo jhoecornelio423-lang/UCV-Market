@@ -617,6 +617,10 @@ $surface: #f7f8fa;
 }
 
 @media (max-width: 860px) {
+  .login-content {
+    --background: #ffffff;
+  }
+
   .login-shell {
     display: block;
     padding: 0;
@@ -629,9 +633,10 @@ $surface: #f7f8fa;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center; /* Centrado vertical */
     margin: 0 auto;
     padding: max(28px, env(safe-area-inset-top)) 25px max(22px, env(safe-area-inset-bottom));
-    overflow: hidden;
+    overflow-y: auto; /* Permitir desplazamiento cuando sale el teclado */
     border: 0;
     border-radius: 0;
     box-shadow: 0 0 34px rgba(7, 21, 47, 0.07);

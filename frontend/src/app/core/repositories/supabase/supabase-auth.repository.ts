@@ -4,6 +4,7 @@ import { SupabaseClientService } from '../../database/supabase.client';
 import { Profile, UserRole } from '../../models/profile.model';
 import { from, Observable, of, throwError, delay } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
+import { Capacitor } from '@capacitor/core';
 
 @Injectable({
   providedIn: 'root'
@@ -68,10 +69,17 @@ export class SupabaseAuthRepository implements AuthRepository {
   }
 
   signInWithGoogle(): Observable<any> {
+    const isApp = Capacitor.isNativePlatform();
+    const redirectTo = isApp 
+      ? 'io.ionic.starter://login-callback' 
+      : `${window.location.origin}/buyer-panel`;
+
+    console.log('DEBUG: OAuth redirectTo:', redirectTo);
+
     const promise = this.supabaseService.client.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/buyer-panel`
+        redirectTo: redirectTo
       }
     });
 
