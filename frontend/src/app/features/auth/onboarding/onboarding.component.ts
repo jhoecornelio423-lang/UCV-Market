@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,11 +7,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./onboarding.component.scss'],
   standalone: false
 })
-export class OnboardingComponent implements OnInit {
+export class OnboardingComponent {
   private router = inject(Router);
-
-  ngOnInit(): void {
-  }
 
   goToLogin() {
     this.router.navigate(['/login/login']);
