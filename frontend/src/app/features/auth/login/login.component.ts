@@ -110,15 +110,8 @@ export class LoginComponent implements OnInit {
     this.authService.signIn(email, password).subscribe({
       next: (profile) => {
         loading.dismiss();
-        if (profile.role === 'admin') {
-          this.router.navigate(['/admin']);
-        } else if (profile.role === 'emprendedor') {
-          sessionStorage.removeItem('banner_shown');
-          this.router.navigate(['/seller']);
-        } else {
-          sessionStorage.removeItem('banner_shown');
-          this.router.navigate(['/buyer-panel/catalog']);
-        }
+        sessionStorage.removeItem('banner_shown');
+        this.authService.redirectUserByRole(profile);
       },
       error: async (err) => {
         loading.dismiss();

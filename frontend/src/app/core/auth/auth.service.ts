@@ -1,9 +1,12 @@
-import { Injectable, Inject } from '@angular/core';
-import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { Injectable, Inject, inject, NgZone } from '@angular/core';
+import { BehaviorSubject, Observable, of, throwError, from } from 'rxjs';
 import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { Profile, UserRole } from '../models/profile.model';
 import { AuthRepository, AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { SupabaseClientService } from '../database/supabase.client';
+import { Router } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
+import { App, URLOpenListenerEvent } from '@capacitor/app';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +14,9 @@ import { SupabaseClientService } from '../database/supabase.client';
 export class AuthService {
   private currentProfileSubject = new BehaviorSubject<Profile | null>(null);
   public currentProfile$: Observable<Profile | null> = this.currentProfileSubject.asObservable();
+  
+  private router = inject(Router);
+  private zone = inject(NgZone);
 
   /**
    * Señaliza cuando la sesión inicial ha sido evaluada (existe o no).
@@ -23,6 +29,7 @@ export class AuthService {
     private supabaseService: SupabaseClientService
   ) {
     this.initializeSession();
+    this.setupNativeDeepLinks();
   }
 
   /**
@@ -163,5 +170,101 @@ export class AuthService {
    */
   uploadBusinessAsset(filePath: string, file: File): Observable<string> {
     return this.authRepository.uploadBusinessAsset(filePath, file);
+  }
+
+  private setupNativeDeepLinks() {
+    if (!Capacitor.isNativePlatform()) {
+      return;
+    }
+
+    App.addListener('appUrlOpen', (event: URLOpenListenerEvent) => {
+      this.zone.run(() => {
+        console.log('DEBUG: Deep link recibido en AuthService:', event.url);
+        const urlStr = event.url;
+        
+        if (urlStr.includes('code=')) {
+          const url = new URL(urlStr);
+          const code = url.searchParams.get('code');
+          if (code) {
+            console.log('DEBUG: Iniciando intercambio de code PKCE en móvil...');
+            this.isInitializedSubject.next(false);
+            
+            from(this.supabaseService.client.auth.exchangeCodeForSession(code)).subscribe({
+              next: (res) => {
+                console.log('DEBUG: Intercambio PKCE exitoso.');
+                if (res.data.session?.user) {
+                  this.authRepository.getProfile(res.data.session.user.id).subscribe({
+                    next: (profile) => {
+                      this.redirectUserByRole(profile);
+                    },
+                    error: (err) => {
+                      console.error('DEBUG: Error al obtener perfil post-PKCE:', err);
+                      this.isInitializedSubject.next(true);
+                    }
+                  });
+                } else {
+                  this.isInitializedSubject.next(true);
+                }
+              },
+              error: (err) => {
+                console.error('DEBUG: Error en intercambio PKCE:', err);
+                this.isInitializedSubject.next(true);
+              }
+            });
+          }
+        } else if (urlStr.includes('access_token=')) {
+          // El token implicit flow viene en la hash part (#)
+          // URL: io.ionic.starter://login-callback#access_token=...&refresh_token=...
+          const hashIndex = urlStr.indexOf('#');
+          if (hashIndex !== -1) {
+            const hash = urlStr.substring(hashIndex + 1);
+            const params = new URLSearchParams(hash);
+            const accessToken = params.get('access_token');
+            const refreshToken = params.get('refresh_token');
+            if (accessToken && refreshToken) {
+              console.log('DEBUG: Cargando sesión implícita en móvil...');
+              this.isInitializedSubject.next(false);
+              
+              from(this.supabaseService.client.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken
+              })).subscribe({
+                next: (res) => {
+                  console.log('DEBUG: Sesión implícita cargada con éxito.');
+                  if (res.data.session?.user) {
+                    this.authRepository.getProfile(res.data.session.user.id).subscribe({
+                      next: (profile) => {
+                        this.redirectUserByRole(profile);
+                      },
+                      error: (err) => {
+                        console.error('DEBUG: Error al obtener perfil post-Implicit:', err);
+                        this.isInitializedSubject.next(true);
+                      }
+                    });
+                  } else {
+                    this.isInitializedSubject.next(true);
+                  }
+                },
+                error: (err) => {
+                  console.error('DEBUG: Error al cargar sesión implícita:', err);
+                  this.isInitializedSubject.next(true);
+                }
+              });
+            }
+          }
+        }
+      });
+    });
+  }
+
+  public redirectUserByRole(profile: Profile): void {
+    console.log('DEBUG: Redireccionando según rol:', profile.role);
+    if (profile.role === 'emprendedor') {
+      this.router.navigate(['/seller']);
+    } else if (profile.role === 'admin') {
+      this.router.navigate(['/admin']);
+    } else {
+      this.router.navigate(['/buyer-panel/catalog']);
+    }
   }
 }
