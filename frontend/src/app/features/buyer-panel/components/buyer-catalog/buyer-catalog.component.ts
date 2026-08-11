@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Inject, AfterViewInit } from '@angular/core';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
@@ -19,7 +19,7 @@ import { FavoritesService } from '../../../../core/services/favorites.service';
   styleUrls: ['./buyer-catalog.component.scss'],
   standalone: false
 })
-export class BuyerCatalogComponent implements OnInit, OnDestroy {
+export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   products: Product[] = [];
   categories: Category[] = [];
   unreadCount$: Observable<number>;
@@ -29,6 +29,11 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
   loading = false;
   userProfile: Profile | null = null;
   cartCount = 0;
+
+  featuredProductIndex = 0;
+  private carouselInterval: any;
+  private touchStartX = 0;
+  private touchEndX = 0;
 
   get greeting(): string {
     const currentHour = new Date().getHours();
@@ -51,8 +56,19 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
     return `${parts[0]} ${parts[1]}`; // Default for 2 words
   }
 
-  get featuredProduct(): Product | null {
-    return this.products.length > 0 ? this.products[0] : null;
+  get featuredProducts(): Product[] {
+    return this.products.slice(0, 3);
+  }
+
+  getFeaturedClass(index: number): string {
+    const N = this.featuredProducts.length;
+    if (N === 0) return '';
+    const diff = (index - (this.featuredProductIndex % N) + N) % N;
+    
+    if (diff === 0) return 'card-active';
+    if (diff === 1) return 'card-next';
+    if (diff === 2) return 'card-back';
+    return 'card-hidden';
   }
 
   get popularProducts(): Product[] {
@@ -120,6 +136,74 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+    this.stopCarousel();
+  }
+
+  ngAfterViewInit() {
+    this.startCarousel();
+  }
+
+  ionViewDidEnter() {
+    this.startCarousel();
+  }
+
+  ionViewWillLeave() {
+    this.stopCarousel();
+  }
+
+  private startCarousel() {
+    this.stopCarousel(); // Evitar duplicados
+    this.carouselInterval = setInterval(() => {
+      if (this.products.length > 0) {
+        this.nextFeatured();
+      }
+    }, 4000); // Rotar cada 4 segundos
+  }
+
+  private stopCarousel() {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
+      this.carouselInterval = null;
+    }
+  }
+
+  private resetCarouselInterval() {
+    this.stopCarousel();
+    this.startCarousel();
+  }
+
+  onTouchStart(event: TouchEvent) {
+    this.touchStartX = event.changedTouches[0].screenX;
+  }
+
+  onTouchEnd(event: TouchEvent) {
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.handleSwipe();
+  }
+
+  private handleSwipe() {
+    const threshold = 40;
+    if (this.touchEndX < this.touchStartX - threshold) {
+      // Swipe a la izquierda -> siguiente
+      this.nextFeatured();
+      this.resetCarouselInterval();
+    } else if (this.touchEndX > this.touchStartX + threshold) {
+      // Swipe a la derecha -> anterior
+      this.prevFeatured();
+      this.resetCarouselInterval();
+    }
+  }
+
+  nextFeatured() {
+    this.featuredProductIndex++;
+  }
+
+  prevFeatured() {
+    const N = this.featuredProducts.length;
+    if (N > 0) {
+      // Evitar índices negativos en JS
+      this.featuredProductIndex = (this.featuredProductIndex - 1 + N) % N;
+    }
   }
 
 

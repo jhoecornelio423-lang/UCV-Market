@@ -39,18 +39,38 @@
       />
     </div>
 
-    <!-- Figma Style Banner -->
-    <section *ngIf="featuredProduct as featured" class="featured-banner-figma" (click)="addToCart(featured)">
-      <div class="banner-content">
-        <span class="offer-label"><ion-icon name="flame" style="margin-right:4px; font-size:14px; transform:translateY(2px)"></ion-icon> Oferta del día</span>
-        <h2 class="banner-title">{{ featured.name }}<br>a S/ {{ (featured.price * 0.9).toFixed(2) }} hoy</h2>
-        <button type="button" class="banner-btn">
-          Ver oferta
-          <ion-icon name="arrow-forward-outline"></ion-icon>
-        </button>
+    <!-- Stacked Cards Banner -->
+    <section class="featured-carousel-wrapper" *ngIf="featuredProducts.length > 0">
+      <div class="featured-stacked-carousel"
+        (touchstart)="onTouchStart($event)"
+        (touchend)="onTouchEnd($event)">
+        <div 
+          *ngFor="let featured of featuredProducts; let i = index" 
+          class="stacked-card" 
+          [ngClass]="getFeaturedClass(i)"
+          (click)="addToCart(featured)">
+          
+          <div class="banner-content">
+            <span class="offer-label"><ion-icon name="flame" style="margin-right:4px; font-size:14px; transform:translateY(2px)"></ion-icon> Oferta del día</span>
+            <h2 class="banner-title">{{ featured.name }}<br>a S/ {{ (featured.price * 0.9).toFixed(2) }} hoy</h2>
+            <button type="button" class="banner-btn">
+              Ver oferta
+              <ion-icon name="arrow-forward-outline"></ion-icon>
+            </button>
+          </div>
+          <div class="banner-image-container">
+            <img [src]="getProductImage(featured)" [alt]="featured.name" />
+          </div>
+        </div>
       </div>
-      <div class="banner-image-container">
-        <img [src]="getProductImage(featured)" [alt]="featured.name" />
+      
+      <!-- Dots Indicator -->
+      <div class="carousel-dots">
+        <span 
+          *ngFor="let _ of featuredProducts; let i = index" 
+          class="dot"
+          [class.active]="(featuredProductIndex % featuredProducts.length) === i">
+        </span>
       </div>
     </section>
 

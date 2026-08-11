@@ -1,6 +1,7 @@
 .buyer-layout {
   --background: #f4f6f9;
-  height: 100vh;
+  height: 100dvh; /* Soporte para barras móviles dinámicas */
+  height: 100%; /* Fallback si está dentro de ion-app */
   display: flex;
   flex-direction: column;
 }
@@ -18,8 +19,9 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 10px 0;
-  height: 64px;
+  padding-top: 10px;
+  padding-bottom: calc(10px + var(--ion-safe-area-bottom, env(safe-area-inset-bottom)));
+  min-height: calc(64px + var(--ion-safe-area-bottom, env(safe-area-inset-bottom)));
 }
 
 .nav-item-figma {
