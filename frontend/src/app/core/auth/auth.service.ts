@@ -24,6 +24,8 @@ export class AuthService {
    */
   private isInitializedSubject = new BehaviorSubject<boolean>(false);
   public isInitialized$: Observable<boolean> = this.isInitializedSubject.asObservable();
+  
+  private profileSubscriptionChannel: any = null;
 
   constructor(
     @Inject(AUTH_REPOSITORY) private authRepository: AuthRepository,
@@ -57,18 +59,21 @@ export class AuthService {
       if (session?.user) {
         // Suscribirse a cambios en tiempo real del perfil para suspensión en vivo
         const userId = session.user.id;
-        this.supabaseService.client.channel('custom-filter-channel')
-          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload) => {
-            const updatedProfile = payload.new as Profile;
-            if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
-               this.zone.run(() => {
-                 this.redirectUserByRole(updatedProfile);
-               });
-            } else {
-               this.currentProfileSubject.next(updatedProfile);
-            }
-          })
-          .subscribe();
+        if (!this.profileSubscriptionChannel) {
+          this.profileSubscriptionChannel = this.supabaseService.client.channel(`profile-updates-${userId}`);
+          this.profileSubscriptionChannel
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload: any) => {
+              const updatedProfile = payload.new as Profile;
+              if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
+                 this.zone.run(() => {
+                   this.redirectUserByRole(updatedProfile);
+                 });
+              } else {
+                 this.currentProfileSubject.next(updatedProfile);
+              }
+            })
+            .subscribe();
+        }
 
         this.authRepository.getProfile(userId).pipe(
           tap(profile => {
@@ -83,6 +88,10 @@ export class AuthService {
           })
         ).subscribe();
       } else {
+        if (this.profileSubscriptionChannel) {
+          this.supabaseService.client.removeChannel(this.profileSubscriptionChannel);
+          this.profileSubscriptionChannel = null;
+        }
         // Si es callback de OAuth y es el primer evento (que es null), esperamos a que se procese
         if (isOAuthCallback && !hasSkippedInitialNull) {
           hasSkippedInitialNull = true;
