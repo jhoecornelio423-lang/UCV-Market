@@ -11,9 +11,51 @@
       <ion-icon name="search-outline"></ion-icon>
       <input type="text" placeholder="Busca productos o emprendedores..." (input)="onSearch($event)">
     </div>
-    <button class="filter-btn">
-      <ion-icon name="filter-outline"></ion-icon>
+    <button class="filter-btn" (click)="toggleFilters($event)">
+      <ion-icon name="filter-outline" [class.active-filter]="(sortBy$ | async) !== 'none' || (onlyAvailable$ | async)"></ion-icon>
     </button>
+
+    <!-- Modal de filtros emergente (estilo popover) -->
+    <div class="filters-dropdown" *ngIf="showFiltersModal" (click)="$event.stopPropagation()">
+      <div class="filter-header">
+        <h4>Filtrar y Ordenar</h4>
+        <button class="reset-btn" (click)="resetFilters()">Limpiar</button>
+      </div>
+      
+      <div class="filter-body">
+        <!-- Ordenar por -->
+        <div class="filter-group">
+          <h5>Ordenar por</h5>
+          <div class="option-list">
+            <label class="option-item">
+              <input type="radio" name="sortBy" value="none" [checked]="(sortBy$ | async) === 'none'" (change)="setSortBy('none')">
+              <span>Relevancia</span>
+            </label>
+            <label class="option-item">
+              <input type="radio" name="sortBy" value="price-asc" [checked]="(sortBy$ | async) === 'price-asc'" (change)="setSortBy('price-asc')">
+              <span>Menor precio</span>
+            </label>
+            <label class="option-item">
+              <input type="radio" name="sortBy" value="price-desc" [checked]="(sortBy$ | async) === 'price-desc'" (change)="setSortBy('price-desc')">
+              <span>Mayor precio</span>
+            </label>
+            <label class="option-item">
+              <input type="radio" name="sortBy" value="rating-desc" [checked]="(sortBy$ | async) === 'rating-desc'" (change)="setSortBy('rating-desc')">
+              <span>Mayor calificación</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Disponibilidad -->
+        <div class="filter-group">
+          <h5>Disponibilidad</h5>
+          <label class="toggle-item">
+            <span>Mostrar solo disponibles</span>
+            <input type="checkbox" [checked]="onlyAvailable$ | async" (change)="toggleOnlyAvailable($event)">
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Categories Chips -->
@@ -42,7 +84,7 @@
     <h2>EMPRENDIMIENTOS</h2>
   </div>
   <div class="sellers-scroll">
-    <div class="seller-card" *ngFor="let seller of sellers">
+    <div class="seller-card" *ngFor="let seller of sellers" [routerLink]="['/buyer-panel/seller-store', seller.id]">
       <div class="seller-image-wrapper">
         <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="seller" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
       </div>

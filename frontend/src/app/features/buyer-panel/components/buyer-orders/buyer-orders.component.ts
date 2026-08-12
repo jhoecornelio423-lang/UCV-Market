@@ -21,6 +21,11 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   userProfile: Profile | null = null;
   loading = false;
 
+  isReviewModalOpen = false;
+  selectedOrder: Order | null = null;
+  selectedRating = 0;
+  reviewComment = '';
+
   get visibleOrders(): Order[] {
     const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
     return this.buyerOrders.filter(order => this.buyerFilter === 'history'
@@ -183,49 +188,33 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   /**
    * Califica al emprendedor tras una compra exitosa.
    */
-  async qualifySeller(order: Order) {
-    const alert = await this.alertCtrl.create({
-      header: 'Calificar Emprendedor',
-      subHeader: `Pedido #${order.id.substring(0, 8)}`,
-      message: 'Evalúa tu experiencia de compra del 1 al 5:',
-      inputs: [
-        {
-          name: 'rating',
-          type: 'number',
-          placeholder: 'Estrellas (1-5)',
-          min: 1,
-          max: 5
-        },
-        {
-          name: 'comment',
-          type: 'textarea',
-          placeholder: 'Deja tu comentario/reseña aquí...'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Enviar Calificación',
-          handler: (data) => {
-            const rating = parseInt(data.rating, 10);
-            const comment = data.comment;
+  qualifySeller(order: Order) {
+    this.selectedOrder = order;
+    this.selectedRating = 0;
+    this.reviewComment = '';
+    this.isReviewModalOpen = true;
+  }
 
-            if (isNaN(rating) || rating < 1 || rating > 5) {
-              this.showToast('Por favor, ingresa una calificación válida del 1 al 5.', 'warning');
-              return false; // Evita cerrar el modal
-            }
+  setRating(rating: number) {
+    this.selectedRating = rating;
+  }
 
-            this.submitReview(order, rating, comment);
-            return true;
-          }
-        }
-      ],
-      cssClass: 'custom-alert'
-    });
-    await alert.present();
+  getRatingLabel(rating: number): string {
+    switch (rating) {
+      case 1: return 'Muy malo ★';
+      case 2: return 'Malo ★★';
+      case 3: return 'Regular ★★★';
+      case 4: return 'Bueno ★★★★';
+      case 5: return '¡Excelente! ★★★★★';
+      default: return '';
+    }
+  }
+
+  submitCustomReview() {
+    if (!this.selectedOrder || this.selectedRating === 0) return;
+    
+    this.isReviewModalOpen = false;
+    this.submitReview(this.selectedOrder, this.selectedRating, this.reviewComment);
   }
 
   private submitReview(order: Order, rating: number, comment: string) {

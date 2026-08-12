@@ -64,8 +64,8 @@
       </div>
 
       <!-- Seller Info -->
-      <div class="seller-card">
-        <img [src]="product.seller?.avatar_url || 'assets/images/default-avatar.png'" alt="Vendedor" />
+      <div class="seller-card" [routerLink]="['/buyer-panel/seller-store', product.seller_id]" style="cursor: pointer;">
+        <img [src]="product.seller?.avatar_url || 'assets/images/default-avatar.png'" alt="Vendedor" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
         <div class="seller-details">
           <span class="s-label">Vendedor</span>
           <h4 class="s-name">{{ product.seller?.full_name || 'Vendedor' }}</h4>

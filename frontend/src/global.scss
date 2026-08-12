@@ -89,7 +89,7 @@ ion-button {
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
 
 /* Custom premium styles for Alerts and Loading elements matching UCV Market branding */
 .custom-alert {
@@ -185,6 +185,36 @@ ion-button {
   .loading-wrapper {
     box-shadow: 0 15px 30px rgba(7, 21, 47, 0.25);
     padding: 18px 24px;
+  }
+}
+
+/* Estilos de círculo de fondo premium y separación para los botones de retroceso (Back Buttons) */
+ion-back-button.back-btn {
+  --color: #07152f !important;
+  --background: #ffffff !important;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  margin-left: 16px !important; /* Separado de la izquierda */
+  box-shadow: 0 4px 12px rgba(7, 21, 47, 0.08) !important;
+  --padding-start: 0 !important;
+  --padding-end: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  
+  &::part(native) {
+    border-radius: 50% !important;
+    padding: 0 !important;
+    width: 40px !important;
+    height: 40px !important;
+    background: #ffffff !important;
+  }
+
+  &::part(icon) {
+    font-size: 20px !important;
+    margin: 0 !important;
+    color: #07152f !important;
   }
 }
 

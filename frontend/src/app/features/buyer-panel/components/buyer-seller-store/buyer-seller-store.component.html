@@ -1,0 +1,89 @@
+<ion-content [fullscreen]="true" class="store-content">
+  <div *ngIf="loading" class="loading-state">
+    <ion-spinner></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && seller" class="store-container">
+    
+    <!-- Hero Banner & Back Button -->
+    <div class="store-hero">
+      <img *ngIf="seller.banner_url" [src]="seller.banner_url" alt="Banner Negocio" class="banner-img" onerror="this.style.display='none'" />
+      <div class="overlay"></div>
+      
+      <button class="back-btn" (click)="goBack()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Store Profile Card -->
+    <div class="store-profile-card">
+      <div class="profile-avatar-row">
+        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar-img" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
+        <div class="store-badges">
+          <span class="badge-status open" *ngIf="seller.accepting_orders">Abierto</span>
+          <span class="badge-status closed" *ngIf="!seller.accepting_orders">Cerrado</span>
+          <span class="badge-category">{{ seller.business_category || 'Emprendedor UCV' }}</span>
+        </div>
+      </div>
+
+      <div class="store-info-section">
+        <h1 class="store-name">{{ seller.full_name }}</h1>
+        <p class="store-desc">{{ seller.business_description || 'Sin descripción comercial.' }}</p>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="metrics-row">
+        <div class="metric-item">
+          <ion-icon name="star" class="star-icon"></ion-icon>
+          <span class="value">{{ seller.rating_average || '5.0' | number:'1.1-1' }}</span>
+          <span class="label">Calificación</span>
+        </div>
+        <div class="divider"></div>
+        <div class="metric-item">
+          <ion-icon name="location-outline" class="loc-icon"></ion-icon>
+          <span class="value">{{ seller.business_location || 'Campus UCV' }}</span>
+          <span class="label">Ubicación</span>
+        </div>
+        <div class="divider"></div>
+        <div class="metric-item">
+          <ion-icon name="time-outline" class="time-icon"></ion-icon>
+          <span class="value">{{ seller.open_time || '08:00' }} - {{ seller.close_time || '18:00' }}</span>
+          <span class="label">Horario</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products List Section -->
+    <div class="products-section">
+      <h3 class="section-title">Nuestros Productos</h3>
+
+      <div class="products-grid" *ngIf="products.length > 0; else noProducts">
+        <div class="product-card" *ngFor="let product of products" [routerLink]="['/buyer-panel/product', product.id]">
+          <div class="image-wrapper">
+            <img [src]="getProductImage(product)" [alt]="product.name" />
+            <button class="heart-btn" (click)="toggleFavorite(product, $event)">
+              <ion-icon name="heart" class="heart-icon" [class.active]="isFavorite(product.id)"></ion-icon>
+            </button>
+            <span *ngIf="product.stock <= 2 && product.stock > 0" class="low-stock-badge">¡Últimos!</span>
+          </div>
+          
+          <div class="card-content">
+            <h4 class="product-name">{{ product.name }}</h4>
+            <p class="product-desc">{{ product.description || 'Sin descripción.' }}</p>
+            <div class="price-row">
+              <strong class="price">S/ {{ product.price | number:'1.2-2' }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noProducts>
+        <div class="empty-state">
+          <ion-icon name="fast-food-outline"></ion-icon>
+          <p>Este emprendedor aún no tiene productos disponibles.</p>
+        </div>
+      </ng-template>
+    </div>
+
+  </div>
+</ion-content>

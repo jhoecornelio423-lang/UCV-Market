@@ -17,10 +17,37 @@
       </div>
 
       <div class="header-actions">
-        <button type="button" class="header-icon" (click)="goToNotifications()" aria-label="Notificaciones">
+        <button type="button" class="header-icon" (click)="goToNotifications($event)" aria-label="Notificaciones">
           <ion-icon name="notifications-outline"></ion-icon>
           <span class="action-badge pulse" *ngIf="(unreadCount$ | async)! > 0">{{ unreadCount$ | async }}</span>
         </button>
+
+        <!-- Dropdown de notificaciones para Web/Desktop -->
+        <div class="notif-dropdown" *ngIf="showNotifDropdown" (click)="$event.stopPropagation()">
+          <div class="dropdown-header">
+            <h4>Notificaciones</h4>
+            <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+          </div>
+          <div class="notif-list" *ngIf="(notifications$ | async)?.length; else emptyNotifs">
+            <div class="notif-item" *ngFor="let notif of (notifications$ | async)" [class.unread]="notif.unread" (click)="onNotificationClick(notif)" style="cursor: pointer;">
+              <div class="notif-icon" [style.background-color]="notif.iconBg" [style.color]="notif.iconColor">
+                <ion-icon [name]="notif.icon"></ion-icon>
+              </div>
+              <div class="notif-body">
+                <h5>{{ notif.title }}</h5>
+                <p>{{ notif.body }}</p>
+                <span class="time">{{ notif.time }}</span>
+              </div>
+              <span class="unread-dot" *ngIf="notif.unread"></span>
+            </div>
+          </div>
+          <ng-template #emptyNotifs>
+            <div class="empty-notifs">
+              <ion-icon name="notifications-off-outline"></ion-icon>
+              <p>No tienes notificaciones</p>
+            </div>
+          </ng-template>
+        </div>
         <button type="button" class="header-icon" (click)="goToCart()" aria-label="Abrir carrito">
           <ion-icon name="cart-outline"></ion-icon>
           <span *ngIf="cartCount > 0" class="action-badge">{{ cartCount }}</span>
@@ -48,7 +75,7 @@
           *ngFor="let featured of featuredProducts; let i = index" 
           class="stacked-card" 
           [ngClass]="getFeaturedClass(i)"
-          (click)="addToCart(featured)">
+          [routerLink]="['/buyer-panel/product', featured.id]">
           
           <div class="banner-content">
             <span class="offer-label"><ion-icon name="flame" style="margin-right:4px; font-size:14px; transform:translateY(2px)"></ion-icon> Oferta del día</span>
@@ -97,7 +124,7 @@
       <section class="products-section-horizontal" aria-labelledby="popular-title">
         <div class="section-header-figma">
           <h3 id="popular-title" style="display:flex; align-items:center; gap:6px;">Popular ahora <ion-icon name="flame" style="color:var(--ion-color-primary)"></ion-icon></h3>
-          <button type="button" class="see-all" (click)="selectCategory('')">Ver todo</button>
+          <button type="button" class="see-all" routerLink="/buyer-panel/explore">Ver todo</button>
         </div>
 
         <div class="horizontal-scroller">
@@ -127,7 +154,7 @@
       <section class="nearby-section-figma" aria-labelledby="nearby-title">
         <div class="section-header-figma">
           <h3 id="nearby-title" style="display:flex; align-items:center; gap:6px;">Cerca de ti <ion-icon name="location" style="color:var(--ion-color-primary)"></ion-icon></h3>
-          <button type="button" class="see-all">Ver todo</button>
+          <button type="button" class="see-all" routerLink="/buyer-panel/explore">Ver todo</button>
         </div>
 
         <div class="vertical-list-figma">

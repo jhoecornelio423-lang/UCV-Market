@@ -15,13 +15,17 @@ $bg: #f8f9fb;
 }
 
 .orders-header {
-  --background: white;
   border-bottom: 1px solid #F3F4F6;
-  .header-toolbar {
-    --background: white;
-    --color: #{$navy};
-    --title-font-weight: 900;
-    padding-top: calc(env(safe-area-inset-top) + 10px);
+  background: white;
+  
+  .page-header {
+    padding: calc(env(safe-area-inset-top) + 20px) 24px 10px;
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: #07152f;
+      margin: 0;
+    }
   }
 }
 
@@ -95,3 +99,180 @@ $bg: #f8f9fb;
     &.active { color: $primary; &::after { content: ''; width: 4px; height: 4px; background: $primary; border-radius: 50%; margin-top: 2px; } }
   }
 }
+
+.review-modal {
+  --width: 90%;
+  --max-width: 440px;
+  --height: auto;
+  --border-radius: 24px;
+  --box-shadow: 0 20px 40px rgba(7, 21, 47, 0.15);
+  
+  &::part(content) {
+    border-radius: 24px;
+    overflow: hidden;
+  }
+}
+
+.review-modal-content {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    h2 {
+      font-size: 20px;
+      font-weight: 900;
+      color: $navy;
+      margin: 0;
+    }
+    
+    .close-btn {
+      background: #f3f4f6;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #6b7280;
+      
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+  
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    
+    .order-id {
+      font-size: 13px;
+      font-weight: 800;
+      color: $primary;
+      background: #fff2f0;
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin: 0;
+    }
+    
+    .instructor {
+      font-size: 14px;
+      color: #4b5563;
+      text-align: center;
+      margin: 0;
+    }
+    
+    .stars-selector {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 10px 0;
+      
+      button {
+        background: transparent;
+        border: none;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        outline: none;
+        
+        .star-icon {
+          font-size: 38px;
+          color: #d1d5db;
+          transition: transform 0.15s ease, color 0.15s ease;
+          
+          &.active {
+            color: #ffb400;
+            filter: drop-shadow(0 2px 6px rgba(255, 180, 0, 0.2));
+          }
+        }
+        
+        &:active .star-icon {
+          transform: scale(0.9);
+        }
+      }
+    }
+    
+    .rating-label {
+      font-size: 14px;
+      font-weight: 800;
+      color: #f57f17;
+      margin: 0;
+    }
+    
+    .comment-wrapper {
+      width: 100%;
+      
+      textarea {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 12px 16px;
+        font-size: 14px;
+        color: $navy;
+        background: #f9fafb;
+        resize: none;
+        outline: none;
+        transition: border-color 0.2s, background-color 0.2s;
+        
+        &:focus {
+          border-color: $primary;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(232, 67, 45, 0.08);
+        }
+      }
+    }
+  }
+  
+  .modal-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    
+    button {
+      flex: 1;
+      height: 48px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      border: none;
+      transition: background-color 0.2s, transform 0.1s;
+      
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+    
+    .btn-cancel {
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+    
+    .btn-submit {
+      background: $primary;
+      color: white;
+      box-shadow: 0 8px 16px rgba(232, 67, 45, 0.15);
+      
+      &:disabled {
+        background: #f3f4f6;
+        color: #9ca3af;
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+

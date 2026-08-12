@@ -65,13 +65,23 @@ export class SellerStateService {
   public loading$ = new BehaviorSubject<boolean>(false);
 
   private readNotificationIds = new Set<string>();
+  private channel: any;
+  private storageKey = 'ucv_market_seller_read_notifs';
 
   constructor() {
     this.loadCategories();
     this.authService.currentProfile$.subscribe((profile: Profile | null) => {
       this.userProfileSubject.next(profile);
       if (profile && profile.role === 'emprendedor') {
+        this.storageKey = `ucv_market_seller_read_notifs_${profile.id}`;
+        this.loadReadNotifications();
         this.loadSellerData(profile.id);
+        this.setupRealtimeSubscription(profile.id);
+      } else {
+        if (this.channel) {
+          this.supabaseService.client.removeChannel(this.channel);
+          this.channel = null;
+        }
       }
     });
   }
@@ -203,8 +213,26 @@ export class SellerStateService {
     this.statsSubject.next(stats);
   }
 
+  private loadReadNotifications() {
+    const stored = localStorage.getItem(this.storageKey);
+    this.readNotificationIds.clear();
+    if (stored) {
+      try {
+        const ids = JSON.parse(stored) as string[];
+        ids.forEach(id => this.readNotificationIds.add(id));
+      } catch (e) {
+        console.error('Error loading read notifications:', e);
+      }
+    }
+  }
+
+  private saveReadNotifications() {
+    localStorage.setItem(this.storageKey, JSON.stringify(Array.from(this.readNotificationIds)));
+  }
+
   markNotificationAsRead(id: string) {
     this.readNotificationIds.add(id);
+    this.saveReadNotifications();
     const stats = this.statsSubject.value;
     if (stats.notifications) {
       const notif = stats.notifications.find(n => n.id === id);
@@ -225,9 +253,34 @@ export class SellerStateService {
         n.unread = false;
         this.readNotificationIds.add(n.id);
       });
+      this.saveReadNotifications();
       stats.unreadNotifCount = 0;
       this.statsSubject.next(stats);
     }
+  }
+
+  setupRealtimeSubscription(sellerId: string) {
+    if (this.channel) {
+      this.supabaseService.client.removeChannel(this.channel);
+    }
+
+    this.channel = this.supabaseService.client
+      .channel(`seller-orders-channel-${sellerId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: `seller_id=eq.${sellerId}`
+        },
+        (payload: any) => {
+          console.log('Realtime update on seller orders:', payload);
+          // Refresca los datos del vendedor automáticamente
+          this.loadSellerData(sellerId);
+        }
+      )
+      .subscribe();
   }
 
   private calculateCategoryStats(orders: Order[], stats: Partial<SellerStats>) {

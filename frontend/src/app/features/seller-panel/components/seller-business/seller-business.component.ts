@@ -28,7 +28,7 @@ export class SellerBusinessComponent implements OnInit {
   bAcceptingOrders: boolean = true;
   bPushEnabled: boolean = true;
   businessBannerUrl: string = 'assets/images/login-food-banner.jpg';
-  businessAvatarUrl: string = 'assets/images/user-placeholder.jpg';
+  businessAvatarUrl: string = 'https://ionicframework.com/docs/img/demos/avatar.svg';
   selectedBannerFile: File | null = null;
   selectedAvatarFile: File | null = null;
 
@@ -48,7 +48,7 @@ export class SellerBusinessComponent implements OnInit {
       this.bAcceptingOrders = userProfile.accepting_orders ?? true;
       this.bPushEnabled = userProfile.push_notifications_enabled ?? true;
       this.businessBannerUrl = userProfile.banner_url || 'assets/images/login-food-banner.jpg';
-      this.businessAvatarUrl = userProfile.avatar_url || 'assets/images/user-placeholder.jpg';
+      this.businessAvatarUrl = userProfile.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg';
     }
   }
 

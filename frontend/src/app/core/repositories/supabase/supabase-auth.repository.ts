@@ -189,13 +189,32 @@ export class SupabaseAuthRepository implements AuthRepository {
           .select()
           .single();
 
-        return from(query);
-      }),
-      map(response => {
-        if (response.error) {
-          throw new Error(response.error.message);
-        }
-        return response.data as Profile;
+        return from(query).pipe(
+          switchMap(response => {
+            if (response.error) {
+              throw new Error(response.error.message);
+            }
+            
+            // Si el rol cambia a comprador, desactivar automáticamente todos sus productos
+            if (profile.role === 'comprador') {
+              const deactivateQuery = this.supabaseService.client
+                .from('products')
+                .update({ is_active: false })
+                .eq('seller_id', currentUserId);
+                
+              return from(deactivateQuery).pipe(
+                map(deactResponse => {
+                  if (deactResponse.error) {
+                    console.error('Error deactivation user products:', deactResponse.error.message);
+                  }
+                  return response.data as Profile;
+                })
+              );
+            }
+            
+            return of(response.data as Profile);
+          })
+        );
       })
     );
   }

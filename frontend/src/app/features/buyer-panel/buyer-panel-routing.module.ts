@@ -13,6 +13,7 @@ import { BuyerOrderConfirmedComponent } from './components/buyer-order-confirmed
 import { BuyerProductDetailComponent } from './components/buyer-product-detail/buyer-product-detail.component';
 import { BuyerOrderTrackingComponent } from './components/buyer-order-tracking/buyer-order-tracking.component';
 import { BuyerSellerApplicationComponent } from './components/buyer-seller-application/buyer-seller-application.component';
+import { BuyerSellerStoreComponent } from './components/buyer-seller-store/buyer-seller-store.component';
 
 const routes: Routes = [
   {
@@ -31,6 +32,7 @@ const routes: Routes = [
       { path: 'tracking/:id', component: BuyerOrderTrackingComponent },
       { path: 'product/:id', component: BuyerProductDetailComponent },
       { path: 'notifications', component: BuyerNotificationsComponent },
+      { path: 'seller-store/:id', component: BuyerSellerStoreComponent },
       { path: '', redirectTo: 'catalog', pathMatch: 'full' }
     ]
   }

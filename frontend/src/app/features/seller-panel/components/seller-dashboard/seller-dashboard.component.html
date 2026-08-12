@@ -41,7 +41,7 @@
     
     <div class="seller-info">
       <h1>{{ (userProfile$ | async)?.full_name || 'Tu Negocio' }}</h1>
-      <div class="rating-info">
+      <div class="rating-info clickable" (click)="openReviewsModal()">
         <ion-icon name="star"></ion-icon>
         <span class="score">{{ (stats$ | async)?.rating }}</span>
         <span class="reviews-count">· {{ (stats$ | async)?.reviewsCount }} reseñas</span>
@@ -60,7 +60,7 @@
         <span class="subtitle">Pedidos</span>
         <span class="active-count">{{ (activeOrders$ | async)?.length }} activos</span>
       </div>
-      <div class="card card-rating">
+      <div class="card card-rating clickable" (click)="openReviewsModal()">
         <div class="title-with-icon">
           <span class="title">{{ (stats$ | async)?.rating }}</span>
           <ion-icon name="star"></ion-icon>
@@ -148,4 +148,55 @@
       </div>
     </section>
   </div>
+
+  <ion-modal [isOpen]="isReviewsModalOpen" (didDismiss)="isReviewsModalOpen = false" class="reviews-list-modal">
+    <ng-template>
+      <div class="reviews-modal-content">
+        <div class="modal-header">
+          <h2>Opiniones de Clientes</h2>
+          <button class="close-btn" (click)="isReviewsModalOpen = false">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="loader-container" *ngIf="loadingReviews">
+            <ion-spinner name="crescent"></ion-spinner>
+            <p>Cargando opiniones...</p>
+          </div>
+
+          <div class="empty-state" *ngIf="!loadingReviews && reviews.length === 0">
+            <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            <p>Aún no tienes valoraciones de clientes.</p>
+          </div>
+
+          <div class="reviews-list" *ngIf="!loadingReviews && reviews.length > 0">
+            <div class="review-item" *ngFor="let review of reviews">
+              <div class="review-header">
+                <div class="reviewer-info">
+                  <div class="reviewer-avatar">
+                    <img [src]="review.reviewer?.avatar_url || 'assets/images/user-placeholder.jpg'" alt="Avatar" />
+                  </div>
+                  <div class="name-date">
+                    <span class="reviewer-name">{{ review.reviewer?.full_name || 'Comprador VALLE-GO' }}</span>
+                    <span class="review-date">{{ review.created_at | date:'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
+                <div class="stars-badge">
+                  <ion-icon name="star"></ion-icon>
+                  <span>{{ review.rating }}</span>
+                </div>
+              </div>
+              <p class="review-comment" *ngIf="review.comment">
+                "{{ review.comment }}"
+              </p>
+              <p class="review-comment empty-comment" *ngIf="!review.comment">
+                Sin comentarios escritos.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>

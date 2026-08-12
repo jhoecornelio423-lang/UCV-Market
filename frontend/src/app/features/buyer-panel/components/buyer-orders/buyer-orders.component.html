@@ -1,8 +1,8 @@
 <ion-content [fullscreen]="true" class="orders-content">
   <header class="orders-header ion-no-border">
-    <ion-toolbar class="header-toolbar">
-      <ion-title>Mis Compras</ion-title>
-    </ion-toolbar>
+    <div class="page-header">
+      <h1>Mis Compras</h1>
+    </div>
 
     <!-- TABS: COMPRADOR (Activos, Historial) -->
     <div class="orders-tabs-figma buyer-tabs">
@@ -60,6 +60,53 @@
       </article>
     </div>
   </div>
+
+  <ion-modal [isOpen]="isReviewModalOpen" (didDismiss)="isReviewModalOpen = false" class="review-modal">
+    <ng-template>
+      <div class="review-modal-content">
+        <div class="modal-header">
+          <h2>Calificar Emprendedor</h2>
+          <button class="close-btn" (click)="isReviewModalOpen = false">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="modal-body" *ngIf="selectedOrder">
+          <p class="order-id">Pedido #{{ selectedOrder.id.substring(0, 8) }}</p>
+          <p class="instructor">Evalúa tu experiencia de compra del 1 al 5:</p>
+
+          <!-- Star Rating Interactive Selector -->
+          <div class="stars-selector">
+            <button type="button" *ngFor="let star of [1, 2, 3, 4, 5]" (click)="setRating(star)">
+              <ion-icon [name]="selectedRating >= star ? 'star' : 'star-outline'" 
+                        [class.active]="selectedRating >= star"
+                        class="star-icon">
+              </ion-icon>
+            </button>
+          </div>
+
+          <p class="rating-label" *ngIf="selectedRating > 0">
+            {{ getRatingLabel(selectedRating) }}
+          </p>
+
+          <!-- Review Comment Textarea -->
+          <div class="comment-wrapper">
+            <textarea placeholder="Deja tu comentario/reseña aquí..." 
+                      [(ngModel)]="reviewComment" 
+                      rows="4">
+            </textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-cancel" (click)="isReviewModalOpen = false">Cancelar</button>
+          <button class="btn-submit" (click)="submitCustomReview()" [disabled]="selectedRating === 0">
+            Enviar Calificación
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
 </ion-content>
 
 

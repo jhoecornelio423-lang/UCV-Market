@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Inject, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { map, startWith, switchMap } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { Product } from '../../../../core/models/product.model';
 import { Category } from '../../../../core/models/category.model';
 import { Profile } from '../../../../core/models/profile.model';
 import { FavoritesService } from '../../../../core/services/favorites.service';
+import { SupabaseClientService } from '../../../../core/database/supabase.client';
 
 @Component({
   selector: 'app-buyer-explore',
@@ -15,9 +16,12 @@ import { FavoritesService } from '../../../../core/services/favorites.service';
   styleUrls: ['./buyer-explore.component.scss'],
   standalone: false
 })
-export class BuyerExploreComponent implements OnInit {
+export class BuyerExploreComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
+  private supabaseService = inject(SupabaseClientService);
+
+  private realtimeChannel: any = null;
   
   constructor(
     @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository,
@@ -30,6 +34,9 @@ export class BuyerExploreComponent implements OnInit {
   // State for filtering
   selectedCategoryId$ = new BehaviorSubject<string | null>(null);
   searchTerm$ = new BehaviorSubject<string>('');
+  sortBy$ = new BehaviorSubject<string>('none');
+  onlyAvailable$ = new BehaviorSubject<boolean>(false);
+  showFiltersModal = false;
 
   filteredProducts$!: Observable<Product[]>;
 
@@ -40,15 +47,57 @@ export class BuyerExploreComponent implements OnInit {
   ngOnInit() {
     this.loadInitialData();
 
+    // Suscribir al canal de tiempo real para la tabla de productos
+    this.realtimeChannel = this.supabaseService.client
+      .channel('explore-products-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+        console.log('Realtime product update detected on explore:', payload);
+        // Disparar recarga del stream reactivo
+        this.searchTerm$.next(this.searchTerm$.value);
+      })
+      .subscribe();
+
     // Combine filters and fetch products dynamically
     this.filteredProducts$ = combineLatest([
       this.selectedCategoryId$,
-      this.searchTerm$.pipe(startWith(''))
+      this.searchTerm$.pipe(startWith('')),
+      this.sortBy$,
+      this.onlyAvailable$
     ]).pipe(
-      switchMap(([categoryId, search]) => 
-        this.productRepository.getActiveProducts(categoryId || undefined, search || undefined)
+      switchMap(([categoryId, search, sortBy, onlyAvailable]) => 
+        this.productRepository.getActiveProducts(categoryId || undefined, search || undefined).pipe(
+          map(products => {
+            let result = [...products];
+            
+            // Filter by stock if requested
+            if (onlyAvailable) {
+              result = result.filter(p => p.stock > 0);
+            }
+            
+            // Apply sorting
+            if (sortBy === 'price-asc') {
+              result.sort((a, b) => a.price - b.price);
+            } else if (sortBy === 'price-desc') {
+              result.sort((a, b) => b.price - a.price);
+            } else if (sortBy === 'rating-desc') {
+              result.sort((a, b) => {
+                const rA = a.seller?.rating_average || 5.0;
+                const rB = b.seller?.rating_average || 5.0;
+                return rB - rA;
+              });
+            }
+            
+            return result;
+          })
+        )
       )
     );
+  }
+
+  ngOnDestroy() {
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+    }
   }
 
   loadInitialData() {
@@ -107,5 +156,29 @@ export class BuyerExploreComponent implements OnInit {
 
   isFavorite(productId: string): boolean {
     return this.favoritesService.isFavorite(productId);
+  }
+
+  toggleFilters(event: Event) {
+    event.stopPropagation();
+    this.showFiltersModal = !this.showFiltersModal;
+  }
+
+  setSortBy(val: string) {
+    this.sortBy$.next(val);
+  }
+
+  toggleOnlyAvailable(event: any) {
+    this.onlyAvailable$.next(event.target.checked);
+  }
+
+  resetFilters() {
+    this.sortBy$.next('none');
+    this.onlyAvailable$.next(false);
+    this.showFiltersModal = false;
+  }
+
+  @HostListener('document:click')
+  closeFilters() {
+    this.showFiltersModal = false;
   }
 }

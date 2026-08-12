@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, Inject, AfterViewInit, HostListener } from '@angular/core';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
@@ -12,6 +12,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { Profile } from '../../../../core/models/profile.model';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { FavoritesService } from '../../../../core/services/favorites.service';
+import { SupabaseClientService } from '../../../../core/database/supabase.client';
 
 @Component({
   selector: 'app-buyer-catalog',
@@ -23,6 +24,8 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   products: Product[] = [];
   categories: Category[] = [];
   unreadCount$: Observable<number>;
+  notifications$: Observable<any[]>;
+  showNotifDropdown = false;
 
   selectedCategoryId: string = '';
   searchQuery: string = '';
@@ -89,16 +92,29 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
   private favoritesService = inject(FavoritesService);
+  private supabaseService = inject(SupabaseClientService);
+  
+  private realtimeChannel: any = null;
 
   constructor(
     @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
   ) {
     this.unreadCount$ = this.notificationService.unreadCount$;
+    this.notifications$ = this.notificationService.notifications$;
   }
 
   ngOnInit() {
     this.loadCategories();
     this.loadProducts();
+
+    // Suscribir al canal de tiempo real para la tabla de productos
+    this.realtimeChannel = this.supabaseService.client
+      .channel('catalog-products-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, (payload) => {
+        console.log('Realtime product update detected on catalog:', payload);
+        this.loadProducts();
+      })
+      .subscribe();
 
     // Escuchar el perfil del usuario actual (campus, etc.)
     this.subscriptions.add(
@@ -137,6 +153,9 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
     this.stopCarousel();
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+    }
   }
 
   ngAfterViewInit() {
@@ -351,8 +370,29 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
     this.router.navigate(['/buyer-panel/profile']);
   }
 
-  goToNotifications() {
-    this.router.navigate(['/buyer-panel/notifications']);
+  goToNotifications(event: Event) {
+    event.stopPropagation();
+    if (window.innerWidth >= 860) {
+      this.showNotifDropdown = !this.showNotifDropdown;
+    } else {
+      this.router.navigate(['/buyer-panel/notifications']);
+    }
+  }
+
+  markAllRead() {
+    this.notificationService.markAllAsRead();
+  }
+
+  onNotificationClick(notif: any) {
+    this.showNotifDropdown = false;
+    if (notif.order_id) {
+      this.router.navigate(['/buyer-panel/orders']);
+    }
+  }
+
+  @HostListener('document:click')
+  closeDropdown() {
+    this.showNotifDropdown = false;
   }
 
   signOut() {

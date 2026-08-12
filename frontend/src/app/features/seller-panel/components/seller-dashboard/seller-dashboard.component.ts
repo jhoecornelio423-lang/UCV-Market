@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { SellerStateService } from '../../services/seller-state.service';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { SupabaseClientService } from '../../../../core/database/supabase.client';
 
 @Component({
   selector: 'app-seller-dashboard',
@@ -15,12 +16,47 @@ export class SellerDashboardComponent {
   private router = inject(Router);
   private toastCtrl = inject(ToastController);
   private authService = inject(AuthService);
+  private supabaseService = inject(SupabaseClientService);
 
   stats$ = this.sellerState.stats$;
   userProfile$ = this.sellerState.userProfile$;
   activeOrders$ = this.sellerState.activeOrders$;
   
   showNotifDropdown = false;
+  isReviewsModalOpen = false;
+  reviews: any[] = [];
+  loadingReviews = false;
+
+  openReviewsModal() {
+    const profile = this.sellerState.currentUserProfile;
+    if (!profile) return;
+    
+    this.isReviewsModalOpen = true;
+    this.loadingReviews = true;
+    
+    this.supabaseService.client
+      .from('reviews')
+      .select(`
+        id,
+        rating,
+        comment,
+        created_at,
+        reviewer:profiles!reviewer_id(
+          full_name,
+          avatar_url
+        )
+      `)
+      .eq('reviewee_id', profile.id)
+      .order('created_at', { ascending: false })
+      .then(response => {
+        if (response.error) {
+          console.error('Error fetching reviews:', response.error.message);
+        } else {
+          this.reviews = response.data || [];
+        }
+        this.loadingReviews = false;
+      });
+  }
 
   showNotifications() {
     this.showNotifDropdown = !this.showNotifDropdown;

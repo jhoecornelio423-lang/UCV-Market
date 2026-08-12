@@ -1,10 +1,10 @@
 <ion-content [fullscreen]="true" class="favorites-content">
-  <div class="favorites-container">
-    <div class="header">
-      <h1 class="title">Favoritos</h1>
-      <p class="subtitle">{{ favorites.length }} {{ favorites.length === 1 ? 'producto guardado' : 'productos guardados' }}</p>
-    </div>
+  <div class="page-header">
+    <h1 class="title">Favoritos</h1>
+    <p class="subtitle">{{ favorites.length }} {{ favorites.length === 1 ? 'producto guardado' : 'productos guardados' }}</p>
+  </div>
 
+  <div class="favorites-container">
     <div class="products-grid" *ngIf="favorites.length > 0">
       <div class="product-card" *ngFor="let product of favorites" [routerLink]="['/buyer-panel/product', product.id]">
         <div class="image-wrapper">
