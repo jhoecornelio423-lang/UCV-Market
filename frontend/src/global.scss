@@ -136,6 +136,7 @@ ion-button {
     line-height: 1.6;
     text-align: center;
     padding: 14px 0 20px 0;
+    white-space: pre-wrap; /* For \n support */
   }
 
   .alert-button-group {
@@ -143,6 +144,16 @@ ion-button {
     display: flex;
     justify-content: space-between;
     gap: 12px;
+  }
+
+  &.single-button-alert {
+    .alert-button-group {
+      justify-content: center;
+    }
+    .alert-button {
+      flex: 0 1 auto;
+      min-width: 160px;
+    }
   }
 
   .alert-button {

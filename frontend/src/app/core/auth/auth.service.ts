@@ -55,7 +55,22 @@ export class AuthService {
       console.log('DEBUG: Evento Auth:', event, 'Sesión activa:', !!session);
 
       if (session?.user) {
-        this.authRepository.getProfile(session.user.id).pipe(
+        // Suscribirse a cambios en tiempo real del perfil para suspensión en vivo
+        const userId = session.user.id;
+        this.supabaseService.client.channel('custom-filter-channel')
+          .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload) => {
+            const updatedProfile = payload.new as Profile;
+            if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
+               this.zone.run(() => {
+                 this.redirectUserByRole(updatedProfile);
+               });
+            } else {
+               this.currentProfileSubject.next(updatedProfile);
+            }
+          })
+          .subscribe();
+
+        this.authRepository.getProfile(userId).pipe(
           tap(profile => {
             this.currentProfileSubject.next(profile);
             this.isInitializedSubject.next(true);
@@ -264,14 +279,15 @@ export class AuthService {
     console.log('DEBUG: Redireccionando según rol:', profile.role);
     if (profile.role === 'suspended' || profile.role === 'suspended_buyer') {
       const reasonText = profile.suspension_reason 
-        ? `<br><br><strong>Motivo:</strong> ${profile.suspension_reason}` 
+        ? `\n\nMotivo:\n${profile.suspension_reason}` 
         : '';
         
       const alert = await this.alertCtrl.create({
         header: 'Cuenta Suspendida',
         message: `Su cuenta ha sido suspendida. Por favor, contacte a soporte para más detalles.${reasonText}`,
         buttons: ['Entendido'],
-        cssClass: 'custom-alert'
+        cssClass: 'custom-alert single-button-alert',
+        backdropDismiss: false
       });
       await alert.present();
       
