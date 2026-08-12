@@ -1,0 +1,121 @@
+<div class="admin-page-container">
+  
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>Vendedores</h1>
+    </div>
+    <div class="header-stats">
+      <span>{{ applications.length }} solicitudes</span> &middot; <span>{{ sellers.length }} activos</span>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="search-bar">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar por nombre o negocio..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+    </div>
+    
+    <div class="filter-pills">
+      <button class="pill" [class.active]="activeFilter === 'pending'" (click)="setFilter('pending')">Pendiente</button>
+      <button class="pill" [class.active]="activeFilter === 'active'" (click)="setFilter('active')">Activos</button>
+      <button class="pill" [class.active]="activeFilter === 'suspended'" (click)="setFilter('suspended')">Suspendidos</button>
+      <button class="pill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">Todos</button>
+    </div>
+  </div>
+
+  <h3 class="section-title" *ngIf="activeFilter === 'all' || activeFilter === 'pending'">COLA DE VERIFICACIÓN</h3>
+
+  <div class="applications-grid" *ngIf="applications.length > 0 && (activeFilter === 'all' || activeFilter === 'pending')">
+    <div class="application-card" *ngFor="let app of applications">
+      <div class="card-header">
+        <div class="avatar-circle">
+          {{ (app.full_name || 'U')[0].toUpperCase() }}{{ (app.full_name?.split(' ')?.[1] || '')[0]?.toUpperCase() || '' }}
+        </div>
+        <div class="info">
+          <h4>{{ app.full_name }}</h4>
+          <span class="career">{{ app.dni || 'No DNI' }} &middot; {{ app.business_category }}</span>
+        </div>
+      </div>
+      
+      <div class="badges">
+        <span class="badge gray">{{ app.dni }}</span>
+        <span class="badge location"><ion-icon name="location" style="color: #EF4444; margin-right: 4px;"></ion-icon> {{ app.delivery_points || 'Sede' }}</span>
+        <span class="business-text">{{ app.business_name }}</span>
+      </div>
+      
+      <div class="card-actions">
+        <button class="btn-approve" (click)="processApplication(app, 'approved')">✓ Aprobar</button>
+        <button class="btn-reject" (click)="processApplication(app, 'rejected')">✕ Rechazar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="glass-panel empty-state" *ngIf="applications.length === 0 && (activeFilter === 'all' || activeFilter === 'pending')" style="margin-bottom: 32px;">
+    <ion-icon name="checkmark-circle-outline" style="font-size: 32px; color: #10B981; margin-bottom: 8px;"></ion-icon>
+    <p style="margin: 0;">No hay emprendedores pendientes por verificar.</p>
+  </div>
+
+  <h3 class="section-title" *ngIf="activeFilter !== 'pending'">VENDEDORES</h3>
+
+  <div class="table-card glass-panel" *ngIf="activeFilter !== 'pending'">
+    <div *ngIf="loading" class="spinner-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+
+    <div *ngIf="!loading && filteredSellers.length === 0" class="empty-state">
+      <p>No se encontraron resultados.</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && filteredSellers.length > 0">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>NOMBRE COMPLETO</th>
+            <th>NEGOCIO</th>
+            <th>CAMPUS</th>
+            <th>REP.</th>
+            <th>VENTAS TOTALES</th>
+            <th>ESTADO</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let seller of filteredSellers">
+            <td>
+              <div class="user-cell">
+                <div class="avatar">{{ (seller.full_name || 'U')[0].toUpperCase() }}</div>
+                <div class="info">
+                  <span class="name">{{ seller.full_name }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-regular">{{ seller.business_name || 'No especificado' }}</span>
+            </td>
+            <td>
+              <span class="text-regular">{{ seller.campus || '-' }}</span>
+            </td>
+            <td>
+              <span class="rating-cell">
+                <ion-icon name="star" class="star-icon"></ion-icon> {{ seller.rating_average || '0.0' }}
+              </span>
+            </td>
+            <td>
+              <span class="text-bold">S/ {{ (seller.rating_average * 123) | number:'1.2-2' }}</span> <!-- Placeholder para ventas totales -->
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="seller.role === 'emprendedor'" [class.suspended]="seller.role !== 'emprendedor'">
+                {{ seller.role === 'emprendedor' ? 'Activo' : 'Suspendido' }}
+              </span>
+            </td>
+            <td>
+              <button class="action-btn" [class.suspend]="seller.role === 'emprendedor'" [class.reactivate]="seller.role !== 'emprendedor'" (click)="toggleSellerStatus(seller)">
+                {{ seller.role === 'emprendedor' ? 'Suspender' : 'Reactivar' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController, ActionSheetController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 
 import { AuthService } from '../../../../core/auth/auth.service';
@@ -34,6 +34,7 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
   private toastCtrl = inject(ToastController);
   private favoritesService = inject(FavoritesService);
   private applicationRepo = inject(SellerApplicationRepository);
+  private actionSheetCtrl = inject(ActionSheetController);
 
   get initials(): string {
     const parts = (this.profile?.full_name || 'UCV')
@@ -144,6 +145,49 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
       position: 'bottom'
     });
     await toast.present();
+  }
+
+  async openHelpMenu() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: 'Centro de Ayuda',
+      subHeader: '¿En qué te podemos ayudar hoy?',
+      buttons: [
+        {
+          text: 'Preguntas Frecuentes (FAQ)',
+          icon: 'help-circle-outline',
+          handler: () => {
+            this.showPendingSection('Preguntas Frecuentes');
+          }
+        },
+        {
+          text: 'Contactar Soporte',
+          icon: 'chatbubbles-outline',
+          handler: () => {
+            this.showPendingSection('Soporte');
+          }
+        },
+        {
+          text: 'Política de Devoluciones',
+          icon: 'arrow-undo-outline',
+          handler: () => {
+            this.showPendingSection('Política de Devoluciones');
+          }
+        },
+        {
+          text: 'Términos y Condiciones',
+          icon: 'document-text-outline',
+          handler: () => {
+            this.showPendingSection('Términos y Condiciones');
+          }
+        },
+        {
+          text: 'Cancelar',
+          icon: 'close-outline',
+          role: 'cancel'
+        }
+      ]
+    });
+    await actionSheet.present();
   }
 
   async onAvatarSelected(event: any) {

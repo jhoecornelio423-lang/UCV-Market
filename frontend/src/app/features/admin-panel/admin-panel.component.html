@@ -1,65 +1,85 @@
-<ion-header class="admin-header ion-no-border">
-  <ion-toolbar class="header-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/buyer-panel/catalog" text="" class="back-btn"></ion-back-button>
-    </ion-buttons>
-    <ion-title>Moderación de Categorías</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="signOut()" class="logout-btn">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="admin-content">
-
-  <div class="admin-dashboard-container">
-    
-    <!-- Alerta Admin -->
-    <div class="admin-intro-card glass-panel">
-      <div class="header-info">
-        <ion-icon name="shield-checkmark-outline" class="shield-icon"></ion-icon>
-        <div>
-          <h2>Panel de Administración UCV</h2>
-          <p>Hola, <strong>{{ userProfile?.full_name || 'Administrador' }}</strong>. Tienes permisos para dar de alta categorías globales.</p>
-        </div>
+<div class="admin-layout">
+  
+  <!-- Sidebar (Desktop) -->
+  <aside class="admin-sidebar ion-hide-md-down">
+    <div class="sidebar-header">
+      <div class="logo-circle">
+        <ion-icon name="bag-handle"></ion-icon>
+      </div>
+      <div class="logo-text">
+        <h2>UCV Market</h2>
+        <span>ADMIN PANEL</span>
       </div>
     </div>
 
-    <!-- Lista de Categorías -->
-    <div class="categories-management-section">
-      <div class="section-header">
-        <h3>Categorías Activas ({{ categories.length }})</h3>
-        <button class="btn-add-category" (click)="addCategory()">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>Nueva Categoría</span>
-        </button>
-      </div>
+    <nav class="sidebar-nav">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-item">
+        <ion-icon name="grid"></ion-icon>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/admin/sellers" routerLinkActive="active" class="nav-item">
+        <ion-icon name="storefront-outline"></ion-icon>
+        <span>Vendedores</span>
+        <span class="badge" *ngIf="pendingApplicationsCount > 0">{{ pendingApplicationsCount }}</span>
+      </a>
+      <a routerLink="/admin/products" routerLinkActive="active" class="nav-item">
+        <ion-icon name="cube-outline"></ion-icon>
+        <span>Productos</span>
+      </a>
+      <a routerLink="/admin/categories" routerLinkActive="active" class="nav-item">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <span>Categorías</span>
+      </a>
+      <a routerLink="/admin/support" routerLinkActive="active" class="nav-item">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+        <span>Soporte</span>
+        <span class="badge" *ngIf="openTicketsCount > 0">{{ openTicketsCount }}</span>
+      </a>
+    </nav>
 
-      <!-- Spinner -->
-      <div *ngIf="loading" class="spinner-container">
-        <ion-spinner name="crescent" color="primary"></ion-spinner>
-      </div>
-
-      <!-- Grid de categorías -->
-      <div *ngIf="!loading && categories.length === 0" class="empty-state">
-        <ion-icon name="alert-circle-outline"></ion-icon>
-        <p>No hay categorías registradas en el sistema.</p>
-      </div>
-
-      <div *ngIf="!loading && categories.length > 0" class="categories-list">
-        <div *ngFor="let cat of categories" class="category-item glass-panel">
-          <span class="cat-icon">{{ cat.icon }}</span>
-          <div class="cat-info">
-            <h4 class="cat-name">{{ cat.name }}</h4>
-            <span class="cat-slug">Slug: /{{ cat.slug }}</span>
-          </div>
-          <div class="cat-id-badge">ID: {{ cat.id.substring(0, 5) }}...</div>
+    <div class="sidebar-footer">
+      <div class="user-profile">
+        <div class="avatar">{{ initials }}</div>
+        <div class="user-info">
+          <h4>{{ userProfile?.full_name || 'Admin' }}</h4>
+          <span>Super Admin</span>
         </div>
+        <ion-icon name="log-out-outline" class="bell-icon" style="cursor: pointer; color: #EF4444;" (click)="signOut()" title="Cerrar sesión"></ion-icon>
       </div>
     </div>
+  </aside>
 
-  </div>
+  <!-- Main Content Area -->
+  <main class="admin-main-content">
+    <ion-router-outlet></ion-router-outlet>
+  </main>
 
-</ion-content>
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="admin-bottom-nav ion-hide-md-up">
+    <a routerLink="/admin/dashboard" routerLinkActive="active" class="bottom-nav-item">
+      <ion-icon name="grid"></ion-icon>
+      <span>Dashboard</span>
+    </a>
+    <a routerLink="/admin/sellers" routerLinkActive="active" class="bottom-nav-item">
+      <div class="icon-wrapper">
+        <ion-icon name="storefront-outline"></ion-icon>
+      </div>
+      <span>Vendedores</span>
+    </a>
+    <a routerLink="/admin/products" routerLinkActive="active" class="bottom-nav-item">
+      <ion-icon name="cube-outline"></ion-icon>
+      <span>Productos</span>
+    </a>
+    <a routerLink="/admin/categories" routerLinkActive="active" class="bottom-nav-item">
+      <ion-icon name="pricetag-outline"></ion-icon>
+      <span>Categorías</span>
+    </a>
+    <a routerLink="/admin/support" routerLinkActive="active" class="bottom-nav-item">
+      <div class="icon-wrapper">
+        <ion-icon name="chatbubble-outline"></ion-icon>
+      </div>
+      <span>Soporte</span>
+    </a>
+  </nav>
+
+</div>

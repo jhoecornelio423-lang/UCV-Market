@@ -1,0 +1,74 @@
+<div class="admin-page-container">
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Centro de Soporte</h1>
+      <p>Bandeja de entrada de reportes y consultas de los usuarios.</p>
+    </div>
+  </div>
+
+  <div class="table-card glass-panel">
+    <div *ngIf="loading" class="spinner-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+
+    <div *ngIf="!loading && tickets.length === 0" class="empty-state">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <p>No hay tickets de soporte pendientes.</p>
+    </div>
+
+    <div class="table-responsive" *ngIf="!loading && tickets.length > 0">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Asunto</th>
+            <th>Mensaje</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ticket of tickets" [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed'">
+            <td>
+              <div class="user-cell">
+                <div class="avatar">{{ (ticket.profiles?.full_name || 'U')[0].toUpperCase() }}</div>
+                <div class="info">
+                  <span class="name">{{ ticket.profiles?.full_name || 'Desconocido' }}</span>
+                  <span class="email">{{ ticket.profiles?.email || 'Sin correo' }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="subject">{{ ticket.subject }}</span>
+            </td>
+            <td class="message-cell">
+              <p class="message-text">{{ ticket.message }}</p>
+            </td>
+            <td>
+              <span class="text-muted">{{ ticket.created_at | date:'dd/MM/yy HH:mm' }}</span>
+            </td>
+            <td>
+              <span class="status-badge" 
+                [class.open]="ticket.status === 'open'"
+                [class.progress]="ticket.status === 'in_progress'"
+                [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed'">
+                {{ ticket.status === 'open' ? 'Abierto' : ticket.status === 'in_progress' ? 'En Progreso' : 'Resuelto' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="action-btn success" 
+                        *ngIf="ticket.status !== 'resolved' && ticket.status !== 'closed'"
+                        (click)="markAsResolved(ticket)" 
+                        title="Marcar como Resuelto">
+                  <ion-icon name="checkmark-done-outline"></ion-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

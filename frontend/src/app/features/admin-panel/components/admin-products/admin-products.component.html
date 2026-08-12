@@ -1,0 +1,67 @@
+<div class="admin-page-container">
+  
+  <div class="page-header">
+    <div class="header-titles">
+      <h1>Gestión de Productos</h1>
+    </div>
+    <div class="header-stats">
+      <span>{{ filteredProducts.length }} productos</span>
+    </div>
+  </div>
+
+  <div class="filters-container">
+    <div class="search-bar">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar producto o vendedor..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+    </div>
+    
+    <div class="filter-pills">
+      <button class="pill" [class.active]="activeCategoryId === 'all'" (click)="setCategoryFilter('all')">Todos</button>
+      <button class="pill" *ngFor="let cat of categories" [class.active]="activeCategoryId === cat.id" (click)="setCategoryFilter(cat.id)">
+        {{ cat.name }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="spinner-container">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <div *ngIf="!loading && filteredProducts.length === 0" class="empty-state glass-panel">
+    <p>No se encontraron productos.</p>
+  </div>
+
+  <div class="products-grid" *ngIf="!loading && filteredProducts.length > 0">
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      
+      <div class="product-image">
+        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder.jpg'" alt="{{ product.name }}">
+      </div>
+
+      <div class="product-content">
+        <div class="product-info">
+          <h4 class="product-name">{{ product.name }}</h4>
+          <span class="seller-name">{{ product.seller?.business_name || product.seller?.full_name || 'Vendedor' }}</span>
+        </div>
+
+        <div class="product-footer">
+          <div class="price-stock">
+            <span class="price">S/ {{ product.price | number:'1.2-2' }}</span>
+            <span class="stock">{{ product.stock }} en stock</span>
+          </div>
+          
+          <div class="actions-container" style="display: flex; align-items: center; gap: 12px;">
+            <button class="delete-btn" (click)="confirmDelete(product)" title="Eliminar Producto">
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+            <div class="toggle-container" title="Activar/Desactivar Producto">
+              <ion-toggle [checked]="product.is_active" (ionChange)="toggleProductStatus(product)" mode="md"></ion-toggle>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+</div>

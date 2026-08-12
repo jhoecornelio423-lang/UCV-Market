@@ -36,9 +36,10 @@ export class AppComponent implements OnInit {
   }
 
   private updateSidebarVisibility() {
-    const hiddenRoutes = ['/login', '/register', '/welcome'];
-    const isHiddenRoute = hiddenRoutes.some(route => this.currentPath.startsWith(route));
-    this.showSidebar = !!this.userProfile && !isHiddenRoute;
+    const path = this.currentPath || this.router.url;
+    const hiddenRoutes = ['/login', '/register', '/welcome', '/admin'];
+    const isHiddenRoute = hiddenRoutes.some(route => path.startsWith(route));
+    this.showSidebar = !!this.userProfile && this.userProfile.role !== 'admin' && !isHiddenRoute;
   }
 
   // Métodos de navegación globales

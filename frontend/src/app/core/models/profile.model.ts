@@ -1,13 +1,15 @@
-export type UserRole = 'comprador' | 'emprendedor' | 'admin';
+export type UserRole = 'comprador' | 'emprendedor' | 'admin' | 'suspended';
 
 export interface Profile {
   id: string; // UUID references auth.users
   full_name: string;
   phone: string;
+  email?: string;
   student_code?: string;
   role: UserRole;
   rating_average: number;
   campus: string;
+  business_name?: string;
   business_description?: string;
   business_category?: string;
   business_location?: string;

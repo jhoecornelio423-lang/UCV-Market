@@ -1,196 +1,224 @@
-// Variables locales de diseño
-$primary-color: #0C4A6E;
-$accent-color: #E11D48;
+$navy: #1A1F36;
+$primary: #E8432D;
+$bg-color: #F8F9FB;
 $text-light: #F8FAFC;
-$text-muted: #94A3B8;
-$background-dark: #0B0F19;
-$card-bg: rgba(30, 41, 59, 0.45);
-$input-bg: rgba(255, 255, 255, 0.05);
+$text-muted: #8F95B2;
 
-.admin-content {
-  --background: #{$background-dark};
-  --color: #{$text-light};
+.admin-layout {
+  display: flex;
+  height: 100dvh;
+  width: 100%;
+  background-color: $bg-color;
+  overflow: hidden;
 }
 
-.admin-header {
-  background: radial-gradient(circle at 10% 20%, rgba(12, 74, 110, 0.15) 0%, rgba(11, 15, 25, 1) 90%);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-
-  .header-toolbar {
-    --background: transparent;
-    --color: white;
-    --title-font-weight: 700;
-  }
-}
-
-.back-btn {
-  --color: white;
-}
-
-.logout-btn {
-  --color: $text-muted;
-}
-
-.admin-dashboard-container {
-  padding: 1.25rem;
+/* Sidebar (Desktop) */
+.admin-sidebar {
+  width: 280px;
+  background-color: $navy;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  animation: fadeIn 0.5s ease;
-}
+  flex-shrink: 0;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+  z-index: 10;
 
-// Tarjeta Introductoria
-.admin-intro-card {
-  border-left: 4px solid #E11D48; // Borde UCV Accent
-
-  .header-info {
+  .sidebar-header {
+    padding: 32px 24px;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 12px;
 
-    .shield-icon {
-      font-size: 2.25rem;
-      color: #E11D48;
-      background: rgba(225, 29, 72, 0.1);
-      padding: 0.6rem;
-      border-radius: 12px;
-    }
-
-    h2 {
-      font-size: 1.1rem;
-      font-weight: 800;
+    .logo-circle {
+      width: 40px;
+      height: 40px;
+      background-color: $primary;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
-      margin: 0 0 0.2rem 0;
+      font-size: 20px;
     }
 
-    p {
-      font-size: 0.8rem;
-      color: $text-muted;
-      margin: 0;
-      line-height: 1.4;
-
-      strong {
+    .logo-text {
+      h2 {
         color: white;
+        font-size: 16px;
+        font-weight: 800;
+        margin: 0 0 2px 0;
+      }
+      span {
+        color: $text-muted;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+    }
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 16px;
+    gap: 8px;
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      color: $text-muted;
+      text-decoration: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+      position: relative;
+
+      ion-icon {
+        font-size: 20px;
+        margin-right: 16px;
+      }
+
+      .badge {
+        background-color: $primary;
+        color: white;
+        font-size: 11px;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 99px;
+        margin-left: auto;
+      }
+
+      &:hover {
+        background-color: rgba(255,255,255,0.05);
+        color: white;
+      }
+
+      &.active {
+        background-color: $primary;
+        color: white;
+        box-shadow: 0 4px 12px rgba(232, 67, 45, 0.3);
+      }
+    }
+  }
+
+  .sidebar-footer {
+    padding: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: $primary;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .user-info {
+        flex: 1;
+        h4 {
+          color: white;
+          font-size: 13px;
+          font-weight: 700;
+          margin: 0 0 2px 0;
+        }
+        span {
+          color: $text-muted;
+          font-size: 11px;
+        }
+      }
+
+      .bell-icon {
+        color: $text-muted;
+        font-size: 20px;
+        cursor: pointer;
+        &:hover { color: white; }
       }
     }
   }
 }
 
-// Sección de Gestión
-.categories-management-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+/* Main Content Area */
+.admin-main-content {
+  flex: 1;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.section-header {
+/* Bottom Navigation (Mobile) */
+.admin-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-around;
+  padding: 10px 0;
+  padding-bottom: env(safe-area-inset-bottom, 10px);
+  border-top: 1px solid #E5E7EB;
+  z-index: 100;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.02);
 
-  h3 {
-    font-size: 1.05rem;
-    font-weight: 750;
-    margin: 0;
-    color: white;
-  }
-
-  .btn-add-category {
-    background: linear-gradient(135deg, #0284C7 0%, $accent-color 100%);
-    border: none;
-    color: white;
-    padding: 0.6rem 1rem;
-    border-radius: 10px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(225, 29, 72, 0.15);
-    transition: all 0.2s;
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 15px rgba(225, 29, 72, 0.25);
-    }
-  }
-}
-
-// Spinner
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  padding: 3rem;
-}
-
-// Lista de Categorías
-.categories-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.category-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-
-  .cat-icon {
-    font-size: 1.75rem;
-    background: rgba(255,255,255,0.03);
-    width: 48px;
-    height: 48px;
-    border-radius: 10px;
+  .bottom-nav-item {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    border: 1px solid rgba(255,255,255,0.06);
-  }
-
-  .cat-info {
-    flex: 1;
-
-    .cat-name {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: white;
-      margin: 0 0 0.15rem 0;
-    }
-
-    .cat-slug {
-      font-size: 0.75rem;
-      color: $text-muted;
-    }
-  }
-
-  .cat-id-badge {
-    font-size: 0.7rem;
     color: $text-muted;
-    background: rgba(15, 23, 42, 0.4);
-    padding: 0.25rem 0.5rem;
-    border-radius: 6px;
+    text-decoration: none;
+    gap: 4px;
+
+    .icon-wrapper {
+      position: relative;
+    }
+
+    ion-icon {
+      font-size: 24px;
+    }
+
+    span {
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .badge {
+      position: absolute;
+      top: -4px;
+      right: -8px;
+      background-color: $primary;
+      color: white;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 99px;
+    }
+
+    &.active {
+      color: $primary;
+    }
   }
 }
 
-// Estado Vacío
-.empty-state {
-  text-align: center;
-  color: $text-muted;
-  padding: 3rem;
-
-  ion-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+@media (max-width: 768px) {
+  .admin-layout {
+    flex-direction: column;
   }
-
-  p {
-    font-size: 0.85rem;
+  .admin-main-content {
+    height: 100%;
+    padding-bottom: 60px; /* Space for bottom nav */
   }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }

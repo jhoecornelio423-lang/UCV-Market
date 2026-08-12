@@ -29,4 +29,5 @@ export interface Product {
   seller?: Profile;
   category?: Category;
   product_images?: ProductImage[];
+  profiles?: any;
 }

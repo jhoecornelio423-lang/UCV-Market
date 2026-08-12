@@ -6,6 +6,7 @@ import { PRODUCT_REPOSITORY, ProductRepository } from '../../core/repositories/p
 import { AuthService } from '../../core/auth/auth.service';
 import { Category } from '../../core/models/category.model';
 import { Profile } from '../../core/models/profile.model';
+import { AdminRepository } from '../../core/repositories/admin.repository';
 
 @Component({
   selector: 'app-admin-panel',
@@ -23,106 +24,35 @@ export class AdminPanelComponent implements OnInit {
   private toastCtrl = inject(ToastController);
   private loadingCtrl = inject(LoadingController);
   private router = inject(Router);
+  private adminRepo = inject(AdminRepository);
 
   constructor(
     @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
   ) {}
 
+  get initials(): string {
+    const name = this.userProfile?.full_name || 'Admin';
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  pendingApplicationsCount = 0;
+  openTicketsCount = 0;
+
   ngOnInit() {
-    this.loadCategories();
     this.authService.currentProfile$.subscribe(profile => {
       this.userProfile = profile;
     });
+    this.loadBadges();
   }
 
-  loadCategories() {
-    this.loading = true;
-    this.productRepository.getCategories().subscribe({
-      next: (categories) => {
-        this.categories = categories;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar categorías:', err);
-        this.loading = false;
-      }
+  loadBadges() {
+    // Para simplificar, hacemos las llamadas directas aquí, pero lo ideal sería tener un BehaviorSubject en un servicio
+    this.adminRepo.getPendingApplications().subscribe(apps => {
+      this.pendingApplicationsCount = apps.length;
     });
-  }
-
-  async addCategory() {
-    const alert = await this.alertCtrl.create({
-      header: 'Nueva Categoría',
-      message: 'Registra una categoría para ordenar los productos del catálogo:',
-      inputs: [
-        {
-          name: 'name',
-          type: 'text',
-          placeholder: 'Nombre (Ej. Ropa y Moda)'
-        },
-        {
-          name: 'icon',
-          type: 'text',
-          placeholder: 'Emoji / Icono (Ej. 👕)'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
-        {
-          text: 'Crear',
-          handler: (data) => {
-            const name = data.name?.trim();
-            const icon = data.icon?.trim();
-
-            if (!name || !icon) {
-              this.showToast('Por favor completa todos los campos.', 'warning');
-              return false;
-            }
-
-            this.executeCategoryCreation(name, icon);
-            return true;
-          }
-        }
-      ],
-      cssClass: 'custom-alert'
+    this.adminRepo.getSupportTickets().subscribe(tickets => {
+      this.openTicketsCount = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
     });
-    await alert.present();
-  }
-
-  private async executeCategoryCreation(name: string, icon: string) {
-    const loading = await this.loadingCtrl.create({
-      message: 'Creando categoría...',
-      spinner: 'crescent'
-    });
-    await loading.present();
-
-    const slug = name.toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)+/g, '');
-
-    this.productRepository.createCategory(name, slug, icon).subscribe({
-      next: () => {
-        loading.dismiss();
-        this.showToast('Categoría creada exitosamente.', 'success');
-        this.loadCategories();
-      },
-      error: (err) => {
-        loading.dismiss();
-        this.showToast(err.message || 'Error al crear la categoría.', 'danger');
-      }
-    });
-  }
-
-  private async showToast(message: string, color: string) {
-    const toast = await this.toastCtrl.create({
-      message,
-      duration: 1500,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 
   signOut() {

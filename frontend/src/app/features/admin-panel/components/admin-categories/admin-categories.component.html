@@ -1,0 +1,41 @@
+<div class="admin-page-container">
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Moderación de Categorías</h1>
+      <p>Administra las categorías de productos disponibles en el mercado.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-add-category" (click)="addCategory()">
+        <ion-icon name="add-outline"></ion-icon>
+        <span>Nueva Categoría</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="categories-management-section">
+    <!-- Spinner -->
+    <div *ngIf="loading" class="spinner-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && categories.length === 0" class="empty-state glass-panel">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      <p>No hay categorías registradas en el sistema.</p>
+    </div>
+
+    <!-- Grid de categorías -->
+    <div *ngIf="!loading && categories.length > 0" class="categories-grid">
+      <div *ngFor="let cat of categories" class="category-item glass-panel">
+        <div class="cat-header">
+          <span class="cat-icon">{{ cat.icon }}</span>
+          <div class="cat-id-badge">ID: {{ cat.id.substring(0, 5) }}...</div>
+        </div>
+        <div class="cat-info">
+          <h4 class="cat-name">{{ cat.name }}</h4>
+          <span class="cat-slug">Slug: /{{ cat.slug }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

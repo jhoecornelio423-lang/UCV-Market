@@ -7,6 +7,7 @@ import { SupabaseClientService } from '../database/supabase.client';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
+import { AlertController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -257,8 +258,25 @@ export class AuthService {
     });
   }
 
-  public redirectUserByRole(profile: Profile): void {
+  private alertCtrl = inject(AlertController);
+
+  public async redirectUserByRole(profile: Profile): Promise<void> {
     console.log('DEBUG: Redireccionando según rol:', profile.role);
+    if (profile.role === 'suspended') {
+      const alert = await this.alertCtrl.create({
+        header: 'Cuenta Suspendida',
+        message: 'Su cuenta ha sido suspendida. Por favor, contacte a soporte para más detalles.',
+        buttons: ['Entendido'],
+        cssClass: 'custom-alert'
+      });
+      await alert.present();
+      
+      this.signOut().subscribe(() => {
+        this.router.navigate(['/login']);
+      });
+      return;
+    }
+
     if (profile.role === 'emprendedor') {
       this.router.navigate(['/seller']);
     } else if (profile.role === 'admin') {

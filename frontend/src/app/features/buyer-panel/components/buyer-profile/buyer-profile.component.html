@@ -61,19 +61,11 @@
 
       <!-- Menu Options -->
       <div class="menu-list">
-        <button class="menu-item" (click)="goToOrders()">
-          <div class="icon-wrapper">
-            <ion-icon name="cube-outline"></ion-icon>
+        <button class="menu-item" (click)="openHelpMenu()">
+          <div class="icon-wrapper" style="background-color: #F3E8FF; color: #9333EA;">
+            <ion-icon name="headset-outline"></ion-icon>
           </div>
-          <span>Mis pedidos</span>
-          <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
-        </button>
-
-        <button class="menu-item" routerLink="/buyer-panel/favorites">
-          <div class="icon-wrapper">
-            <ion-icon name="heart-outline"></ion-icon>
-          </div>
-          <span>Favoritos</span>
+          <span>Ayuda</span>
           <ion-icon name="chevron-forward-outline" class="chevron"></ion-icon>
         </button>
 

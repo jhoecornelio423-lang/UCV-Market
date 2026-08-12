@@ -1,20 +1,20 @@
 -- Merging decision tree log ---
 provider#androidx.core.content.FileProvider
-INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:27:9-35:20
+INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:30:9-36:20
 	android:grantUriPermissions
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:31:13-47
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:34:13-47
 	android:authorities
 		INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:29:13-64
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:32:13-64
 	android:exported
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:30:13-37
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:33:13-37
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:28:13-62
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:31:13-62
 manifest
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-41:12
-INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-41:12
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-42:12
+INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-42:12
+INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-42:12
+INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:1-42:12
 MERGED from [:capacitor-app] C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\app\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:2:1-7:12
 MERGED from [:capacitor-haptics] C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\haptics\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:2:1-9:12
 MERGED from [:capacitor-keyboard] C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\keyboard\android\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:2:1-7:12
@@ -64,8 +64,8 @@ MERGED from [androidx.core:core-viewtree:1.0.0] C:\Users\djald\.gradle\caches\8.
 	xmlns:android
 		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:4:5-36:19
-INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:4:5-36:19
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:3:5-37:19
+INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:3:5-37:19
 MERGED from [:capacitor-cordova-android-plugins] C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:5-9:19
 MERGED from [:capacitor-cordova-android-plugins] C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\capacitor-cordova-android-plugins\build\intermediates\merged_manifest\release\processReleaseManifest\AndroidManifest.xml:8:5-9:19
 MERGED from [androidx.emoji2:emoji2:1.3.0] C:\Users\djald\.gradle\caches\8.14.3\transforms\353d69426d62513a7e19e841051a3a44\transformed\emoji2-1.3.0\AndroidManifest.xml:23:5-33:19
@@ -85,51 +85,69 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\dj
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.17.0] C:\Users\djald\.gradle\caches\8.14.3\transforms\11094a199bb7945826b161d8a9c17beb\transformed\core-1.17.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:9:9-35
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:8:9-35
 	android:label
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:7:9-41
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:6:9-41
 	android:roundIcon
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:8:9-54
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:7:9-54
 	android:icon
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:6:9-43
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:5:9-43
 	android:allowBackup
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:5:9-35
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:4:9-35
 	android:theme
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:10:9-40
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:9:9-40
 activity#io.ionic.starter.MainActivity
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:12:9-25:20
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:10:9-28:20
 	android:label
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:15:13-56
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:13:13-56
 	android:launchMode
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:17:13-44
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:15:13-44
 	android:exported
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:18:13-36
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:16:13-36
 	android:configChanges
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:13:13-148
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:11:13-148
 	android:theme
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:16:13-62
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:14:13-62
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:14:13-41
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:12:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:20:13-23:29
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:17:13-20:29
 action#android.intent.action.MAIN
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:21:17-69
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:18:17-69
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:21:25-66
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:18:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:22:17-77
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:19:17-77
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:22:27-74
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:19:27-74
+intent-filter#action:name:android.intent.action.VIEW+category:name:android.intent.category.BROWSABLE+category:name:android.intent.category.DEFAULT+data:scheme:@string/custom_url_scheme
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:22:13-27:29
+action#android.intent.action.VIEW
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:23:17-69
+	android:name
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:23:25-66
+category#android.intent.category.DEFAULT
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:24:17-76
+	android:name
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:24:27-73
+category#android.intent.category.BROWSABLE
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:25:17-78
+	android:name
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:25:27-75
+data
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:26:17-68
+	android:scheme
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:26:23-65
 uses-permission#android.permission.INTERNET
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:40:5-67
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:41:5-67
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:40:22-64
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:41:22-64
 meta-data#android.support.FILE_PROVIDER_PATHS
-ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:32:13-34:64
+ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:35:13-112
 	android:resource
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:34:17-51
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:35:75-109
 	android:name
-		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:33:17-67
+		ADDED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml:35:24-74
 uses-sdk
 INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\AndroidManifest.xml

@@ -4,7 +4,7 @@
   </div>
 
   <!-- Bottom Navigation for Mobile / Tablet -->
-  <nav *ngIf="!currentPath.includes('/buyer-panel/cart') && !currentPath.includes('/buyer-panel/notifications') && !currentPath.includes('/buyer-panel/checkout') && !currentPath.includes('/buyer-panel/product') && !currentPath.includes('/buyer-panel/order-confirmed')" class="bottom-navigation-figma ion-hide-lg-up">
+  <nav *ngIf="!currentPath.includes('/buyer-panel/cart') && !currentPath.includes('/buyer-panel/notifications') && !currentPath.includes('/buyer-panel/checkout') && !currentPath.includes('/buyer-panel/product') && !currentPath.includes('/buyer-panel/order-confirmed') && !currentPath.includes('/buyer-panel/seller-store')" class="bottom-navigation-figma ion-hide-lg-up">
     <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/catalog')" routerLink="/buyer-panel/catalog" (click)="goTo('/buyer-panel/catalog')">
       <ion-icon name="home-outline"></ion-icon>
       <span>Inicio</span>

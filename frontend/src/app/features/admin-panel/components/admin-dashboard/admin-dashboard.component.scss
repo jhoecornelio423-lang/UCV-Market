@@ -1,0 +1,269 @@
+$navy: #1A1F36;
+$primary: #E8432D;
+$bg-color: #F8F9FB;
+$card-bg: #FFFFFF;
+$text-muted: #8F95B2;
+$border-color: #F1F3F9;
+
+.admin-dashboard-container {
+  padding: 24px 32px;
+  background-color: $bg-color;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  
+  .header-titles {
+    h1 {
+      font-size: 24px;
+      font-weight: 800;
+      color: $navy;
+      margin: 0 0 4px 0;
+    }
+    p {
+      color: $text-muted;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+  }
+
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: $card-bg;
+    border: 1px solid $border-color;
+    border-radius: 99px;
+    padding: 10px 18px;
+    color: $navy;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    ion-icon { font-size: 16px; color: $text-muted; }
+  }
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: $card-bg;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.02);
+
+  .stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 800;
+      color: $text-muted;
+      letter-spacing: 0.5px;
+      line-height: 1.4;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+
+      &.users-icon { background: #EEF2FF; color: #4F46E5; }
+      &.sellers-icon { background: #ECFDF5; color: #10B981; }
+      &.products-icon { background: #FFFBEB; color: #F59E0B; }
+      &.revenue-icon { background: #FEF2F2; color: #EF4444; }
+    }
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 900;
+    color: $navy;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .trend {
+    font-size: 12px;
+    font-weight: 700;
+    margin: 0;
+    &.positive { color: #10B981; }
+  }
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: $card-bg;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.02);
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+
+    .chart-titles {
+      h3 { font-size: 16px; font-weight: 800; color: $navy; margin: 0 0 4px 0; }
+      p { font-size: 13px; font-weight: 500; color: $text-muted; margin: 0; }
+    }
+
+    .chart-badge {
+      background: #ECFDF5;
+      color: #10B981;
+      padding: 6px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+  }
+
+  .canvas-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    &.doughnut-container {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}
+
+/* Lists Grid */
+.lists-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.list-card {
+  background: $card-bg;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+  border: 1px solid rgba(0,0,0,0.02);
+
+  .list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h3 { font-size: 15px; font-weight: 800; color: $navy; margin: 0; }
+    
+    .count-badge {
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 800;
+      &.pending { background: #FFFBEB; color: #F59E0B; border: 1px solid #FEF3C7; }
+      &.danger { background: #FEF2F2; color: #EF4444; border: 1px solid #FEE2E2; }
+    }
+  }
+
+  .list-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: #FAFBFC;
+      border-radius: 16px;
+      border: 1px solid $border-color;
+
+      .item-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 14px;
+        flex-shrink: 0;
+
+        &.alert-icon { background: #FEF3C7; color: #D97706; }
+        &.img-icon {
+          padding: 0;
+          overflow: hidden;
+          img { width: 100%; height: 100%; object-fit: cover; }
+        }
+      }
+
+      .item-details {
+        flex: 1;
+        min-width: 0;
+        h4 { font-size: 14px; font-weight: 800; color: $navy; margin: 0 0 4px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        p { font-size: 12px; color: $text-muted; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      }
+
+      .action-link {
+        background: none;
+        border: none;
+        color: #F59E0B;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .flag-badge {
+        color: #EF4444;
+        font-weight: 800;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        ion-icon { font-size: 14px; }
+      }
+    }
+  }
+}
+
+/* Responsive specific to Dashboard Grid */
+@media (max-width: 1200px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-grid { grid-template-columns: 1fr; }
+  .lists-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-container { padding: 20px 16px 80px; } /* 80px for bottom nav */
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat-card { padding: 16px; h2 { font-size: 20px; } }
+}
