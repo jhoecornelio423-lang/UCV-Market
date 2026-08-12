@@ -262,10 +262,14 @@ export class AuthService {
 
   public async redirectUserByRole(profile: Profile): Promise<void> {
     console.log('DEBUG: Redireccionando según rol:', profile.role);
-    if (profile.role === 'suspended') {
+    if (profile.role === 'suspended' || profile.role === 'suspended_buyer') {
+      const reasonText = profile.suspension_reason 
+        ? `<br><br><strong>Motivo:</strong> ${profile.suspension_reason}` 
+        : '';
+        
       const alert = await this.alertCtrl.create({
         header: 'Cuenta Suspendida',
-        message: 'Su cuenta ha sido suspendida. Por favor, contacte a soporte para más detalles.',
+        message: `Su cuenta ha sido suspendida. Por favor, contacte a soporte para más detalles.${reasonText}`,
         buttons: ['Entendido'],
         cssClass: 'custom-alert'
       });

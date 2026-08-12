@@ -1,4 +1,4 @@
-export type UserRole = 'comprador' | 'emprendedor' | 'admin' | 'suspended';
+export type UserRole = 'comprador' | 'emprendedor' | 'admin' | 'suspended' | 'suspended_buyer';
 
 export interface Profile {
   id: string; // UUID references auth.users
@@ -20,6 +20,7 @@ export interface Profile {
   show_in_explore?: boolean;
   banner_url?: string;
   avatar_url?: string;
+  suspension_reason?: string;
   created_at?: string;
   updated_at?: string;
 }

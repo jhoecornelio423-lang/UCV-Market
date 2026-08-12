@@ -8,6 +8,7 @@ import { AdminSellersComponent } from './components/admin-sellers/admin-sellers.
 import { AdminProductsComponent } from './components/admin-products/admin-products.component';
 import { AdminCategoriesComponent } from './components/admin-categories/admin-categories.component';
 import { AdminSupportComponent } from './components/admin-support/admin-support.component';
+import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 const routes: Routes = [
@@ -20,6 +21,7 @@ const routes: Routes = [
       { path: 'products', component: AdminProductsComponent },
       { path: 'categories', component: AdminCategoriesComponent },
       { path: 'support', component: AdminSupportComponent },
+      { path: 'users', component: AdminUsersComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   }
@@ -34,7 +36,8 @@ import { FormsModule } from '@angular/forms';
     AdminSellersComponent,
     AdminProductsComponent,
     AdminCategoriesComponent,
-    AdminSupportComponent
+    AdminSupportComponent,
+    AdminUsersComponent
   ],
   imports: [
     CommonModule,

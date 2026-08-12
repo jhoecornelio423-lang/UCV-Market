@@ -22,6 +22,10 @@
         <span>Vendedores</span>
         <span class="badge" *ngIf="pendingApplicationsCount > 0">{{ pendingApplicationsCount }}</span>
       </a>
+      <a routerLink="/admin/users" routerLinkActive="active" class="nav-item">
+        <ion-icon name="people-outline"></ion-icon>
+        <span>Usuarios</span>
+      </a>
       <a routerLink="/admin/products" routerLinkActive="active" class="nav-item">
         <ion-icon name="cube-outline"></ion-icon>
         <span>Productos</span>
@@ -58,16 +62,18 @@
   <nav class="admin-bottom-nav ion-hide-md-up">
     <a routerLink="/admin/dashboard" routerLinkActive="active" class="bottom-nav-item">
       <ion-icon name="grid"></ion-icon>
-      <span>Dashboard</span>
+      <span>Inicio</span>
     </a>
     <a routerLink="/admin/sellers" routerLinkActive="active" class="bottom-nav-item">
-      <div class="icon-wrapper">
-        <ion-icon name="storefront-outline"></ion-icon>
-      </div>
+      <ion-icon name="storefront"></ion-icon>
       <span>Vendedores</span>
     </a>
+    <a routerLink="/admin/users" routerLinkActive="active" class="bottom-nav-item">
+      <ion-icon name="people"></ion-icon>
+      <span>Usuarios</span>
+    </a>
     <a routerLink="/admin/products" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="cube-outline"></ion-icon>
+      <ion-icon name="cube"></ion-icon>
       <span>Productos</span>
     </a>
     <a routerLink="/admin/categories" routerLinkActive="active" class="bottom-nav-item">

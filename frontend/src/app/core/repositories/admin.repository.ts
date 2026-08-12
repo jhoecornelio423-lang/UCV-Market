@@ -125,14 +125,54 @@ export class AdminRepository {
   }
 
   /**
-   * Cambia el estado (ban) de un vendedor
+   * Obtiene todos los compradores
    */
-  updateSellerRole(sellerId: string, role: string): Observable<void> {
+  getBuyers(): Observable<Profile[]> {
     return from(
       this.supabaseService.client
         .from('profiles')
-        .update({ role })
+        .select('*')
+        .in('role', ['comprador', 'suspended_buyer'])
+        .order('created_at', { ascending: false })
+        .then(res => res.data as Profile[] || [])
+    );
+  }
+
+  /**
+   * Cambia el estado (ban) de un vendedor
+   */
+  updateSellerRole(sellerId: string, role: string, suspensionReason?: string): Observable<void> {
+    const updateData: any = { role };
+    if (suspensionReason !== undefined) {
+      updateData.suspension_reason = suspensionReason;
+    }
+    return from(
+      this.supabaseService.client
+        .from('profiles')
+        .update(updateData)
         .eq('id', sellerId)
+        .select()
+        .single()
+        .then(({ error, data }) => {
+          if (error) throw error;
+          if (!data) throw new Error('No se pudo actualizar. Permisos insuficientes.');
+        })
+    );
+  }
+
+  /**
+   * Cambia el estado (ban) de un comprador
+   */
+  updateBuyerRole(buyerId: string, role: string, suspensionReason?: string): Observable<void> {
+    const updateData: any = { role };
+    if (suspensionReason !== undefined) {
+      updateData.suspension_reason = suspensionReason;
+    }
+    return from(
+      this.supabaseService.client
+        .from('profiles')
+        .update(updateData)
+        .eq('id', buyerId)
         .select()
         .single()
         .then(({ error, data }) => {

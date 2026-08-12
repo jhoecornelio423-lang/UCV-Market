@@ -1,0 +1,91 @@
+<div class="admin-page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2 class="page-title">Gestión de Usuarios</h2>
+      <p class="page-subtitle">Administra los compradores de la plataforma y mantén la comunidad segura.</p>
+    </div>
+    <div class="header-actions">
+      <div class="stats-badge">
+        <ion-icon name="people"></ion-icon>
+        <span>{{ users.length }} usuarios totales</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters-section">
+    <div class="search-bar glass-panel">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar por nombre o código de estudiante..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+    </div>
+    <div class="filter-pills">
+      <button class="pill" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">Todos</button>
+      <button class="pill" [class.active]="activeFilter === 'active'" (click)="setFilter('active')">Activos</button>
+      <button class="pill" [class.active]="activeFilter === 'suspended'" (click)="setFilter('suspended')">Suspendidos</button>
+    </div>
+  </div>
+
+  <h3 class="section-title">COMPRADORES REGISTRADOS</h3>
+
+  <div class="table-card glass-panel">
+    <div class="table-responsive">
+      <table class="modern-table">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Código / Sede</th>
+            <th>Registro</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>
+              <div class="user-cell">
+                <div class="avatar" [style.background-image]="'url(' + (user.avatar_url || 'assets/images/default-avatar.png') + ')'"></div>
+                <div class="user-info">
+                  <span class="name">{{ user.full_name }}</span>
+                  <span class="email">{{ user.email || 'Sin correo' }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="code-cell">
+                <span class="code">{{ user.student_code || 'N/A' }}</span>
+                <span class="campus">{{ user.campus || 'Sede no especificada' }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="date">{{ user.created_at | date:'dd MMM yyyy' }}</span>
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="user.role === 'comprador'" [class.suspended]="user.role === 'suspended_buyer'">
+                {{ user.role === 'comprador' ? 'Activo' : 'Suspendido' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <div class="toggle-container" title="Suspender/Reactivar Usuario">
+                  <ion-toggle [checked]="user.role === 'comprador'" (ionChange)="toggleUserStatus(user)" mode="md"></ion-toggle>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div class="empty-state" *ngIf="filteredUsers.length === 0 && !loading">
+        <ion-icon name="search-outline"></ion-icon>
+        <h4>No se encontraron usuarios</h4>
+        <p>Intenta con otros términos de búsqueda o filtros.</p>
+      </div>
+
+      <!-- Loading State -->
+      <div class="empty-state" *ngIf="loading">
+        <ion-spinner name="crescent"></ion-spinner>
+        <h4>Cargando usuarios...</h4>
+      </div>
+    </div>
+  </div>
+</div>

@@ -102,17 +102,28 @@ export class AdminSellersComponent implements OnInit {
     const alert = await this.alertCtrl.create({
       header: isBanning ? 'Suspender Vendedor' : 'Reactivar Vendedor',
       message: `¿Estás seguro de que deseas ${isBanning ? 'suspender' : 'reactivar'} a ${seller.full_name || 'este vendedor'}?`,
+      inputs: isBanning ? [
+        {
+          name: 'reason',
+          type: 'textarea',
+          placeholder: 'Motivo de la suspensión (opcional)'
+        }
+      ] : [],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         { 
           text: 'Confirmar', 
-          handler: () => {
-            this.adminRepo.updateSellerRole(seller.id, newRole).subscribe({
+          handler: (data) => {
+            const reason = isBanning ? data?.reason : null; // Clear reason if reactivating
+            this.adminRepo.updateSellerRole(seller.id, newRole, reason).subscribe({
               next: () => {
                 this.showToast(`Vendedor ${isBanning ? 'suspendido' : 'reactivado'} con éxito`);
                 this.loadData();
               },
-              error: () => this.showToast('Error al actualizar el estado', 'danger')
+              error: (err) => {
+                console.error(err);
+                this.showToast('Error al actualizar el estado. Verifica tus permisos.', 'danger');
+              }
             });
           }
         }
