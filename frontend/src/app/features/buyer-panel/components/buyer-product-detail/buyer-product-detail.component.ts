@@ -5,7 +5,8 @@ import { ProductRepository, PRODUCT_REPOSITORY } from '../../../../core/reposito
 import { CartService } from '../../../../core/cart/cart.service';
 import { FavoritesService } from '../../../../core/services/favorites.service';
 import { Inject } from '@angular/core';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
+import { AuthService } from '../../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-buyer-product-detail',
@@ -23,6 +24,8 @@ export class BuyerProductDetailComponent implements OnInit {
   private cartService = inject(CartService);
   private favoritesService = inject(FavoritesService);
   private toastCtrl = inject(ToastController);
+  private alertCtrl = inject(AlertController);
+  private authService = inject(AuthService);
 
   constructor(
     @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository

@@ -42,7 +42,7 @@
           <tr *ngFor="let user of filteredUsers">
             <td>
               <div class="user-cell">
-                <div class="avatar" [style.background-image]="'url(' + (user.avatar_url || 'assets/images/default-avatar.png') + ')'"></div>
+                <div class="avatar" [style.background-image]="'url(' + (user.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg') + ')'"></div>
                 <div class="user-info">
                   <span class="name">{{ user.full_name }}</span>
                   <span class="email">{{ user.email || 'Sin correo' }}</span>

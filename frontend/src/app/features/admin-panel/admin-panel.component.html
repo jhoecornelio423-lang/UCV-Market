@@ -1,5 +1,21 @@
 <div class="admin-layout">
   
+  <!-- Mobile Header Bar -->
+  <header class="admin-mobile-header ion-hide-md-up">
+    <div class="mobile-logo">
+      <div class="logo-circle">
+        <ion-icon name="bag-handle"></ion-icon>
+      </div>
+      <div class="logo-text">
+        <h2>UCV Market</h2>
+        <span>ADMIN PANEL</span>
+      </div>
+    </div>
+    <button class="logout-btn" (click)="signOut()" title="Cerrar Sesión">
+      <ion-icon name="log-out-outline"></ion-icon>
+    </button>
+  </header>
+
   <!-- Sidebar (Desktop) -->
   <aside class="admin-sidebar ion-hide-md-down">
     <div class="sidebar-header">
@@ -38,6 +54,11 @@
         <ion-icon name="chatbubble-outline"></ion-icon>
         <span>Soporte</span>
         <span class="badge" *ngIf="openTicketsCount > 0">{{ openTicketsCount }}</span>
+      </a>
+      <a routerLink="/admin/reports" routerLinkActive="active" class="nav-item">
+        <ion-icon name="flag-outline"></ion-icon>
+        <span>Reportes</span>
+        <span class="badge danger" *ngIf="activeReportsCount > 0">{{ activeReportsCount }}</span>
       </a>
     </nav>
 
@@ -85,6 +106,10 @@
         <ion-icon name="chatbubble-outline"></ion-icon>
       </div>
       <span>Soporte</span>
+    </a>
+    <a routerLink="/admin/reports" routerLinkActive="active" class="bottom-nav-item">
+      <ion-icon name="flag-outline"></ion-icon>
+      <span>Reportes</span>
     </a>
   </nav>
 

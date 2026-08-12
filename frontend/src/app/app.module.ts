@@ -1,6 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
@@ -14,6 +16,8 @@ import { SupabaseProductRepository } from './core/repositories/supabase/supabase
 import { ORDER_REPOSITORY } from './core/repositories/order.repository';
 import { SupabaseOrderRepository } from './core/repositories/supabase/supabase-order.repository';
 
+registerLocaleData(localeEs);
+
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
@@ -21,7 +25,8 @@ import { SupabaseOrderRepository } from './core/repositories/supabase/supabase-o
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: AUTH_REPOSITORY, useClass: SupabaseAuthRepository },
     { provide: PRODUCT_REPOSITORY, useClass: SupabaseProductRepository },
-    { provide: ORDER_REPOSITORY, useClass: SupabaseOrderRepository }
+    { provide: ORDER_REPOSITORY, useClass: SupabaseOrderRepository },
+    { provide: LOCALE_ID, useValue: 'es' }
   ],
   bootstrap: [AppComponent],
 })

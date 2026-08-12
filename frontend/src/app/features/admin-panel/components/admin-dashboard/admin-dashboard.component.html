@@ -114,31 +114,38 @@
     <div class="list-card">
       <div class="list-header">
         <h3>Ítems Reportados</h3>
-        <span class="count-badge danger">4 productos</span>
+        <span class="count-badge danger" *ngIf="reportedItems.length > 0">{{ reportedItems.length }} reportes</span>
+        <span class="count-badge pending" *ngIf="reportedItems.length === 0">Sin reportes</span>
       </div>
       
       <div class="list-content">
-        <!-- Mocked Data since table doesn't exist -->
-        <div class="list-item">
-          <div class="item-icon img-icon">
-            <img src="assets/images/default-avatar.png" alt="Product" />
-          </div>
-          <div class="item-details">
-            <h4>Arroz Chaufa</h4>
-            <p>Wok Express</p>
-          </div>
-          <span class="flag-badge"><ion-icon name="flag"></ion-icon> 2</span>
+        <!-- Estado Vacío -->
+        <div class="empty-state-list" *ngIf="reportedItems.length === 0" style="text-align: center; padding: 32px 16px; color: #8F95B2;">
+          <ion-icon name="shield-checkmark-outline" style="font-size: 32px; color: #10B981; margin-bottom: 8px;"></ion-icon>
+          <p style="margin: 0; font-size: 13px; font-weight: 500;">No hay productos reportados en la plataforma.</p>
         </div>
-        
-        <div class="list-item">
+
+        <!-- Lista de reportes reales -->
+        <div class="list-item" *ngFor="let item of reportedItems">
           <div class="item-icon img-icon">
-            <img src="assets/images/login-food-banner.jpg" alt="Product" />
+            <img [src]="item.product?.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="Product" />
           </div>
           <div class="item-details">
-            <h4>Hamburguesa</h4>
-            <p>BurgerUni</p>
+            <h4>{{ item.product?.name || 'Producto' }}</h4>
+            <p style="font-size: 11px; margin: 2px 0;"><span style="color: #EF4444; font-weight: 700;">Infracción:</span> {{ item.reason }}</p>
+            <p style="font-size: 10px; color: #8F95B2; margin: 0;">Por: {{ item.reporter?.full_name || 'Usuario' }}</p>
           </div>
-          <span class="flag-badge"><ion-icon name="flag"></ion-icon> 5</span>
+          <div class="reported-actions" style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end; margin-left: 8px;">
+            <button class="action-link" (click)="dismissReport(item.id)" title="Descartar reporte" style="color: #10B981; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">
+              Resolver
+            </button>
+            <button *ngIf="item.product?.is_active" class="action-link" (click)="deactivateProduct(item.product_id, item.product?.name)" title="Desactivar de forma temporal" style="color: #F59E0B; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">
+              Desactivar
+            </button>
+            <button class="action-link" (click)="confirmDeleteProduct(item.product_id, item.product?.name, item.id)" title="Eliminar definitivamente" style="color: #EF4444; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">
+              Eliminar
+            </button>
+          </div>
         </div>
       </div>
     </div>

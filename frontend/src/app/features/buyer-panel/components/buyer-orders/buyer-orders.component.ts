@@ -4,6 +4,7 @@ import { LoadingController, AlertController, ToastController } from '@ionic/angu
 import { Subscription } from 'rxjs';
 
 import { ORDER_REPOSITORY, OrderRepository } from '../../../../core/repositories/order.repository';
+import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Order, OrderStatus } from '../../../../core/models/order.model';
 import { Profile } from '../../../../core/models/profile.model';
@@ -26,6 +27,13 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   selectedRating = 0;
   reviewComment = '';
 
+  isReportModalOpen = false;
+  reportingProduct: { id: string, name: string } | null = null;
+  reportReason = '';
+  selectedEvidenceFile: File | null = null;
+  selectedEvidenceFileUrl: string | null = null;
+  submittingReport = false;
+
   get visibleOrders(): Order[] {
     const historicalStatuses: OrderStatus[] = ['completed', 'cancelled'];
     return this.buyerOrders.filter(order => this.buyerFilter === 'history'
@@ -41,6 +49,7 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
   private orderRepository = inject(ORDER_REPOSITORY);
+  private productRepository = inject(PRODUCT_REPOSITORY);
 
   ngOnInit() {
     this.subscriptions.add(
@@ -290,6 +299,114 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   signOut() {
     this.authService.signOut().subscribe(() => {
       this.router.navigate(['/login']);
+    });
+  }
+
+  async reportOrderProduct(order: Order) {
+    if (!order.order_items || order.order_items.length === 0) return;
+
+    const items = order.order_items.filter(item => item.product_id);
+    if (items.length === 0) return;
+
+    if (items.length === 1) {
+      this.openReportModal(items[0].product_id, items[0].product?.name || 'Producto');
+    } else {
+      const inputs = items.map((item, idx) => ({
+        name: 'product_id',
+        type: 'radio' as const,
+        label: item.product?.name || `Producto ${idx + 1}`,
+        value: item.product_id,
+        checked: idx === 0
+      }));
+
+      const alert = await this.alertCtrl.create({
+        header: 'Selecciona el Producto',
+        message: '¿Cuál de los productos comprados deseas reportar?',
+        inputs: inputs as any,
+        buttons: [
+          { text: 'Cancelar', role: 'cancel' },
+          {
+            text: 'Siguiente',
+            handler: (selectedProductId) => {
+              const selectedItem = items.find(i => i.product_id === selectedProductId);
+              if (selectedItem) {
+                this.openReportModal(selectedItem.product_id, selectedItem.product?.name || 'Producto');
+              }
+            }
+          }
+        ]
+      });
+      await alert.present();
+    }
+  }
+
+  openReportModal(productId: string, productName: string) {
+    this.reportingProduct = { id: productId, name: productName };
+    this.reportReason = '';
+    this.selectedEvidenceFile = null;
+    this.selectedEvidenceFileUrl = null;
+    this.isReportModalOpen = true;
+  }
+
+  onEvidenceFileSelected(event: any) {
+    const file = event.target.files?.[0];
+    if (file) {
+      this.selectedEvidenceFile = file;
+      this.selectedEvidenceFileUrl = URL.createObjectURL(file);
+    }
+  }
+
+  removeEvidenceFile() {
+    this.selectedEvidenceFile = null;
+    this.selectedEvidenceFileUrl = null;
+  }
+
+  submitProductReport() {
+    if (!this.reportingProduct || !this.reportReason.trim()) return;
+
+    this.submittingReport = true;
+    this.authService.currentProfile$.subscribe(profile => {
+      if (!profile) {
+        this.submittingReport = false;
+        return;
+      }
+
+      const reason = this.reportReason.trim();
+      const productId = this.reportingProduct!.id;
+
+      if (this.selectedEvidenceFile) {
+        this.productRepository.uploadEvidence(this.selectedEvidenceFile, profile.id).subscribe({
+          next: (url) => {
+            this.sendReportData(productId, profile.id, reason, url);
+          },
+          error: (err) => {
+            console.error('Error al subir evidencia:', err);
+            this.showToast('Error al subir la imagen de evidencia.', 'danger');
+            this.submittingReport = false;
+          }
+        });
+      } else {
+        this.sendReportData(productId, profile.id, reason);
+      }
+    });
+  }
+
+  private sendReportData(productId: string, reporterId: string, reason: string, evidenceUrl?: string) {
+    this.productRepository.reportProduct(productId, reporterId, reason, evidenceUrl).subscribe({
+      next: () => {
+        this.showToast('Reporte enviado con éxito. Los moderadores lo revisarán.', 'success');
+        this.isReportModalOpen = false;
+        this.submittingReport = false;
+        this.reportingProduct = null;
+        this.reportReason = '';
+        this.selectedEvidenceFile = null;
+        this.selectedEvidenceFileUrl = null;
+      },
+      error: (err) => {
+        console.error('Error al reportar:', err);
+        this.showToast('Error al enviar el reporte.', 'danger');
+        this.submittingReport = false;
+      }
     });
   }
 }

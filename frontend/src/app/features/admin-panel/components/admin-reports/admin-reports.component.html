@@ -1,0 +1,151 @@
+<div class="admin-page-container">
+  
+  <div class="page-header">
+    <div class="header-title">
+      <h1>Moderación de Reportes</h1>
+      <p>Administra los reportes de productos enviados por los estudiantes para mantener el mercado seguro.</p>
+    </div>
+    <div class="header-stats">
+      <span>{{ filteredReports.length }} reportes en esta sección</span>
+    </div>
+  </div>
+
+  <div class="filters-container" style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+    <!-- Tabs de Estado -->
+    <div class="orders-tabs-figma buyer-tabs" style="display: flex; gap: 12px; background: #E2E8F0; padding: 6px; border-radius: 12px; width: fit-content;">
+      <button class="tab-item" [class.active]="activeTab === 'pending'" (click)="setFilterTab('pending')" style="border: none; border-radius: 8px; padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+        Pendientes
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'resolved'" (click)="setFilterTab('resolved')" style="border: none; border-radius: 8px; padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+        Resueltos
+      </button>
+      <button class="tab-item" [class.active]="activeTab === 'rejected'" (click)="setFilterTab('rejected')" style="border: none; border-radius: 8px; padding: 8px 16px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.2s;">
+        Rechazados
+      </button>
+    </div>
+
+    <!-- Buscador -->
+    <div class="search-bar glass-panel" style="margin: 0;">
+      <ion-icon name="search-outline"></ion-icon>
+      <input type="text" placeholder="Buscar por producto, infracción o denunciante..." [(ngModel)]="searchTerm" (input)="applyFilters()">
+    </div>
+  </div>
+
+  <div class="table-card glass-panel">
+    <!-- Spinner -->
+    <div *ngIf="loading" class="spinner-container">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && filteredReports.length === 0" class="empty-state">
+      <ion-icon name="shield-checkmark-outline" style="font-size: 48px; color: #10B981; margin-bottom: 12px;"></ion-icon>
+      <p>No se encontraron reportes en esta categoría.</p>
+    </div>
+
+    <!-- Reports Table -->
+    <div class="table-responsive" *ngIf="!loading && filteredReports.length > 0">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Vendedor</th>
+            <th>Reportado Por</th>
+            <th>Infracción / Evidencia</th>
+            <th>Fecha</th>
+            <th>Estado Producto</th>
+            <th>Acciones de Moderación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredReports">
+            <td>
+              <div class="product-cell">
+                <div class="product-avatar">
+                  <img [src]="item.product?.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="Product" />
+                </div>
+                <div class="product-info">
+                  <span class="name">{{ item.product?.name || 'Producto Eliminado' }}</span>
+                  <span class="price">S/ {{ item.product?.price | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="text-regular">{{ item.product?.seller?.business_name || item.product?.seller?.full_name || 'Desconocido' }}</span>
+            </td>
+            <td>
+              <div class="user-info">
+                <span class="name">{{ item.reporter?.full_name || 'Alumno' }}</span>
+                <span class="phone" style="font-size: 11px; color: #8F95B2;">Telf: {{ item.reporter?.phone || 'Sin telf.' }}</span>
+              </div>
+            </td>
+            <td>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <span class="reason-cell" style="color: #EF4444; font-weight: 700; display: block;">{{ item.reason }}</span>
+                <!-- Evidencia Miniatura -->
+                <div *ngIf="item.evidence_url" style="display: flex; align-items: center; gap: 6px;">
+                  <img [src]="item.evidence_url" (click)="openZoomModal(item.evidence_url)" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #E2E8F0; cursor: pointer;" title="Ampliar evidencia" />
+                  <span style="font-size: 10px; color: #8F95B2; cursor: pointer;" (click)="openZoomModal(item.evidence_url)">Ver pruebas</span>
+                </div>
+                <span *ngIf="!item.evidence_url" style="font-size: 11px; color: #8F95B2; font-style: italic;">Sin evidencia de foto</span>
+              </div>
+            </td>
+            <td>
+              <span class="text-muted">{{ item.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="item.product?.is_active" [class.suspended]="!item.product?.is_active">
+                {{ item.product?.is_active ? 'Visible' : 'Oculto/Desactivado' }}
+              </span>
+            </td>
+            <td>
+              <!-- Acciones para reportes pendientes -->
+              <div class="actions" *ngIf="item.status === 'pending'">
+                <button class="action-btn success" (click)="acceptReport(item, 'deactivate')" *ngIf="item.product?.is_active" title="Aceptar reporte y desactivar producto">
+                  <ion-icon name="eye-off-outline"></ion-icon>
+                  <span>Aceptar y Ocultar</span>
+                </button>
+                <button class="action-btn danger" (click)="acceptReport(item, 'delete')" title="Aceptar reporte y eliminar producto">
+                  <ion-icon name="trash-outline"></ion-icon>
+                  <span>Aceptar y Eliminar</span>
+                </button>
+                <button class="action-btn warning" (click)="rejectReport(item)" title="Rechazar reporte (Dejar producto activo)">
+                  <ion-icon name="close-circle-outline"></ion-icon>
+                  <span>Rechazar</span>
+                </button>
+              </div>
+
+              <!-- Estado para reportes ya procesados -->
+              <div *ngIf="item.status !== 'pending'" style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="status-badge" [class.active]="item.status === 'resolved'" [class.suspended]="item.status === 'rejected'">
+                  {{ item.status === 'resolved' ? 'Aceptado/Resuelto' : 'Rechazado/Desestimado' }}
+                </span>
+                <span *ngIf="item.moderator_notes" style="font-size: 11px; color: #64748B; font-style: italic; max-width: 200px;">
+                  Nota: {{ item.moderator_notes }}
+                </span>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Zoom Modal -->
+  <ion-modal [isOpen]="isZoomModalOpen" (didDismiss)="isZoomModalOpen = false" class="review-modal">
+    <ng-template>
+      <div class="review-modal-content" style="max-width: 500px; padding: 20px; border-radius: 20px; background: white; text-align: center; margin: auto;">
+        <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #E2E8F0; padding-bottom: 12px; margin-bottom: 16px;">
+          <h2 style="margin: 0; font-size: 18px; font-weight: 800; color: #1A1F36;">Evidencia de Reporte</h2>
+          <button class="close-btn" (click)="isZoomModalOpen = false" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #8F95B2;">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <img [src]="zoomImageUrl" style="width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; border: 1px solid #E2E8F0;" />
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+</div>

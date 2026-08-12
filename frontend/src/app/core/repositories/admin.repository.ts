@@ -58,21 +58,75 @@ export class AdminRepository {
    * Obtiene la distribución de ventas por categoría
    */
   getSalesByCategory(): Observable<{label: string, value: number}[]> {
-    // Mocked for now to match the UI perfectly without complex RPCs
-    return from(Promise.resolve([
-      { label: 'Almuerzos', value: 38 },
-      { label: 'Postres', value: 24 },
-      { label: 'Bebidas', value: 18 },
-      { label: 'Snacks', value: 12 },
-      { label: 'Desayunos', value: 8 }
-    ]));
+    const promise = this.supabaseService.client
+      .from('order_items')
+      .select('quantity, price_at_sale, order:orders!inner(status), product:products!inner(category:categories!inner(name))')
+      .in('order.status', ['completed', 'ready', 'accepted'])
+      .then(res => {
+        if (res.error) throw res.error;
+        const data = res.data || [];
+        const map = new Map<string, number>();
+        data.forEach((item: any) => {
+          const catName = item.product?.category?.name || 'Otros';
+          const total = (item.price_at_sale || 0) * (item.quantity || 1);
+          map.set(catName, (map.get(catName) || 0) + total);
+        });
+        
+        const result = Array.from(map.entries()).map(([label, value]) => ({
+          label,
+          value: Math.round(value)
+        }));
+        
+        if (result.length === 0) {
+          return [
+            { label: 'Almuerzos', value: 0 },
+            { label: 'Postres', value: 0 },
+            { label: 'Bebidas', value: 0 },
+            { label: 'Snacks', value: 0 }
+          ];
+        }
+        return result;
+      });
+      
+    return from(promise);
   }
 
   /**
    * Obtiene el historial de ventas de los últimos 7 días
    */
   getWeeklySales(): Observable<number[]> {
-    return from(Promise.resolve([800, 1200, 700, 1600, 2100, 3100, 1500]));
+    const today = new Date();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(today.getDate() - 7);
+    
+    const promise = this.supabaseService.client
+      .from('orders')
+      .select('total_price, created_at')
+      .in('status', ['completed', 'ready', 'accepted'])
+      .gte('created_at', sevenDaysAgo.toISOString())
+      .then(res => {
+        if (res.error) throw res.error;
+        const data = res.data || [];
+        
+        // Creamos un arreglo de 7 elementos inicializado en 0 (Lunes a Domingo)
+        const salesByDay = Array(7).fill(0);
+        
+        // Mapeo del día de la semana (donde Lunes = 0, ..., Domingo = 6)
+        const dayIndices = [1, 2, 3, 4, 5, 6, 0]; // Monday = 1, Sunday = 0
+        
+        data.forEach(order => {
+          const date = new Date(order.created_at);
+          const day = date.getDay(); // 0 (Domingo) al 6 (Sábado)
+          const chartIdx = dayIndices.indexOf(day);
+          if (chartIdx !== -1) {
+            salesByDay[chartIdx] += Number(order.total_price || 0);
+          }
+        });
+        
+        return salesByDay.map(s => Math.round(s));
+      });
+      
+    return from(promise);
   }
 
   /**
@@ -261,5 +315,54 @@ export class AdminRepository {
           if (error) throw error;
         })
     );
+  }
+
+  /**
+   * Obtiene la lista de productos reportados
+   */
+  getReportedProducts(): Observable<any[]> {
+    const promise = this.supabaseService.client
+      .from('product_reports')
+      .select('*, product:products!product_id(*, product_images(*), seller:profiles!seller_id(*)), reporter:profiles!reporter_id(full_name, phone)')
+      .order('created_at', { ascending: false })
+      .then(res => {
+        if (res.error) throw res.error;
+        return res.data || [];
+      });
+    return from(promise);
+  }
+
+  /**
+   * Descarta un reporte de producto (eliminándolo)
+   */
+  dismissReport(reportId: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('product_reports')
+        .delete()
+        .eq('id', reportId)
+        .then(({ error }) => {
+          if (error) throw error;
+        })
+    );
+  }
+
+  /**
+   * Actualiza el estado de un reporte de producto, opcionalmente eliminando la evidencia de storage
+   */
+  updateReportStatus(reportId: string, status: 'resolved' | 'rejected', notes?: string, deleteFilePath?: string): Observable<void> {
+    const promise = this.supabaseService.client
+      .from('product_reports')
+      .update({ status, moderator_notes: notes || null })
+      .eq('id', reportId)
+      .then(async ({ error }) => {
+        if (error) throw error;
+        if (deleteFilePath) {
+          await this.supabaseService.client.storage
+            .from('product-images')
+            .remove([deleteFilePath]);
+        }
+      });
+    return from(promise);
   }
 }

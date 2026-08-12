@@ -56,6 +56,10 @@
           <button *ngIf="order.status === 'completed'" class="btn-rate" (click)="qualifySeller(order)">
             Calificar
           </button>
+          <button *ngIf="['completed', 'cancelled'].includes(order.status)" class="btn-report" (click)="reportOrderProduct(order)">
+            <ion-icon name="flag-outline"></ion-icon>
+            Reportar
+          </button>
         </div>
       </article>
     </div>
@@ -102,6 +106,67 @@
           <button class="btn-cancel" (click)="isReviewModalOpen = false">Cancelar</button>
           <button class="btn-submit" (click)="submitCustomReview()" [disabled]="selectedRating === 0">
             Enviar Calificación
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal de Reportar Producto -->
+  <ion-modal [isOpen]="isReportModalOpen" (didDismiss)="isReportModalOpen = false" class="review-modal">
+    <ng-template>
+      <div class="review-modal-content">
+        <div class="modal-header">
+          <h2>Reportar Producto</h2>
+          <button class="close-btn" (click)="isReportModalOpen = false">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="modal-body" *ngIf="reportingProduct">
+          <p class="order-id" style="font-weight: 700; color: #E8432D; margin-bottom: 8px;">
+            Producto: {{ reportingProduct.name }}
+          </p>
+          <p class="instructor">Detalla el motivo del reporte e incluye una foto como evidencia para que el administrador pueda revisarlo:</p>
+
+          <!-- Campo de Descripción -->
+          <div class="comment-wrapper">
+            <textarea placeholder="Escribe aquí el motivo detallado (ej. Producto vencido, estafa, el vendedor no asistió)..." 
+                      [(ngModel)]="reportReason" 
+                      rows="4">
+            </textarea>
+          </div>
+
+          <!-- Selector de Imagen / Evidencia -->
+          <div class="evidence-selector-wrapper" style="margin-top: 16px;">
+            <label class="evidence-label" style="font-size: 13px; font-weight: 700; color: #1A1F36; display: block; margin-bottom: 8px;">
+              Evidencia Fotográfica (Recomendado)
+            </label>
+            
+            <!-- Preview de Imagen -->
+            <div class="evidence-preview" *ngIf="selectedEvidenceFileUrl" style="position: relative; width: 100%; height: 160px; border-radius: 12px; overflow: hidden; margin-bottom: 12px; border: 1px dashed #E2E8F0;">
+              <img [src]="selectedEvidenceFileUrl" style="width: 100%; height: 100%; object-fit: cover;" />
+              <button type="button" (click)="removeEvidenceFile()" style="position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Botón de Selección -->
+            <div class="upload-btn-wrapper" *ngIf="!selectedEvidenceFileUrl">
+              <button type="button" class="btn-select-file" (click)="fileInput.click()" style="width: 100%; height: 80px; border: 2px dashed #CBD5E1; border-radius: 12px; background: #F8FAFC; color: #64748B; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;">
+                <ion-icon name="image-outline" style="font-size: 24px; color: #E8432D;"></ion-icon>
+                <span>Subir foto de evidencia</span>
+              </button>
+              <input type="file" #fileInput (change)="onEvidenceFileSelected($event)" accept="image/*" style="display: none;" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" style="display: flex; gap: 10px;">
+          <button class="btn-cancel" (click)="isReportModalOpen = false" style="flex: 1;">Cancelar</button>
+          <button class="btn-submit" (click)="submitProductReport()" [disabled]="submittingReport || !reportReason.trim()" style="flex: 1; background: #E8432D; color: white;">
+            <ion-spinner name="crescent" color="light" *ngIf="submittingReport" style="width: 20px; height: 20px;"></ion-spinner>
+            <span *ngIf="!submittingReport">Enviar Reporte</span>
           </button>
         </div>
       </div>

@@ -155,8 +155,17 @@ $text-muted: #8F95B2;
 .admin-main-content {
   flex: 1;
   position: relative;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
+
+  ::ng-deep .ion-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
 }
 
 /* Bottom Navigation (Mobile) */
@@ -209,6 +218,68 @@ $text-muted: #8F95B2;
 
     &.active {
       color: $primary;
+    }
+  }
+}
+
+/* Mobile Header */
+.admin-mobile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background-color: $navy;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+
+  .mobile-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .logo-circle {
+      width: 32px;
+      height: 32px;
+      background-color: $primary;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      h2 {
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        margin: 0;
+      }
+      span {
+        color: $text-muted;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .logout-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    transition: background 0.2s;
+
+    &:active {
+      background-color: rgba(255, 255, 255, 0.1);
     }
   }
 }

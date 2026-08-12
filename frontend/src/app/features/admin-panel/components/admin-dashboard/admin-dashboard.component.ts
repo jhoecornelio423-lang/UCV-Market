@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { AdminRepository, AdminDashboardStats } from '../../../../core/repositories/admin.repository';
 import { SellerApplication } from '../../../../core/models/seller-application.model';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -18,6 +19,7 @@ export class AdminDashboardComponent implements OnInit {
   };
   
   pendingApplications: SellerApplication[] = [];
+  reportedItems: any[] = [];
   
   // Weekly Sales Line Chart
   lineChartData: ChartConfiguration['data'] = {
@@ -53,12 +55,46 @@ export class AdminDashboardComponent implements OnInit {
   doughnutChartType: 'doughnut' = 'doughnut';
 
   private adminRepo = inject(AdminRepository);
+  private alertCtrl = inject(AlertController);
+  private toastCtrl = inject(ToastController);
   todayDate = new Date();
 
   ngOnInit() {
+    this.adjustChartOptions();
     this.loadStats();
     this.loadCharts();
     this.loadApplications();
+    this.loadReports();
+  }
+
+  loadReports() {
+    this.adminRepo.getReportedProducts().subscribe({
+      next: (reports) => {
+        this.reportedItems = reports || [];
+      },
+      error: (err) => {
+        console.error('Error al cargar reportes:', err);
+      }
+    });
+  }
+
+  dismissReport(reportId: string) {
+    this.adminRepo.dismissReport(reportId).subscribe({
+      next: () => {
+        this.loadReports();
+      },
+      error: (err) => {
+        console.error('Error al descartar reporte:', err);
+      }
+    });
+  }
+
+  adjustChartOptions() {
+    if (window.innerWidth < 768) {
+      if (this.doughnutChartOptions && this.doughnutChartOptions.plugins && this.doughnutChartOptions.plugins.legend) {
+        this.doughnutChartOptions.plugins.legend.position = 'bottom';
+      }
+    }
   }
 
   loadStats() {
@@ -101,5 +137,66 @@ export class AdminDashboardComponent implements OnInit {
     this.adminRepo.getPendingApplications().subscribe(apps => {
       this.pendingApplications = apps;
     });
+  }
+
+  async deactivateProduct(productId: string, productName: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Desactivar Producto',
+      message: `¿Estás seguro de que deseas desactivar temporalmente el producto "${productName || 'este producto'}"? Dejará de ser visible en el catálogo.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Desactivar',
+          handler: () => {
+            this.adminRepo.updateProductStatus(productId, false).subscribe({
+              next: () => {
+                this.showToast('Producto desactivado correctamente.', 'success');
+                this.loadReports();
+                this.loadStats();
+              },
+              error: () => this.showToast('Error al desactivar el producto.', 'danger')
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async confirmDeleteProduct(productId: string, productName: string, reportId: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Eliminar Producto',
+      message: `¿Estás seguro de que deseas eliminar permanentemente el producto "${productName || 'este producto'}"? Se borrará del catálogo y se cerrarán todos los reportes asociados.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.adminRepo.deleteProduct(productId).subscribe({
+              next: () => {
+                this.adminRepo.dismissReport(reportId).subscribe(() => {
+                  this.showToast('Producto eliminado y reporte resuelto.', 'success');
+                  this.loadReports();
+                  this.loadStats();
+                });
+              },
+              error: () => this.showToast('Error al eliminar el producto.', 'danger')
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private async showToast(message: string, color: string = 'success') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

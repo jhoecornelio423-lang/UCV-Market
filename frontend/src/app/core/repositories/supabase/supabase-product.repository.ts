@@ -246,4 +246,51 @@ export class SupabaseProductRepository implements ProductRepository {
       })
     );
   }
+
+  reportProduct(productId: string, reporterId: string, reason: string, evidenceUrl?: string): Observable<boolean> {
+    const dataToInsert: any = { 
+      product_id: productId, 
+      reporter_id: reporterId, 
+      reason 
+    };
+    if (evidenceUrl) {
+      dataToInsert.evidence_url = evidenceUrl;
+    }
+
+    const query = this.supabaseService.client
+      .from('product_reports')
+      .insert(dataToInsert);
+
+    return from(query).pipe(
+      map(response => {
+        if (response.error) throw new Error(response.error.message);
+        return true;
+      })
+    );
+  }
+
+  uploadEvidence(file: File, reporterId: string): Observable<string> {
+    const fileExt = file.name.split('.').pop();
+    const filePath = `reports/${reporterId}-${Date.now()}.${fileExt}`;
+    const promise = this.supabaseService.client.storage
+      .from('product-images')
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+
+    return from(promise).pipe(
+      switchMap((response: any) => {
+        if (response.error) {
+          return throwError(() => new Error(response.error.message));
+        }
+        const publicUrlResponse = this.supabaseService.client.storage
+          .from('product-images')
+          .getPublicUrl(filePath);
+
+        return of(publicUrlResponse.data.publicUrl);
+      }),
+      catchError(error => throwError(() => new Error(error.message)))
+    );
+  }
 }

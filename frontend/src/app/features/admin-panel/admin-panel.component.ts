@@ -37,6 +37,7 @@ export class AdminPanelComponent implements OnInit {
 
   pendingApplicationsCount = 0;
   openTicketsCount = 0;
+  activeReportsCount = 0;
 
   ngOnInit() {
     this.authService.currentProfile$.subscribe(profile => {
@@ -46,12 +47,14 @@ export class AdminPanelComponent implements OnInit {
   }
 
   loadBadges() {
-    // Para simplificar, hacemos las llamadas directas aquí, pero lo ideal sería tener un BehaviorSubject en un servicio
     this.adminRepo.getPendingApplications().subscribe(apps => {
       this.pendingApplicationsCount = apps.length;
     });
     this.adminRepo.getSupportTickets().subscribe(tickets => {
       this.openTicketsCount = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
+    });
+    this.adminRepo.getReportedProducts().subscribe(reports => {
+      this.activeReportsCount = reports.length;
     });
   }
 
