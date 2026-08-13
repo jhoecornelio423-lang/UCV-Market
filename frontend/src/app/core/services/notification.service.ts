@@ -1,5 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Capacitor } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { SupabaseClientService } from '../database/supabase.client';
 import { AuthService } from '../auth/auth.service';
 
@@ -29,7 +31,9 @@ export class NotificationService {
 
   private storageKey = 'ucv_market_buyer_notifications';
   private currentUserId: string | null = null;
-  private channel: any;
+  private channels: any[] = [];
+
+  private permissionsRequested = false;
 
   private supabaseService = inject(SupabaseClientService);
   private authService = inject(AuthService);
@@ -40,17 +44,25 @@ export class NotificationService {
         this.currentUserId = user.id;
         this.storageKey = `ucv_market_buyer_notifs_${user.id}`;
         this.loadFromStorage();
-        this.setupRealtimeSubscription();
+        this.setupRealtimeSubscriptions();
       } else {
         this.currentUserId = null;
         this.notificationsSubject.next([]);
         this.updateUnreadCount();
-        if (this.channel) {
-          this.supabaseService.client.removeChannel(this.channel);
-          this.channel = null;
-        }
+        this.removeChannels();
       }
     });
+  }
+
+  private removeChannels() {
+    this.channels.forEach(ch => {
+      try {
+        this.supabaseService.client.removeChannel(ch);
+      } catch (e) {
+        console.error('Error al remover canal realtime', e);
+      }
+    });
+    this.channels = [];
   }
 
   private loadFromStorage() {
@@ -85,14 +97,14 @@ export class NotificationService {
     this.saveToStorage(notifs);
   }
 
-  private setupRealtimeSubscription() {
+  private setupRealtimeSubscriptions() {
     if (!this.currentUserId) return;
+    this.removeChannels();
 
-    if (this.channel) {
-      this.supabaseService.client.removeChannel(this.channel);
-    }
+    const userId = this.currentUserId;
 
-    this.channel = this.supabaseService.client
+    // 1) Comprador: cambios de estado de sus pedidos
+    const buyerChannel = this.supabaseService.client
       .channel('buyer-order-updates')
       .on(
         'postgres_changes',
@@ -100,13 +112,69 @@ export class NotificationService {
           event: 'UPDATE',
           schema: 'public',
           table: 'orders',
-          filter: `buyer_id=eq.${this.currentUserId}`
+          filter: `buyer_id=eq.${userId}`
         },
         (payload: any) => {
           this.handleOrderStatusChange(payload.old, payload.new);
         }
       )
       .subscribe();
+    this.channels.push(buyerChannel);
+
+    // 2) Vendedor: llegada de un pedido nuevo
+    const sellerChannel = this.supabaseService.client
+      .channel('seller-new-order')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'orders',
+          filter: `seller_id=eq.${userId}`
+        },
+        (payload: any) => {
+          this.handleNewOrder(payload.new);
+        }
+      )
+      .subscribe();
+    this.channels.push(sellerChannel);
+
+    // 3) Comprador: cambio de estado de sus reportes de producto
+    const reportChannel = this.supabaseService.client
+      .channel('buyer-report-status')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'product_reports',
+          filter: `reporter_id=eq.${userId}`
+        },
+        (payload: any) => {
+          this.handleReportStatusChange(payload.old, payload.new);
+        }
+      )
+      .subscribe();
+    this.channels.push(reportChannel);
+  }
+
+  private handleNewOrder(newOrder: any) {
+    const newNotif: AppNotification = {
+      id: Math.random().toString(36).substr(2, 9),
+      order_id: newOrder.id,
+      title: '¡Nuevo pedido recibido!',
+      body: 'Un comprador acaba de realizar un pedido. Revisa la sección de pedidos para aceptarlo.',
+      time: 'Justo ahora',
+      icon: 'bag-handle',
+      iconBg: '#FFF2F0',
+      iconColor: '#E8432D',
+      unread: true,
+      type: 'order',
+      timestamp: Date.now()
+    };
+
+    this.pushNotification(newNotif);
+    this.fireLocalNotification('¡Nuevo pedido recibido!', 'Un comprador realizó un pedido en tu emprendimiento.');
   }
 
   private handleOrderStatusChange(oldOrder: any, newOrder: any) {
@@ -173,10 +241,83 @@ export class NotificationService {
       timestamp: Date.now()
     };
 
+    this.pushNotification(newNotif);
+    this.fireLocalNotification(title, body);
+  }
+
+  private handleReportStatusChange(oldReport: any, newReport: any) {
+    if (!oldReport || !newReport) return;
+    if (oldReport.status === newReport.status) return;
+
+    if (newReport.status === 'resolved') {
+      const newNotif: AppNotification = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: 'Reporte aceptado y en revisión',
+        body: 'Tu reporte fue aceptado por los moderadores y está siendo revisado. Gracias por tu ayuda.',
+        time: 'Justo ahora',
+        icon: 'shield-checkmark',
+        iconBg: '#ECFDF5',
+        iconColor: '#10B981',
+        unread: true,
+        type: 'report',
+        timestamp: Date.now()
+      };
+      this.pushNotification(newNotif);
+      this.fireLocalNotification('Reporte aceptado', 'Tu reporte fue aceptado y está en revisión. ¡Gracias por tu ayuda!');
+    } else if (newReport.status === 'rejected') {
+      const newNotif: AppNotification = {
+        id: Math.random().toString(36).substr(2, 9),
+        title: 'Reporte rechazado',
+        body: 'Tu reporte fue evaluado y rechazado por los moderadores. Si tienes dudas, escríbenos a soporte.',
+        time: 'Justo ahora',
+        icon: 'shield-close',
+        iconBg: '#FEF2F2',
+        iconColor: '#EF4444',
+        unread: true,
+        type: 'report',
+        timestamp: Date.now()
+      };
+      this.pushNotification(newNotif);
+      this.fireLocalNotification('Reporte rechazado', 'Tu reporte fue evaluado y rechazado por los moderadores.');
+    }
+  }
+
+  private pushNotification(notif: AppNotification) {
     const currentNotifs = this.notificationsSubject.value;
-    // Add to top of list
-    const updatedNotifs = [newNotif, ...currentNotifs].slice(0, 50); // Keep max 50
+    const updatedNotifs = [notif, ...currentNotifs].slice(0, 50); // Keep max 50
     this.saveToStorage(updatedNotifs);
+  }
+
+  /**
+   * Dispara una notificación del sistema (celular) cuando la app está activa.
+   * En navegador usa la API Web Notifications si hay permiso.
+   */
+  private async fireLocalNotification(title: string, body: string) {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        if (!this.permissionsRequested) {
+          this.permissionsRequested = true;
+          const perm = await LocalNotifications.requestPermissions();
+          if (perm.display !== 'granted') return;
+        }
+        await LocalNotifications.schedule({
+          notifications: [{
+            id: Date.now(),
+            title,
+            body,
+            iconColor: '#E8432D',
+            channelId: 'pedidos'
+          }]
+        });
+      } else if (typeof window !== 'undefined' && 'Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification(title, { body });
+        }
+      }
+    } catch (e) {
+      // No romper el flujo si las notificaciones locales fallan
+      console.error('Error al mostrar notificación local:', e);
+    }
   }
 
   // Permite simular una notificación para pruebas

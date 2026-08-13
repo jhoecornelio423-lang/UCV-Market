@@ -1,9 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { SellerStateService } from '../../services/seller-state.service';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { SupabaseClientService } from '../../../../core/database/supabase.client';
+import { NotificationService, AppNotification } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-seller-dashboard',
@@ -17,10 +19,13 @@ export class SellerDashboardComponent {
   private toastCtrl = inject(ToastController);
   private authService = inject(AuthService);
   private supabaseService = inject(SupabaseClientService);
+  private notificationService = inject(NotificationService);
 
   stats$ = this.sellerState.stats$;
   userProfile$ = this.sellerState.userProfile$;
   activeOrders$ = this.sellerState.activeOrders$;
+  notifications$: Observable<AppNotification[]> = this.notificationService.notifications$;
+  unreadCount$: Observable<number> = this.notificationService.unreadCount$;
   
   showNotifDropdown = false;
   isReviewsModalOpen = false;
@@ -69,20 +74,20 @@ export class SellerDashboardComponent {
   }
 
   markAllRead() {
-    this.sellerState.markAllNotificationsAsRead();
+    this.notificationService.markAllAsRead();
   }
 
   onNotificationClick(notif: any) {
     if (notif.unread) {
-      this.sellerState.markNotificationAsRead(notif.id);
+      this.notificationService.markAllAsRead();
     }
 
     this.showNotifDropdown = false;
 
-    if (notif.id === 'p-orders') {
+    if (notif.order_id) {
       this.router.navigate(['/seller/orders']);
-    } else if (notif.id.startsWith('sys-')) {
-      this.router.navigate(['/seller/stats']);
+    } else {
+      this.router.navigate(['/seller/orders']);
     }
   }
 

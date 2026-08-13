@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { ORDER_REPOSITORY, OrderRepository } from '../../../../core/repositories/order.repository';
 import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { SupabaseClientService } from '../../../../core/database/supabase.client';
 import { Order, OrderStatus } from '../../../../core/models/order.model';
 import { Profile } from '../../../../core/models/profile.model';
 
@@ -50,6 +51,9 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   private toastCtrl = inject(ToastController);
   private orderRepository = inject(ORDER_REPOSITORY);
   private productRepository = inject(PRODUCT_REPOSITORY);
+  private supabaseService = inject(SupabaseClientService);
+
+  private realtimeChannel: any = null;
 
   ngOnInit() {
     this.subscriptions.add(
@@ -57,6 +61,7 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
         this.userProfile = profile;
         if (profile) {
           this.loadBuyerOrders(profile.id);
+          this.setupRealtimeSubscription(profile.id);
         }
       })
     );
@@ -64,6 +69,35 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+      this.realtimeChannel = null;
+    }
+  }
+
+  /**
+   * Mantiene el historial de compras actualizado en tiempo real.
+   */
+  private setupRealtimeSubscription(buyerId: string) {
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+    }
+
+    this.realtimeChannel = this.supabaseService.client
+      .channel(`buyer-orders-${buyerId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: `buyer_id=eq.${buyerId}`
+        },
+        () => {
+          this.loadBuyerOrders(buyerId);
+        }
+      )
+      .subscribe();
   }
 
   loadBuyerOrders(buyerId: string) {
@@ -197,7 +231,15 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   /**
    * Califica al emprendedor tras una compra exitosa.
    */
+  orderHasReview(order: Order): boolean {
+    return (order.reviews && order.reviews.length > 0) === true;
+  }
+
   qualifySeller(order: Order) {
+    if (this.orderHasReview(order)) {
+      this.showToast('Ya calificaste este pedido. Solo se permite una calificación.', 'warning');
+      return;
+    }
     this.selectedOrder = order;
     this.selectedRating = 0;
     this.reviewComment = '';
@@ -228,6 +270,10 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
 
   private submitReview(order: Order, rating: number, comment: string) {
     if (!this.userProfile) return;
+    if (this.orderHasReview(order)) {
+      this.showToast('Este pedido ya fue calificado.', 'warning');
+      return;
+    }
 
     this.orderRepository.addReview(
       order.id,
@@ -309,7 +355,7 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
     if (items.length === 0) return;
 
     if (items.length === 1) {
-      this.openReportModal(items[0].product_id, items[0].product?.name || 'Producto');
+      await this.reportProductOnce(items[0].product_id, items[0].product?.name || 'Producto');
     } else {
       const inputs = items.map((item, idx) => ({
         name: 'product_id',
@@ -330,7 +376,7 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
             handler: (selectedProductId) => {
               const selectedItem = items.find(i => i.product_id === selectedProductId);
               if (selectedItem) {
-                this.openReportModal(selectedItem.product_id, selectedItem.product?.name || 'Producto');
+                void this.reportProductOnce(selectedItem.product_id, selectedItem.product?.name || 'Producto');
               }
             }
           }
@@ -346,6 +392,30 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
     this.selectedEvidenceFile = null;
     this.selectedEvidenceFileUrl = null;
     this.isReportModalOpen = true;
+  }
+
+  /**
+   * Solo permite reportar un producto una vez por comprador.
+   */
+  private async reportProductOnce(productId: string, productName: string) {
+    const profile = this.authService.currentProfileValue;
+    if (!profile) {
+      this.showToast('No se encontró la sesión activa.', 'danger');
+      return;
+    }
+
+    this.productRepository.hasUserReportedProduct(productId, profile.id).subscribe({
+      next: (alreadyReported) => {
+        if (alreadyReported) {
+          this.showToast('Ya reportaste este producto anteriormente. Solo se permite un reporte por producto.', 'warning');
+          return;
+        }
+        this.openReportModal(productId, productName);
+      },
+      error: () => {
+        this.openReportModal(productId, productName);
+      }
+    });
   }
 
   onEvidenceFileSelected(event: any) {

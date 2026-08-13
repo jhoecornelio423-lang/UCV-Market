@@ -57,9 +57,13 @@
           <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-wa" (click)="contactPartnerViaWhatsApp(order, 'compras')">
             Contactar vendedor
           </button>
-          <button *ngIf="order.status === 'completed'" class="btn-rate" (click)="qualifySeller(order)">
+          <button *ngIf="order.status === 'completed' && !orderHasReview(order)" class="btn-rate" (click)="qualifySeller(order)">
             Calificar
           </button>
+          <span *ngIf="order.status === 'completed' && orderHasReview(order)" class="btn-rate rated">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            Calificado
+          </span>
           <button *ngIf="['completed', 'cancelled'].includes(order.status)" class="btn-report" (click)="reportOrderProduct(order)">
             <ion-icon name="flag-outline"></ion-icon>
             Reportar

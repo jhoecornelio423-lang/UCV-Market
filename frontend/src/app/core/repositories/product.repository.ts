@@ -16,5 +16,6 @@ export interface ProductRepository {
   incrementWhatsAppClicks(id: string): Observable<number>;
   createCategory(name: string, slug: string, icon: string): Observable<Category>;
   reportProduct(productId: string, reporterId: string, reason: string, evidenceUrl?: string): Observable<boolean>;
+  hasUserReportedProduct(productId: string, reporterId: string): Observable<boolean>;
   uploadEvidence(file: File, reporterId: string): Observable<string>;
 }

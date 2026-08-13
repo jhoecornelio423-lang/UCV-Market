@@ -33,7 +33,7 @@ export class SupabaseOrderRepository implements OrderRepository {
   getBuyerOrders(buyerId: string): Observable<Order[]> {
     const query = this.supabaseService.client
       .from('orders')
-      .select('*, order_items(*, product:products(*, product_images(*))), seller:profiles!seller_id(*)')
+      .select('*, order_items(*, product:products(*, product_images(*))), seller:profiles!seller_id(*), reviews:reviews!order_id(id)')
       .eq('buyer_id', buyerId)
       .order('created_at', { ascending: false });
 

@@ -29,4 +29,5 @@ export interface Order {
   buyer?: Profile;
   seller?: Profile;
   order_items?: OrderItem[];
+  reviews?: { id: string }[];
 }

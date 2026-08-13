@@ -1,5 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { AdminRepository } from '../../../../core/repositories/admin.repository';
+import { SupabaseClientService } from '../../../../core/database/supabase.client';
 import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
@@ -8,7 +9,7 @@ import { AlertController, ToastController } from '@ionic/angular';
   styleUrls: ['./admin-reports.component.scss'],
   standalone: false
 })
-export class AdminReportsComponent implements OnInit {
+export class AdminReportsComponent implements OnInit, OnDestroy {
   reports: any[] = [];
   filteredReports: any[] = [];
   loading = true;
@@ -21,9 +22,31 @@ export class AdminReportsComponent implements OnInit {
   private adminRepo = inject(AdminRepository);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
+  private supabaseService = inject(SupabaseClientService);
+
+  private realtimeChannel: any = null;
 
   ngOnInit() {
     this.loadReports();
+
+    // Reportes en tiempo real: recargar ante cualquier cambio
+    this.realtimeChannel = this.supabaseService.client
+      .channel('admin-reports-realtime')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'product_reports' },
+        () => {
+          this.loadReports();
+        }
+      )
+      .subscribe();
+  }
+
+  ngOnDestroy() {
+    if (this.realtimeChannel) {
+      this.supabaseService.client.removeChannel(this.realtimeChannel);
+      this.realtimeChannel = null;
+    }
   }
 
   loadReports() {
@@ -135,31 +158,35 @@ export class AdminReportsComponent implements OnInit {
             const notes = data.notes?.trim() || 'Infracción confirmada por moderador';
             const storagePath = reportItem.evidence_url ? this.extractStoragePath(reportItem.evidence_url) : undefined;
 
-            if (action === 'deactivate') {
-              // Desactivar producto y cambiar estado reporte a resolved
-              this.adminRepo.updateProductStatus(reportItem.product_id, false).subscribe({
+            const finalizeReport = () => {
+              this.adminRepo.updateReportStatus(reportItem.id, 'resolved', notes, storagePath || undefined).subscribe({
                 next: () => {
-                  this.adminRepo.updateReportStatus(reportItem.id, 'resolved', notes, storagePath || undefined).subscribe({
-                    next: () => {
-                      this.showToast('Reporte resuelto y producto ocultado.', 'success');
-                      this.loadReports();
-                    }
-                  });
+                  this.showToast('Reporte resuelto y producto procesado correctamente.', 'success');
+                  this.loadReports();
                 },
-                error: () => this.showToast('Error al desactivar el producto.', 'danger')
+                error: (err) => {
+                  console.error('Error al actualizar el estado del reporte:', err);
+                  this.showToast('El producto se procesó, pero no se pudo actualizar el estado del reporte.', 'warning');
+                  this.loadReports();
+                }
+              });
+            };
+
+            if (action === 'deactivate') {
+              this.adminRepo.updateProductStatus(reportItem.product_id, false).subscribe({
+                next: () => finalizeReport(),
+                error: (err) => {
+                  console.error('Error al desactivar el producto:', err);
+                  this.showToast('Error al ocultar el producto. Verifica tus permisos de administrador.', 'danger');
+                }
               });
             } else {
-              // Eliminar producto y cambiar estado reporte a resolved
               this.adminRepo.deleteProduct(reportItem.product_id).subscribe({
-                next: () => {
-                  this.adminRepo.updateReportStatus(reportItem.id, 'resolved', notes, storagePath || undefined).subscribe({
-                    next: () => {
-                      this.showToast('Reporte resuelto y producto eliminado permanentemente.', 'success');
-                      this.loadReports();
-                    }
-                  });
-                },
-                error: () => this.showToast('Error al eliminar el producto.', 'danger')
+                next: () => finalizeReport(),
+                error: (err) => {
+                  console.error('Error al eliminar el producto:', err);
+                  this.showToast('Error al eliminar el producto. Verifica tus permisos de administrador.', 'danger');
+                }
               });
             }
           }

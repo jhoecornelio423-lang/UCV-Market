@@ -321,13 +321,25 @@ export class SupabaseProductRepository implements ProductRepository {
 
     const query = this.supabaseService.client
       .from('product_reports')
-      .insert(dataToInsert);
+      .upsert(dataToInsert, { onConflict: 'product_id,reporter_id', ignoreDuplicates: true });
 
     return from(query).pipe(
       map(response => {
         if (response.error) throw new Error(response.error.message);
         return true;
       })
+    );
+  }
+
+  hasUserReportedProduct(productId: string, reporterId: string): Observable<boolean> {
+    const query = this.supabaseService.client
+      .from('product_reports')
+      .select('id', { count: 'exact', head: true })
+      .eq('product_id', productId)
+      .eq('reporter_id', reporterId);
+
+    return from(query).pipe(
+      map((res: any) => (res.count || 0) > 0)
     );
   }
 
