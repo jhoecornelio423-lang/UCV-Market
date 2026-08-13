@@ -1,6 +1,7 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SellerStateService } from '../../services/seller-state.service';
 import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
 import { Product } from '../../../../core/models/product.model';
@@ -19,6 +20,7 @@ export class SellerProductFormComponent implements OnInit {
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
+  private destroyRef = inject(DestroyRef);
 
   categories$ = this.sellerState.categories$;
 
@@ -30,14 +32,13 @@ export class SellerProductFormComponent implements OnInit {
   pPrice: number = 0;
   pStock: number = 20;
   pCategoryId: string = '';
-  pPickupLocation: string = 'Biblioteca Pabellón A';
+  pPickupLocation: string = 'Biblioteca';
   pIsActive: boolean = true;
-  pPreparationTime: string = '10 min';
   selectedFiles: File[] = [];
   previewImageUrl: string | null = null;
 
   ngOnInit() {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       const id = params['id'];
       if (id) {
         this.formMode = 'edit';
@@ -54,18 +55,31 @@ export class SellerProductFormComponent implements OnInit {
     const products = this.sellerState['productsSubject'].value;
     const product = products.find((p: Product) => p.id === id);
     if (product) {
-      this.pName = product.name;
-      this.pDescription = product.description || '';
-      this.pPrice = product.price;
-      this.pStock = product.stock;
-      this.pCategoryId = product.category_id;
-      this.pPickupLocation = product.pickup_location;
-      this.pIsActive = product.is_active;
-      this.previewImageUrl = product.product_images && product.product_images.length > 0
-        ? product.product_images[0].image_url
-        : null;
-      this.selectedFiles = [];
+      this.applyProductData(product);
+    } else {
+      // El estado global aún no está cargado (acceso directo por URL): consultar la BD
+      this.productRepository.getProductById(id).subscribe({
+        next: (p) => this.applyProductData(p),
+        error: (err) => {
+          console.error('Error al cargar producto:', err);
+          this.showErrorAlert('Error', 'No se pudo cargar el producto.');
+        }
+      });
     }
+  }
+
+  private applyProductData(product: Product) {
+    this.pName = product.name;
+    this.pDescription = product.description || '';
+    this.pPrice = product.price;
+    this.pStock = product.stock;
+    this.pCategoryId = product.category_id;
+    this.pPickupLocation = product.pickup_location;
+    this.pIsActive = product.is_active;
+    this.previewImageUrl = product.product_images && product.product_images.length > 0
+      ? product.product_images[0].image_url
+      : null;
+    this.selectedFiles = [];
   }
 
   resetForm() {
@@ -75,8 +89,7 @@ export class SellerProductFormComponent implements OnInit {
     this.pPrice = 0;
     this.pStock = 20;
     this.pIsActive = true;
-    this.pPreparationTime = '10 min';
-    this.pPickupLocation = 'Biblioteca Pabellón A';
+    this.pPickupLocation = 'Biblioteca';
     const categories = this.sellerState['categoriesSubject'].value;
     if (categories.length > 0) {
       this.pCategoryId = categories[0].id;
@@ -156,7 +169,7 @@ export class SellerProductFormComponent implements OnInit {
         }
       });
     } else if (this.formMode === 'edit' && this.selectedProductId) {
-      this.productRepository.updateProduct(this.selectedProductId, productPayload).subscribe({
+      this.productRepository.updateProduct(this.selectedProductId, productPayload, this.selectedFiles).subscribe({
         next: () => {
           loading.dismiss();
           this.showToast('Producto actualizado con éxito.', 'success');

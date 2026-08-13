@@ -42,9 +42,9 @@
             <p class="category-text">{{ getCategoryName(product.category_id) }}</p>
             <div class="price-rating">
               <span class="price">S/ {{ product.price.toFixed(2) }}</span>
-              <div class="rating">
+              <div class="rating" *ngIf="product.rating_average">
                 <ion-icon name="star" class="star-gold-mini"></ion-icon>
-                <span>{{ product.rating_average || '5.0' }}</span>
+                <span>{{ product.rating_average }}</span>
               </div>
             </div>
           </div>

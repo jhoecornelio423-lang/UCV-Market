@@ -35,7 +35,7 @@
     <div class="product-card" *ngFor="let product of filteredProducts">
       
       <div class="product-image">
-        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder.jpg'" alt="{{ product.name }}">
+        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png'" alt="{{ product.name }}">
       </div>
 
       <div class="product-content">

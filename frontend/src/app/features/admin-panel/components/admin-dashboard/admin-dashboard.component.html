@@ -5,21 +5,26 @@
       <h1>Panel de Control</h1>
       <p>{{ todayDate | date:'EEEE, d \'de\' MMMM \'de\' yyyy' : 'es' }}</p>
     </div>
-    <button class="export-btn">
-      <ion-icon name="download-outline"></ion-icon>
-      Exportar
-    </button>
   </header>
 
+  <div class="loader-state" *ngIf="dashboardLoading">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <div class="load-error" *ngIf="loadError && !dashboardLoading">
+    <ion-icon name="cloud-offline-outline"></ion-icon>
+    <p>No se pudieron cargar los datos del panel. Revisa tu conexión e inténtalo de nuevo.</p>
+    <button (click)="retry()">Reintentar</button>
+  </div>
+
   <!-- Top Stats Grid -->
-  <div class="stats-grid">
+  <div class="stats-grid" *ngIf="!loadError">
     <div class="stat-card">
       <div class="stat-top">
         <span class="stat-label">USUARIOS<br>REGISTRADOS</span>
         <div class="stat-icon users-icon"><ion-icon name="people-outline"></ion-icon></div>
       </div>
       <h2>{{ stats.totalUsers | number }}</h2>
-      <p class="trend positive">+12% este mes</p>
     </div>
 
     <div class="stat-card">
@@ -28,7 +33,6 @@
         <div class="stat-icon sellers-icon"><ion-icon name="storefront-outline"></ion-icon></div>
       </div>
       <h2>{{ stats.activeSellers | number }}</h2>
-      <p class="trend positive">+5% este mes</p>
     </div>
 
     <div class="stat-card">
@@ -37,7 +41,6 @@
         <div class="stat-icon products-icon"><ion-icon name="cube-outline"></ion-icon></div>
       </div>
       <h2>{{ stats.publishedProducts | number }}</h2>
-      <p class="trend positive">+8% este mes</p>
     </div>
 
     <div class="stat-card">
@@ -46,7 +49,6 @@
         <div class="stat-icon revenue-icon"><ion-icon name="logo-usd"></ion-icon></div>
       </div>
       <h2>S/ {{ stats.totalRevenue | number:'1.2-2' }}</h2>
-      <p class="trend positive">+18% este mes</p>
     </div>
   </div>
 
@@ -58,7 +60,6 @@
           <h3>Ventas Semanales</h3>
           <p>Ingresos en soles (S/)</p>
         </div>
-        <span class="chart-badge">↑ +18% vs semana ant.</span>
       </div>
       <div class="canvas-container">
         <canvas baseChart
@@ -103,7 +104,7 @@
             <h4>{{ app.full_name }}</h4>
             <p>{{ app.business_name }} · {{ app.business_category }}</p>
           </div>
-          <button class="action-link">Revisar &rarr;</button>
+          <button class="action-link" routerLink="/admin/sellers">Revisar &rarr;</button>
         </div>
         <div class="empty-state" *ngIf="pendingApplications.length === 0">
           No hay verificaciones pendientes
@@ -136,7 +137,7 @@
             <p style="font-size: 10px; color: #8F95B2; margin: 0;">Por: {{ item.reporter?.full_name || 'Usuario' }}</p>
           </div>
           <div class="reported-actions" style="display: flex; flex-direction: column; gap: 4px; align-items: flex-end; margin-left: 8px;">
-            <button class="action-link" (click)="dismissReport(item.id)" title="Descartar reporte" style="color: #10B981; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">
+            <button class="action-link" (click)="dismissReport(item.id, item.product?.name)" title="Descartar reporte" style="color: #10B981; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">
               Resolver
             </button>
             <button *ngIf="item.product?.is_active" class="action-link" (click)="deactivateProduct(item.product_id, item.product?.name)" title="Desactivar de forma temporal" style="color: #F59E0B; font-weight: 700; font-size: 11px; padding: 2px 4px; background: none; border: none; cursor: pointer;">

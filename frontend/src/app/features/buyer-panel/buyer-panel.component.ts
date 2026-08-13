@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-buyer-panel',
@@ -11,9 +12,13 @@ import { filter } from 'rxjs/operators';
 export class BuyerPanelComponent implements OnInit {
   currentPath = '';
 
-  constructor(private router: Router) {
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
     this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
     ).subscribe((event: any) => {
       this.currentPath = event.urlAfterRedirects;
     });

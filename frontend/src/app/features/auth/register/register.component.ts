@@ -1,7 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, AlertController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../../core/auth/auth.service';
 import { UserRole } from '../../../core/models/profile.model';
 import { SellerApplicationRepository } from '../../../core/repositories/seller-application.repository';
@@ -44,6 +46,7 @@ export class RegisterComponent implements OnInit {
   private loadingCtrl = inject(LoadingController);
   private alertCtrl = inject(AlertController);
   private applicationRepo = inject(SellerApplicationRepository);
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit() {
     this.registerForm = this.fb.group({
@@ -66,7 +69,7 @@ export class RegisterComponent implements OnInit {
       delivery_points: ['']
     });
 
-    this.registerForm.get('role')?.valueChanges.subscribe(role => {
+    this.registerForm.get('role')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(role => {
       this.updateValidators(role);
     });
   }
@@ -134,7 +137,7 @@ export class RegisterComponent implements OnInit {
 
     if (role === 'emprendedor') {
       try {
-        const isUnique = await this.applicationRepo.checkBusinessNameUnique(formValues.business_name.trim()).toPromise();
+        const isUnique = await firstValueFrom(this.applicationRepo.checkBusinessNameUnique(formValues.business_name.trim()));
         if (!isUnique) {
           loading.dismiss();
           const alert = await this.alertCtrl.create({
@@ -154,7 +157,8 @@ export class RegisterComponent implements OnInit {
 
     this.authService.signUp(email, password, fullName, phone, studentCode, finalRole as UserRole, campus).subscribe({
       next: async (profile) => {
-        
+        let applicationSubmitted = false;
+
         if (role === 'emprendedor' && this.selectedLogo) {
           loading.message = 'Enviando solicitud...';
           try {
@@ -171,14 +175,31 @@ export class RegisterComponent implements OnInit {
               phone: phone,
               delivery_points: formValues.delivery_points.trim()
             };
-            await this.applicationRepo.submitApplication(application, profile.id).toPromise();
+            await firstValueFrom(this.applicationRepo.submitApplication(application, profile.id));
+            applicationSubmitted = true;
           } catch (appErr) {
             console.error('Error submitting application:', appErr);
+            await loading.dismiss();
+            const alert = await this.alertCtrl.create({
+              header: 'Cuenta creada, solicitud pendiente',
+              message: 'Tu cuenta fue creada correctamente, pero no pudimos registrar tu solicitud de emprendedor por un error. Inténtalo nuevamente desde tu perfil en unos minutos o contacta a soporte.',
+              buttons: [
+                {
+                  text: 'Entendido',
+                  handler: () => {
+                    this.router.navigate(['/buyer-panel/profile']);
+                  }
+                }
+              ],
+              cssClass: 'custom-alert'
+            });
+            await alert.present();
+            return;
           }
         }
 
         loading.dismiss();
-        this.showSuccessAlert(role as UserRole);
+        this.showSuccessAlert(role as UserRole, applicationSubmitted);
       },
       error: async (err) => {
         loading.dismiss();
@@ -193,20 +214,20 @@ export class RegisterComponent implements OnInit {
     });
   }
 
-  async showSuccessAlert(role: UserRole) {
+  async showSuccessAlert(role: UserRole, applicationSubmitted = false) {
+    const isSeller = role === 'emprendedor';
     const alert = await this.alertCtrl.create({
       header: '¡Registro Exitoso!',
-      message: 'Tu cuenta ha sido creada correctamente. Se ha enviado un enlace de confirmación a tu correo institucional.',
+      message: isSeller
+        ? (applicationSubmitted
+          ? 'Tu cuenta ha sido creada correctamente. Tu solicitud de emprendedor fue enviada y quedará pendiente de aprobación por un administrador.'
+          : 'Tu cuenta ha sido creada correctamente.')
+        : 'Tu cuenta ha sido creada correctamente. Se ha enviado un enlace de confirmación a tu correo institucional.',
       buttons: [
         {
           text: 'Ingresar',
           handler: () => {
-            if (role === 'emprendedor') {
-              // Now they don't need to go to the form, they go straight to profile where it shows "Pending"
-              this.router.navigate(['/buyer-panel/profile']);
-            } else {
-              this.router.navigate(['/buyer-panel/catalog']);
-            }
+            this.router.navigate(isSeller ? ['/buyer-panel/profile'] : ['/buyer-panel/catalog']);
           }
         }
       ],

@@ -50,6 +50,10 @@
         </div>
 
         <div class="card-actions-figma">
+          <button *ngIf="order.status === 'pending'" class="btn-cancel-order" (click)="cancelOrder(order)">
+            <ion-icon name="close-outline"></ion-icon>
+            Cancelar pedido
+          </button>
           <button *ngIf="['accepted', 'preparing', 'ready'].includes(order.status)" class="btn-wa" (click)="contactPartnerViaWhatsApp(order, 'compras')">
             Contactar vendedor
           </button>

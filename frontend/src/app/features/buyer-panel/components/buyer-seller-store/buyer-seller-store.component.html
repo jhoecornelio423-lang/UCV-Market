@@ -7,7 +7,7 @@
     
     <!-- Hero Banner & Back Button -->
     <div class="store-hero">
-      <img *ngIf="seller.banner_url" [src]="seller.banner_url" alt="Banner Negocio" class="banner-img" onerror="this.style.display='none'" />
+      <img *ngIf="seller.banner_url && !bannerLoadFailed" [src]="seller.banner_url" alt="Banner Negocio" class="banner-img" (error)="bannerLoadFailed = true" />
       <div class="overlay"></div>
       
       <button class="back-btn" (click)="goBack()">
@@ -18,7 +18,7 @@
     <!-- Store Profile Card -->
     <div class="store-profile-card">
       <div class="profile-avatar-row">
-        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar-img" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
+        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="Avatar" class="avatar-img" />
         <div class="store-badges">
           <span class="badge-status open" *ngIf="seller.accepting_orders">Abierto</span>
           <span class="badge-status closed" *ngIf="!seller.accepting_orders">Cerrado</span>
@@ -35,19 +35,19 @@
       <div class="metrics-row">
         <div class="metric-item">
           <ion-icon name="star" class="star-icon"></ion-icon>
-          <span class="value">{{ seller.rating_average || '5.0' | number:'1.1-1' }}</span>
+          <span class="value">{{ seller.rating_average ? (seller.rating_average | number:'1.1-1') : '—' }}</span>
           <span class="label">Calificación</span>
         </div>
         <div class="divider"></div>
         <div class="metric-item">
           <ion-icon name="location-outline" class="loc-icon"></ion-icon>
-          <span class="value">{{ seller.business_location || 'Campus UCV' }}</span>
+          <span class="value">{{ seller.business_location || '—' }}</span>
           <span class="label">Ubicación</span>
         </div>
         <div class="divider"></div>
         <div class="metric-item">
           <ion-icon name="time-outline" class="time-icon"></ion-icon>
-          <span class="value">{{ seller.open_time || '08:00' }} - {{ seller.close_time || '18:00' }}</span>
+          <span class="value">{{ seller.open_time || '—' }} - {{ seller.close_time || '—' }}</span>
           <span class="label">Horario</span>
         </div>
       </div>

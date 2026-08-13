@@ -3,6 +3,7 @@ import { AdminRepository } from '../../../../core/repositories/admin.repository'
 import { Profile } from '../../../../core/models/profile.model';
 import { SellerApplication } from '../../../../core/models/seller-application.model';
 import { AlertController, ToastController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-admin-sellers',
@@ -30,8 +31,8 @@ export class AdminSellersComponent implements OnInit {
   loadData() {
     this.loading = true;
     Promise.all([
-      this.adminRepo.getSellers().toPromise(),
-      this.adminRepo.getPendingApplications().toPromise()
+      firstValueFrom(this.adminRepo.getSellers()),
+      firstValueFrom(this.adminRepo.getPendingApplications())
     ]).then(([sellers, apps]) => {
       this.sellers = sellers || [];
       this.applications = apps || [];

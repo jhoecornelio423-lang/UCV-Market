@@ -1,10 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from '../../../../core/models/product.model';
-import { ProductRepository, PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
 import { CartService } from '../../../../core/cart/cart.service';
 import { FavoritesService } from '../../../../core/services/favorites.service';
-import { Inject } from '@angular/core';
 import { ToastController, AlertController } from '@ionic/angular';
 import { AuthService } from '../../../../core/auth/auth.service';
 
@@ -26,10 +25,7 @@ export class BuyerProductDetailComponent implements OnInit {
   private toastCtrl = inject(ToastController);
   private alertCtrl = inject(AlertController);
   private authService = inject(AuthService);
-
-  constructor(
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
-  ) {}
+  private productRepository = inject(PRODUCT_REPOSITORY);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -39,13 +35,15 @@ export class BuyerProductDetailComponent implements OnInit {
   }
 
   loadProduct(id: string) {
-    // In a real app we would load by ID. But currently getActiveProducts takes categoryId/search.
-    // Assuming product might be passed via state or loaded. Let's just fetch all and find,
-    // or if we have a getProductById in the repo, let's use it. Let's check the repo later, 
-    // for now we fetch by searching and finding.
-    this.productRepository.getActiveProducts('', '').subscribe(products => {
-      this.product = products.find(p => p.id === id) || null;
-      this.loading = false;
+    this.productRepository.getProductById(id).subscribe({
+      next: product => {
+        this.product = product;
+        this.loading = false;
+      },
+      error: () => {
+        this.product = null;
+        this.loading = false;
+      }
     });
   }
 

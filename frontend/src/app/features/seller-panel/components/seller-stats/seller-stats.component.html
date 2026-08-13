@@ -18,7 +18,7 @@
         </div>
         <div class="summary-card">
           <p class="lbl">Pedidos totales</p>
-          <h2 class="val">{{ (products$ | async)?.length }}</h2>
+          <h2 class="val">{{ (stats$ | async)?.totalOrders }}</h2>
           <span class="trend" [class.up]="(stats$ | async)?.ordersGrowth! >= 0" [class.down]="(stats$ | async)?.ordersGrowth! < 0">
             <ion-icon [name]="(stats$ | async)?.ordersGrowth! >= 0 ? 'arrow-up' : 'arrow-down'"></ion-icon>
             {{ (stats$ | async)?.ordersGrowth === 100 ? 'Récord' : ((stats$ | async)?.ordersGrowth! >= 0 ? '+' : '') + (stats$ | async)?.ordersGrowth + '%' }}

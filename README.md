@@ -1,6 +1,6 @@
-# UCV Market 🛒 - Marketplace Universitario
+# VALLE-GO 🛒 - Marketplace Universitario
 
-¡Bienvenido al repositorio oficial de **UCV Market**! Una plataforma diseñada específicamente para la comunidad estudiantil de la Universidad César Vallejo, permitiendo a los alumnos emprender y comprar productos dentro del campus de manera segura y eficiente.
+¡Bienvenido al repositorio oficial de **VALLE-GO** (antes UCV Market)! Una plataforma diseñada específicamente para la comunidad estudiantil de la Universidad César Vallejo, permitiendo a los alumnos emprender y comprar productos dentro del campus de manera segura y eficiente.
 
 ---
 
@@ -13,7 +13,7 @@ Dentro de los campus universitarios, el comercio entre estudiantes (venta de pos
 ---
 
 ## 💡 Solución
-**UCV Market** centraliza la oferta y demanda del campus en una aplicación híbrida (Web/Móvil) con interfaces modernas basadas en un diseño **Premium Figma**.
+**VALLE-GO** centraliza la oferta y demanda del campus en una aplicación híbrida (Web/Móvil) con interfaces modernas basadas en un diseño **Premium Figma**.
 - **Para Compradores:** Un catálogo categorizado con buscador inteligente, carruseles de productos populares y seguimiento vertical de pedidos en tiempo real.
 - **Para Emprendedores:** Un Dashboard profesional con métricas de ventas, gestión de inventario con carga de imágenes "drag & drop" y un sistema de control de estados (Aceptar -> Preparar -> Listo).
 - **Seguridad:** Registro exclusivo para correos institucionales `@ucv.edu.pe` o `@ucvvirtual.edu.pe`.
@@ -23,8 +23,8 @@ Dentro de los campus universitarios, el comercio entre estudiantes (venta de pos
 ## 🛠️ Stack Tecnológico
 Para garantizar robustez y escalabilidad, hemos utilizado un stack de última generación:
 
-- **Frontend:** [Angular 18+](https://angular.io/) con [Ionic Framework 8](https://ionicframework.com/) para una experiencia nativa fluida.
-- **Mobile:** [Capacitor 6](https://capacitorjs.com/) para el despliegue en Android e iOS.
+- **Frontend:** [Angular 20](https://angular.io/) con [Ionic Framework 8](https://ionicframework.com/) para una experiencia nativa fluida.
+- **Mobile:** [Capacitor 8](https://capacitorjs.com/) para el despliegue en Android e iOS.
 - **Backend/Database:** [Supabase](https://supabase.com/) (PostgreSQL) para la gestión de datos en tiempo real y autenticación.
 - **Diseño:** Figma (UI/UX alineado con la identidad institucional UCV).
 - **Lenguaje:** TypeScript / SCSS.
@@ -49,14 +49,16 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
    npm install
    ```
 3. **Configurar variables de entorno:**
-   Edita el archivo `src/environments/environment.ts` con tus credenciales de Supabase:
-   ```typescript
-   export const environment = {
-     production: false,
-     supabaseUrl: 'TU_URL_DE_SUPABASE',
-     supabaseKey: 'TU_KEY_DE_SUPABASE'
-   };
+   Crea el archivo `.env` a partir de la plantilla y completa tus credenciales de Supabase:
+   ```bash
+   cp .env.example .env
    ```
+   Edita `.env` (nunca lo subas al repositorio):
+   ```dotenv
+   SUPABASE_URL=TU_URL_DE_SUPABASE
+   SUPABASE_KEY=TU_ANON_KEY
+   ```
+   > Los archivos `src/environments/environment.ts` y `environment.prod.ts` se generan automáticamente con `npm run generate-env` (incluido en `npm start` y `npm run build`). En Netlify/CI define `SUPABASE_URL` y `SUPABASE_KEY` como variables de entorno del proyecto.
 4. **Ejecutar el servidor de desarrollo:**
    ```bash
    ionic serve

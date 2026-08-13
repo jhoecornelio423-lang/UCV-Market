@@ -238,7 +238,21 @@ $border: #f0f2f5;
   font-size: 16px;
   font-weight: 900;
   box-shadow: 0 8px 20px rgba(232, 67, 45, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   
+  &[disabled] {
+    opacity: 0.7;
+    cursor: default;
+  }
+
+  .btn-spinner {
+    width: 20px;
+    height: 20px;
+  }
+
   &:active {
     transform: scale(0.98);
   }

@@ -28,7 +28,7 @@
         <div class="input-group" [class.has-error]="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.invalid">
           <div class="input-wrapper">
             <ion-icon name="person-outline" class="input-icon"></ion-icon>
-            <input id="fullName" type="text" placeholder="Nombre completo" formControlName="fullName" autocomplete="name" />
+            <input id="fullName" type="text" placeholder="Nombre completo" formControlName="fullName" autocomplete="name" aria-label="Nombre completo" />
           </div>
           <span class="error-msg" *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('required')">El nombre completo es requerido.</span>
           <span class="error-msg" *ngIf="registerForm.get('fullName')?.touched && registerForm.get('fullName')?.hasError('minlength')">Debe tener al menos 4 caracteres.</span>
@@ -37,7 +37,7 @@
         <div class="input-group" [class.has-error]="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
           <div class="input-wrapper">
             <ion-icon name="mail-outline" class="input-icon"></ion-icon>
-            <input id="register-email" type="email" placeholder="Correo universitario" formControlName="email" autocomplete="email" />
+            <input id="register-email" type="email" placeholder="Correo universitario" formControlName="email" autocomplete="email" aria-label="Correo universitario" />
           </div>
           <span class="error-msg" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('required')">El correo es requerido.</span>
           <span class="error-msg" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.hasError('pattern')">Usa un correo institucional de la UCV.</span>
@@ -46,7 +46,7 @@
         <div class="input-group" [class.has-error]="registerForm.get('studentCode')?.touched && registerForm.get('studentCode')?.invalid">
           <div class="input-wrapper">
             <ion-icon name="barcode-outline" class="input-icon"></ion-icon>
-            <input id="studentCode" type="text" inputmode="numeric" maxlength="10" placeholder="Código de estudiante" formControlName="studentCode" autocomplete="off" />
+            <input id="studentCode" type="text" inputmode="numeric" maxlength="10" placeholder="Código de estudiante" formControlName="studentCode" autocomplete="off" aria-label="Código de estudiante" />
           </div>
           <span class="error-msg" *ngIf="registerForm.get('studentCode')?.touched && registerForm.get('studentCode')?.hasError('required')">El código de estudiante es requerido.</span>
           <span class="error-msg" *ngIf="registerForm.get('studentCode')?.touched && registerForm.get('studentCode')?.hasError('pattern')">Ingresa entre 8 y 10 dígitos.</span>
@@ -56,7 +56,7 @@
           <div class="input-wrapper">
             <ion-icon name="call-outline" class="input-icon"></ion-icon>
             <span class="phone-prefix">+51</span>
-            <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="Número de teléfono" formControlName="phone" autocomplete="tel" />
+            <input id="phone" type="tel" inputmode="numeric" maxlength="9" placeholder="Número de teléfono" formControlName="phone" autocomplete="tel" aria-label="Número de teléfono" />
           </div>
           <span class="error-msg" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('required')">El número de teléfono es requerido.</span>
           <span class="error-msg" *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.hasError('pattern')">Debe tener 9 dígitos y comenzar con 9.</span>
@@ -65,7 +65,7 @@
         <div class="input-group password-group" [class.has-error]="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
           <div class="input-wrapper">
             <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
-            <input id="register-password" [type]="showPassword ? 'text' : 'password'" placeholder="Contraseña (mín 6 carácteres)" formControlName="password" autocomplete="new-password" />
+            <input id="register-password" [type]="showPassword ? 'text' : 'password'" placeholder="Contraseña (mín 6 carácteres)" formControlName="password" autocomplete="new-password" aria-label="Contraseña" />
             <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </button>
@@ -75,13 +75,13 @@
         </div>
 
         <fieldset class="account-type">
-          <legend>Tipo de cuenta</legend>
+          <legend>¿Quieres vender en VALLE-GO?</legend>
           <div class="account-options">
             <label for="register-buyer">
               <input id="register-buyer" type="radio" value="comprador" formControlName="role" />
               <span>
                 <ion-icon name="bag-handle-outline"></ion-icon>
-                <span><strong>Comprador</strong><small>Quiero comprar</small></span>
+                <span><strong>Solo comprar</strong><small>Acceso inmediato</small></span>
                 <ion-icon class="selected-icon" name="checkmark-circle"></ion-icon>
               </span>
             </label>
@@ -90,11 +90,12 @@
               <input id="register-seller" type="radio" value="emprendedor" formControlName="role" />
               <span>
                 <ion-icon name="storefront-outline"></ion-icon>
-                <span><strong>Emprendedor</strong><small>Quiero vender</small></span>
+                <span><strong>Emprender</strong><small>Envío una solicitud</small></span>
                 <ion-icon class="selected-icon" name="checkmark-circle"></ion-icon>
               </span>
             </label>
           </div>
+          <p class="account-hint">Todas las cuentas inician como comprador. Si eliges emprender, tu tienda se activa tras la aprobación del administrador.</p>
         </fieldset>
 
         <!-- SELLER APPLICATION FIELDS -->
@@ -102,7 +103,7 @@
           <div class="input-group" [class.has-error]="registerForm.get('dni')?.touched && registerForm.get('dni')?.invalid">
             <div class="input-wrapper">
               <ion-icon name="card-outline" class="input-icon"></ion-icon>
-              <input type="text" formControlName="dni" placeholder="DNI (Ej. 12345678)" maxlength="8">
+              <input type="text" formControlName="dni" placeholder="DNI (Ej. 12345678)" maxlength="8" aria-label="DNI">
             </div>
             <span class="error-msg" *ngIf="registerForm.get('dni')?.touched && registerForm.get('dni')?.hasError('required')">El DNI es obligatorio.</span>
             <span class="error-msg" *ngIf="registerForm.get('dni')?.touched && registerForm.get('dni')?.hasError('pattern')">El DNI debe tener exactamente 8 dígitos.</span>
@@ -111,7 +112,7 @@
           <div class="input-group" [class.has-error]="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.invalid">
             <div class="input-wrapper">
               <ion-icon name="storefront-outline" class="input-icon"></ion-icon>
-              <input type="text" formControlName="business_name" placeholder="Nombre de tu tienda">
+              <input type="text" formControlName="business_name" placeholder="Nombre de tu tienda" aria-label="Nombre de tu tienda">
             </div>
             <span class="error-msg" *ngIf="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.hasError('required')">El nombre es obligatorio.</span>
             <span class="error-msg" *ngIf="registerForm.get('business_name')?.touched && registerForm.get('business_name')?.hasError('pattern')">Solo se permiten letras.</span>
@@ -120,7 +121,7 @@
           <div class="input-group" [class.has-error]="registerForm.get('category')?.touched && registerForm.get('category')?.invalid">
             <div class="input-wrapper" style="padding-right: 8px;">
               <ion-icon name="list-outline" class="input-icon"></ion-icon>
-              <select formControlName="category" style="width: 100%; border: none; background: transparent; padding: 0; outline: none; font-family: inherit; font-size: 14px; color: #07152f;">
+              <select formControlName="category" style="width: 100%; border: none; background: transparent; padding: 0; outline: none; font-family: inherit; font-size: 14px; color: #07152f;" aria-label="Categoría de tu emprendimiento">
                 <option value="" disabled selected>Selecciona una categoría</option>
                 <option value="Comidas">Comidas</option>
                 <option value="Postres">Postres</option>
@@ -137,13 +138,13 @@
             <div style="flex: 1;" [class.has-error]="registerForm.get('open_time')?.touched && registerForm.get('open_time')?.invalid">
               <div class="input-wrapper" style="padding: 10px;">
                 <ion-icon name="time-outline" class="input-icon" style="margin-right: 4px; font-size: 16px;"></ion-icon>
-                <input type="time" formControlName="open_time" style="font-size: 13px;">
+                <input type="time" formControlName="open_time" style="font-size: 13px;" aria-label="Hora de apertura">
               </div>
             </div>
             <div style="flex: 1;" [class.has-error]="registerForm.get('close_time')?.touched && registerForm.get('close_time')?.invalid">
               <div class="input-wrapper" style="padding: 10px;">
                 <ion-icon name="time-outline" class="input-icon" style="margin-right: 4px; font-size: 16px;"></ion-icon>
-                <input type="time" formControlName="close_time" style="font-size: 13px;">
+                <input type="time" formControlName="close_time" style="font-size: 13px;" aria-label="Hora de cierre">
               </div>
             </div>
           </div>
@@ -151,7 +152,7 @@
           <div class="input-group" [class.has-error]="registerForm.get('description')?.touched && registerForm.get('description')?.invalid">
             <div class="input-wrapper" style="align-items: flex-start;">
               <ion-icon name="document-text-outline" class="input-icon" style="margin-top: 2px;"></ion-icon>
-              <textarea formControlName="description" rows="3" placeholder="¿Qué ofreces? Describe tu emprendimiento..." style="width: 100%; border: none; background: transparent; outline: none; font-family: inherit; font-size: 14px; color: #07152f; resize: vertical; min-height: 60px;"></textarea>
+              <textarea formControlName="description" rows="3" placeholder="¿Qué ofreces? Describe tu emprendimiento..." style="width: 100%; border: none; background: transparent; outline: none; font-family: inherit; font-size: 14px; color: #07152f; resize: vertical; min-height: 60px;" aria-label="Descripción de tu emprendimiento"></textarea>
             </div>
             <span class="error-msg" *ngIf="registerForm.get('description')?.touched && registerForm.get('description')?.hasError('required')">La descripción es obligatoria.</span>
           </div>
@@ -159,7 +160,7 @@
           <div class="input-group" [class.has-error]="registerForm.get('delivery_points')?.touched && registerForm.get('delivery_points')?.invalid">
             <div class="input-wrapper">
               <ion-icon name="map-outline" class="input-icon"></ion-icon>
-              <input type="text" formControlName="delivery_points" placeholder="Puntos de entrega (Ej. Pabellón A)">
+              <input type="text" formControlName="delivery_points" placeholder="Puntos de entrega (Ej. Pabellón A)" aria-label="Puntos de entrega">
             </div>
             <span class="error-msg" *ngIf="registerForm.get('delivery_points')?.touched && registerForm.get('delivery_points')?.hasError('required')">Los puntos de entrega son obligatorios.</span>
           </div>
@@ -169,7 +170,7 @@
               <img *ngIf="logoPreview" [src]="logoPreview" alt="Logo Preview" style="width: 100%; height: 100%; object-fit: cover;">
               <div *ngIf="!logoPreview" style="display: flex; flex-direction: column; align-items: center; gap: 8px; color: #a0aec0;">
                 <ion-icon name="image-outline" style="font-size: 28px;"></ion-icon>
-                <span style="font-size: 13px; font-weight: 500;">Logo o Foto (Opcional)</span>
+                <span style="font-size: 13px; font-weight: 500;">Logo o foto de tu emprendimiento</span>
               </div>
               <input #fileInput type="file" accept="image/*" (change)="onLogoSelected($event)" style="display: none;">
             </div>
@@ -180,8 +181,8 @@
           <input type="checkbox" formControlName="acceptTerms" />
           <span class="legal-check"><ion-icon name="checkmark"></ion-icon></span>
           <span>
-            Acepto los <a href="#" (click)="openTermsModal($event)">Términos de uso</a> y la
-            <a href="#" (click)="openPrivacyModal($event)">Política de privacidad</a> de VALLE-GO.
+            Acepto los <a href="#" (click)="openTermsModal($event)" aria-label="Abrir términos de uso">Términos de uso</a> y la
+            <a href="#" (click)="openPrivacyModal($event)" aria-label="Abrir política de privacidad">Política de privacidad</a> de VALLE-GO.
           </span>
         </label>
         <span class="terms-error" *ngIf="registerForm.get('acceptTerms')?.touched && registerForm.get('acceptTerms')?.invalid">
@@ -215,7 +216,7 @@
       <ion-modal [isOpen]="isTermsModalOpen" (didDismiss)="closeTermsModal()">
         <ng-template>
           <ion-header class="ion-no-border">
-            <ion-toolbar style="--background: #f4513f; --color: white;">
+            <ion-toolbar style="--background: #E8432D; --color: white;">
               <ion-title style="font-weight: 800; font-size: 16px;">Términos de Uso</ion-title>
               <ion-buttons slot="end">
                 <ion-button (click)="closeTermsModal()" style="font-weight: 700; --color: white;">Cerrar</ion-button>
@@ -224,7 +225,7 @@
           </ion-header>
           <ion-content class="ion-padding" style="--background: #ffffff; color: #07152f; font-family: 'Inter', sans-serif;">
             <div style="padding: 10px 5px;">
-              <h2 style="font-weight: 900; font-size: 22px; color: #f4513f; margin-top: 0;">Términos de Uso de VALLE-GO</h2>
+              <h2 style="font-weight: 900; font-size: 22px; color: #E8432D; margin-top: 0;">Términos de Uso de VALLE-GO</h2>
               <p style="font-size: 12px; color: #7d879a; margin-bottom: 20px;">Última actualización: Agosto de 2026</p>
               
               <p style="line-height: 1.6; font-size: 14px;">Bienvenido a VALLE-GO, la plataforma de marketplace universitario para la comunidad de la Universidad César Vallejo (UCV). Al registrarte y utilizar esta aplicación, aceptas regirte por los siguientes términos y condiciones para garantizar un entorno seguro y de confianza:</p>
@@ -252,7 +253,7 @@
       <ion-modal [isOpen]="isPrivacyModalOpen" (didDismiss)="closePrivacyModal()">
         <ng-template>
           <ion-header class="ion-no-border">
-            <ion-toolbar style="--background: #f4513f; --color: white;">
+            <ion-toolbar style="--background: #E8432D; --color: white;">
               <ion-title style="font-weight: 800; font-size: 16px;">Política de Privacidad</ion-title>
               <ion-buttons slot="end">
                 <ion-button (click)="closePrivacyModal()" style="font-weight: 700; --color: white;">Cerrar</ion-button>
@@ -261,7 +262,7 @@
           </ion-header>
           <ion-content class="ion-padding" style="--background: #ffffff; color: #07152f; font-family: 'Inter', sans-serif;">
             <div style="padding: 10px 5px;">
-              <h2 style="font-weight: 900; font-size: 22px; color: #f4513f; margin-top: 0;">Política de Privacidad de VALLE-GO</h2>
+              <h2 style="font-weight: 900; font-size: 22px; color: #E8432D; margin-top: 0;">Política de Privacidad de VALLE-GO</h2>
               <p style="font-size: 12px; color: #7d879a; margin-bottom: 20px;">Última actualización: Agosto de 2026</p>
               
               <p style="line-height: 1.6; font-size: 14px;">VALLE-GO se compromete a resguardar la privacidad y seguridad de la información personal de los miembros de la comunidad UCV. A continuación, detallamos cómo tratamos tus datos:</p>

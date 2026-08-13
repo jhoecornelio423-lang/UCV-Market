@@ -46,7 +46,7 @@
 
         <!-- Método de pago -->
         <section class="checkout-section">
-          <h3><span class="dollar-sign">$</span> Método de pago</h3>
+          <h3><span class="dollar-sign">S/</span> Método de pago</h3>
           
           <div class="radio-card" 
                *ngFor="let method of paymentMethods"
@@ -83,7 +83,9 @@
 
 <!-- Checkout Button (Fixed bottom) -->
 <footer class="checkout-footer">
-  <button class="btn-checkout-figma" (click)="confirmOrder()">
-    Confirmar pedido · S/ {{ cartTotal.toFixed(2) }}
+  <button class="btn-checkout-figma" (click)="confirmOrder()" [disabled]="isSubmitting">
+    <ion-spinner name="crescent" *ngIf="isSubmitting" class="btn-spinner"></ion-spinner>
+    <span *ngIf="!isSubmitting">Confirmar pedido · S/ {{ cartTotal.toFixed(2) }}</span>
+    <span *ngIf="isSubmitting">Procesando...</span>
   </button>
 </footer>

@@ -18,11 +18,9 @@
           <h3 class="product-name">{{ product.name }}</h3>
           <p class="seller-name">{{ product.seller?.full_name || 'Vendedor' }}</p>
           
-          <div class="meta">
+          <div class="meta" *ngIf="product.seller?.rating_average">
             <ion-icon name="star" class="star-icon"></ion-icon>
-            <span class="rating">{{ product.seller?.rating_average || '5.0' | number:'1.1-1' }}</span>
-            <span class="dot">•</span>
-            <span class="time">10 min</span>
+            <span class="rating">{{ product.seller?.rating_average | number:'1.1-1' }}</span>
           </div>
           
           <div class="price">S/ {{ product.price | number:'1.2-2' }}</div>

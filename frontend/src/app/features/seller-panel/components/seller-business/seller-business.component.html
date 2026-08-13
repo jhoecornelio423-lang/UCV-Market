@@ -6,14 +6,14 @@
   <div class="business-scroll-area">
     <div class="business-visuals">
       <div class="banner-wrapper">
-        <img [src]="businessBannerUrl" alt="Banner" onerror="this.src='assets/images/login-food-banner.jpg'">
+        <img [src]="businessBannerUrl" alt="Banner" (error)="onBannerError()">
         <button class="edit-banner-btn" type="button" (click)="bannerInput.click()">
           <ion-icon name="camera-outline"></ion-icon>
         </button>
         <input type="file" #bannerInput style="display: none;" (change)="onBannerSelected($event)" accept="image/*">
       </div>
       <div class="profile-pic-wrapper" (click)="avatarInput.click()">
-        <img [src]="businessAvatarUrl" alt="Perfil" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'">
+        <img [src]="businessAvatarUrl" alt="Perfil" (error)="onAvatarError()">
         <div class="avatar-edit-overlay">
           <ion-icon name="camera-outline"></ion-icon>
         </div>

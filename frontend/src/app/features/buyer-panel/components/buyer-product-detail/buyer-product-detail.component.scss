@@ -74,7 +74,7 @@
         color: #07152f;
         
         &.active {
-          color: #f75c44;
+          color: #E8432D;
         }
       }
     }
@@ -112,7 +112,7 @@
 
     .badge-category {
       background: #fff0ed;
-      color: #f75c44;
+      color: #E8432D;
     }
 
     .badge-status {
@@ -129,7 +129,7 @@
   .product-price {
     font-size: 24px;
     font-weight: 900;
-    color: #f75c44;
+    color: #E8432D;
     margin: 0;
   }
 }
@@ -163,8 +163,8 @@
       margin-bottom: 8px;
       
       &.star-icon { color: #ffb400; }
-      &.loc-icon { color: #f75c44; }
-      &.time-icon { color: #f75c44; }
+      &.loc-icon { color: #E8432D; }
+      &.time-icon { color: #E8432D; }
     }
 
     .stat-value {
@@ -289,7 +289,7 @@
       
       &.add {
         background: #fff0ed;
-        color: #f75c44;
+        color: #E8432D;
       }
       
       &:disabled {
@@ -310,7 +310,7 @@
   width: 100%;
   height: 56px;
   border-radius: 16px;
-  background: #f75c44;
+  background: #E8432D;
   color: white;
   border: none;
   font-size: 16px;

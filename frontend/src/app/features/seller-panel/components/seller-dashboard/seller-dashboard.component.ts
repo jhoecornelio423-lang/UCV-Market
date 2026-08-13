@@ -48,14 +48,20 @@ export class SellerDashboardComponent {
       `)
       .eq('reviewee_id', profile.id)
       .order('created_at', { ascending: false })
-      .then(response => {
-        if (response.error) {
-          console.error('Error fetching reviews:', response.error.message);
-        } else {
-          this.reviews = response.data || [];
+      .then(
+        (response: any) => {
+          if (response.error) {
+            console.error('Error fetching reviews:', response.error.message);
+          } else {
+            this.reviews = response.data || [];
+          }
+          this.loadingReviews = false;
+        },
+        (err: any) => {
+          console.error('Error al cargar reseñas:', err);
+          this.loadingReviews = false;
         }
-        this.loadingReviews = false;
-      });
+      );
   }
 
   showNotifications() {
@@ -158,8 +164,13 @@ export class SellerDashboardComponent {
   }
 
   signOut() {
-    this.authService.signOut().subscribe(() => {
-      this.router.navigate(['/login']);
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión:', err);
+      }
     });
   }
 }

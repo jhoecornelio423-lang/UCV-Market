@@ -28,6 +28,7 @@
               placeholder="Correo universitario"
               formControlName="email"
               autocomplete="username"
+              aria-label="Correo universitario"
             />
           </div>
           <span class="error-msg" *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.hasError('required')">El correo es requerido.</span>
@@ -44,6 +45,7 @@
               placeholder="Contraseña"
               formControlName="password"
               autocomplete="current-password"
+              aria-label="Contraseña"
             />
             <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" [attr.aria-label]="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
@@ -54,7 +56,7 @@
         </div>
 
         <div class="forgot-row">
-          <a class="forgot-pass-link" (click)="onForgotPassword()">¿Olvidaste tu contraseña?</a>
+          <a class="forgot-pass-link" (click)="onForgotPassword()" role="link" aria-label="¿Olvidaste tu contraseña?">¿Olvidaste tu contraseña?</a>
         </div>
 
         <button type="submit" class="submit-btn">Iniciar sesión</button>

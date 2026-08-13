@@ -53,7 +53,7 @@
       <div class="card card-sales">
         <span class="title">S/ {{ (stats$ | async)?.totalSalesToday }}</span>
         <span class="subtitle">Ventas hoy</span>
-        <span class="trend positive">+18% vs ayer</span>
+        <span class="trend positive">{{ ((stats$ | async)?.salesGrowthToday ?? 0) >= 0 ? '+' : '' }}{{ (stats$ | async)?.salesGrowthToday ?? 0 }}% vs ayer</span>
       </div>
       <div class="card card-orders">
         <span class="title">{{ (stats$ | async)?.todayOrdersCount }}</span>
@@ -92,7 +92,7 @@
     <section class="dashboard-section active-orders-section">
       <div class="section-header">
         <h2>Pedidos activos</h2>
-        <a class="view-all" (click)="goToOrders()">Ver todo</a>
+        <a class="view-all" (click)="goToOrders()" role="link" aria-label="Ver todos los pedidos">Ver todo</a>
       </div>
       
       <div class="orders-list" *ngIf="(activeOrders$ | async) as orders">
@@ -117,7 +117,7 @@
     <section class="dashboard-section sales-section">
       <div class="section-header">
         <h2>Ventas esta semana</h2>
-        <span class="trend positive"><ion-icon name="arrow-up"></ion-icon> 23%</span>
+        <span class="trend positive"><ion-icon name="arrow-up"></ion-icon> {{ ((stats$ | async)?.salesGrowthWeekly ?? 0) >= 0 ? '+' : '' }}{{ (stats$ | async)?.salesGrowthWeekly ?? 0 }}%</span>
       </div>
       <div class="chart-container">
         <!-- Pure CSS Bar Chart -->

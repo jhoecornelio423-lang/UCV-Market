@@ -207,9 +207,17 @@ export class AdminRepository {
         .eq('id', sellerId)
         .select()
         .single()
-        .then(({ error, data }) => {
+        .then(async ({ error, data }) => {
           if (error) throw error;
           if (!data) throw new Error('No se pudo actualizar. Permisos insuficientes.');
+          // Si deja de ser emprendedor (suspendido, comprador, etc.), ocultar sus productos
+          if (role !== 'emprendedor') {
+            await this.supabaseService.client
+              .from('products')
+              .update({ is_active: false })
+              .eq('seller_id', sellerId)
+              .eq('is_active', true);
+          }
         })
     );
   }

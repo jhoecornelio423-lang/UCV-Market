@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, inject, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ORDER_REPOSITORY, OrderRepository } from '../../../../core/repositories/order.repository';
+import { ORDER_REPOSITORY } from '../../../../core/repositories/order.repository';
 import { Order, OrderStatus } from '../../../../core/models/order.model';
 import { Subscription, interval } from 'rxjs';
 
@@ -19,10 +19,7 @@ export class BuyerOrderTrackingComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private subs = new Subscription();
   private pollingSub?: Subscription;
-
-  constructor(
-    @Inject(ORDER_REPOSITORY) private orderRepository: OrderRepository
-  ) {}
+  private orderRepository = inject(ORDER_REPOSITORY);
 
   ngOnInit() {
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
@@ -90,7 +87,10 @@ export class BuyerOrderTrackingComponent implements OnInit, OnDestroy {
   }
   
   getLocation(): string {
-    return this.order?.delivery_place || 'Pabellón A';
+    // delivery_place guarda "Punto | Hora: HH:MM | Pago: Método"; mostrar solo el punto
+    const raw = this.order?.delivery_place || '—';
+    const spot = raw.split(' | Hora:')[0].trim();
+    return spot || '—';
   }
 
   get shortOrderId(): string {
@@ -111,10 +111,10 @@ export class BuyerOrderTrackingComponent implements OnInit, OnDestroy {
   
   getEstimatedTime(): string {
     const status = this.order?.status;
-    if (status === 'pending') return '~15 minutos';
-    if (status === 'accepted') return '~10 minutos';
-    if (status === 'preparing') return '~5 minutos';
-    if (status === 'ready') return '¡Ahora!';
+    if (status === 'pending') return 'Esperando confirmación';
+    if (status === 'accepted') return 'Confirmado';
+    if (status === 'preparing') return 'En preparación';
+    if (status === 'ready') return '¡Listo para recoger!';
     return '-';
   }
 }

@@ -10,7 +10,7 @@
           <h1>{{ displayName }}</h1>
           <button type="button" class="campus-selector">
             <ion-icon name="location" aria-hidden="true"></ion-icon>
-            <span>UCV · Campus Lima Norte</span>
+            <span>{{ userProfile?.campus || 'UCV · Campus Lima Norte' }}</span>
             <ion-icon name="chevron-down" class="chevron"></ion-icon>
           </button>
         </div>
@@ -78,10 +78,10 @@
           [routerLink]="['/buyer-panel/product', featured.id]">
           
           <div class="banner-content">
-            <span class="offer-label"><ion-icon name="flame" style="margin-right:4px; font-size:14px; transform:translateY(2px)"></ion-icon> Oferta del día</span>
-            <h2 class="banner-title">{{ featured.name }}<br>a S/ {{ (featured.price * 0.9).toFixed(2) }} hoy</h2>
+            <span class="offer-label"><ion-icon name="sparkles" style="margin-right:4px; font-size:14px; transform:translateY(2px)"></ion-icon> Destacado del día</span>
+            <h2 class="banner-title">{{ featured.name }}<br>S/ {{ featured.price.toFixed(2) }}</h2>
             <button type="button" class="banner-btn">
-              Ver oferta
+              Ver producto
               <ion-icon name="arrow-forward-outline"></ion-icon>
             </button>
           </div>
@@ -118,6 +118,12 @@
 
     <div *ngIf="loading" class="catalog-skeleton">
       <div *ngFor="let item of [1, 2, 3]" class="skeleton-card-figma"></div>
+    </div>
+
+    <div class="load-error" *ngIf="loadError && !loading">
+      <ion-icon name="cloud-offline-outline"></ion-icon>
+      <p>No se pudieron cargar los productos. Revisa tu conexión e inténtalo de nuevo.</p>
+      <button (click)="retry()">Reintentar</button>
     </div>
 
     <ng-container *ngIf="!loading && products.length > 0">

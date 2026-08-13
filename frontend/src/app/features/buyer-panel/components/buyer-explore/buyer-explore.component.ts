@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy, inject, Inject, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { map, startWith, switchMap } from 'rxjs/operators';
-import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
-import { AUTH_REPOSITORY, AuthRepository } from '../../../../core/repositories/auth.repository';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
+import { map, debounceTime, switchMap, catchError } from 'rxjs/operators';
+import { PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
+import { AUTH_REPOSITORY } from '../../../../core/repositories/auth.repository';
 import { Product } from '../../../../core/models/product.model';
 import { Category } from '../../../../core/models/category.model';
 import { Profile } from '../../../../core/models/profile.model';
@@ -20,13 +20,10 @@ export class BuyerExploreComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
   private supabaseService = inject(SupabaseClientService);
+  private productRepository = inject(PRODUCT_REPOSITORY);
+  private authRepository = inject(AUTH_REPOSITORY);
 
   private realtimeChannel: any = null;
-  
-  constructor(
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository,
-    @Inject(AUTH_REPOSITORY) private authRepository: AuthRepository
-  ) {}
 
   categories: Category[] = [];
   sellers: Profile[] = [];
@@ -39,10 +36,6 @@ export class BuyerExploreComponent implements OnInit, OnDestroy {
   showFiltersModal = false;
 
   filteredProducts$!: Observable<Product[]>;
-
-  // Simulate distances and times since they aren't in DB yet
-  simulatedDistances = [120, 200, 350, 500, 800, 1200];
-  simulatedTimes = [10, 15, 20, 30, 45];
 
   ngOnInit() {
     this.loadInitialData();
@@ -58,13 +51,15 @@ export class BuyerExploreComponent implements OnInit, OnDestroy {
       .subscribe();
 
     // Combine filters and fetch products dynamically
+    // Nota: searchTerm$ es un BehaviorSubject (ya emite su valor actual),
+    // por eso NO se usa startWith('') para evitar una petición duplicada al cargar.
     this.filteredProducts$ = combineLatest([
       this.selectedCategoryId$,
-      this.searchTerm$.pipe(startWith('')),
+      this.searchTerm$.pipe(debounceTime(300)),
       this.sortBy$,
       this.onlyAvailable$
     ]).pipe(
-      switchMap(([categoryId, search, sortBy, onlyAvailable]) => 
+      switchMap(([categoryId, search, sortBy, onlyAvailable]) =>
         this.productRepository.getActiveProducts(categoryId || undefined, search || undefined).pipe(
           map(products => {
             let result = [...products];
@@ -81,13 +76,17 @@ export class BuyerExploreComponent implements OnInit, OnDestroy {
               result.sort((a, b) => b.price - a.price);
             } else if (sortBy === 'rating-desc') {
               result.sort((a, b) => {
-                const rA = a.seller?.rating_average || 5.0;
-                const rB = b.seller?.rating_average || 5.0;
+                const rA = a.seller?.rating_average || 0;
+                const rB = b.seller?.rating_average || 0;
                 return rB - rA;
               });
             }
             
             return result;
+          }),
+          catchError(err => {
+            console.error('Error al cargar productos en explorar:', err);
+            return of([] as Product[]);
           })
         )
       )
@@ -117,25 +116,6 @@ export class BuyerExploreComponent implements OnInit, OnDestroy {
   onSearch(event: any) {
     const term = event.target.value;
     this.searchTerm$.next(term);
-  }
-
-  getSimulatedDistance(id: string): string {
-    // Generate a consistent pseudo-random distance based on string hash
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      hash = id.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const idx = Math.abs(hash) % this.simulatedDistances.length;
-    return `${this.simulatedDistances[idx]} m`;
-  }
-
-  getSimulatedTime(id: string): string {
-    let hash = 0;
-    for (let i = 0; i < id.length; i++) {
-      hash = id.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    const idx = Math.abs(hash) % this.simulatedTimes.length;
-    return `${this.simulatedTimes[idx]} min`;
   }
 
   getCategoryIcon(categoryName: string): string {

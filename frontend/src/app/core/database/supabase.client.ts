@@ -9,10 +9,10 @@ export class SupabaseClientService {
   private supabase: SupabaseClient;
 
   constructor() {
-    console.log('DEBUG: Inicializando Supabase...');
-    console.log('DEBUG: URL del environment:', environment.supabaseUrl);
-    console.log('DEBUG: KEY del environment (primeros 10 caracteres):', environment.supabaseKey ? environment.supabaseKey.substring(0, 10) + '...' : 'VACÍO');
-    
+    if (!environment.supabaseUrl || !environment.supabaseKey) {
+      throw new Error('Faltan las credenciales de Supabase. Configúralas en el archivo .env (SUPABASE_URL y SUPABASE_KEY).');
+    }
+
     this.supabase = createClient(environment.supabaseUrl, environment.supabaseKey, {
       auth: {
         persistSession: true,

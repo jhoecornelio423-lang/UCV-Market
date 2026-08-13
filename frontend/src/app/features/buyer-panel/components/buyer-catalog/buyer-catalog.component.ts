@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject, Inject, AfterViewInit, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, AfterViewInit, HostListener } from '@angular/core';
 import { Subject, Subscription, Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
 import { ToastController } from '@ionic/angular';
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 
 import { Product } from '../../../../core/models/product.model';
 import { Category } from '../../../../core/models/category.model';
-import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
 import { CartService } from '../../../../core/cart/cart.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Profile } from '../../../../core/models/profile.model';
@@ -30,6 +30,7 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedCategoryId: string = '';
   searchQuery: string = '';
   loading = false;
+  loadError = false;
   userProfile: Profile | null = null;
   cartCount = 0;
 
@@ -93,12 +94,11 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
   private notificationService = inject(NotificationService);
   private favoritesService = inject(FavoritesService);
   private supabaseService = inject(SupabaseClientService);
-  
+  private productRepository = inject(PRODUCT_REPOSITORY);
+
   private realtimeChannel: any = null;
 
-  constructor(
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
-  ) {
+  constructor() {
     this.unreadCount$ = this.notificationService.unreadCount$;
     this.notifications$ = this.notificationService.notifications$;
   }
@@ -145,6 +145,7 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
         error: (err) => {
           console.error('Error al realizar la búsqueda:', err);
           this.loading = false;
+          this.loadError = true;
         }
       })
     );
@@ -246,17 +247,22 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
    */
   loadProducts() {
     this.loading = true;
+    this.loadError = false;
     this.productRepository.getActiveProducts(this.selectedCategoryId, this.searchQuery).subscribe({
       next: (products) => {
-        console.log('DEBUG: Productos del catálogo:', products);
         this.products = products;
         this.loading = false;
       },
       error: (err) => {
         console.error('Error al cargar productos:', err);
         this.loading = false;
+        this.loadError = true;
       }
     });
+  }
+
+  retry() {
+    this.loadProducts();
   }
 
   /**

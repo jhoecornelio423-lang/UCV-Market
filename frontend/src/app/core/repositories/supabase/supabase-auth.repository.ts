@@ -1,16 +1,17 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { AuthRepository } from '../auth.repository';
 import { SupabaseClientService } from '../../database/supabase.client';
 import { Profile, UserRole } from '../../models/profile.model';
-import { from, Observable, of, throwError, delay } from 'rxjs';
+import { from, Observable, of, throwError } from 'rxjs';
 import { map, switchMap, catchError } from 'rxjs/operators';
 import { Capacitor } from '@capacitor/core';
+import capacitorConfig from '../../../../../capacitor.config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SupabaseAuthRepository implements AuthRepository {
-  constructor(private supabaseService: SupabaseClientService) {}
+  private supabaseService = inject(SupabaseClientService);
 
   signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile> {
     // 1. Validar dominio de correo UCV en el cliente
@@ -71,7 +72,7 @@ export class SupabaseAuthRepository implements AuthRepository {
   signInWithGoogle(): Observable<any> {
     const isApp = Capacitor.isNativePlatform();
     const redirectTo = isApp 
-      ? 'io.ionic.starter://login-callback' 
+      ? `${capacitorConfig.appId}://login-callback`
       : `${window.location.origin}/buyer-panel`;
 
     console.log('DEBUG: OAuth redirectTo:', redirectTo);
@@ -154,7 +155,7 @@ export class SupabaseAuthRepository implements AuthRepository {
           phone: '',
           role: 'comprador',
           campus: 'UCV - Lima Norte',
-          rating_average: 5.00
+          rating_average: 0.00
         };
 
         const insertQuery = this.supabaseService.client
@@ -219,14 +220,24 @@ export class SupabaseAuthRepository implements AuthRepository {
     );
   }
 
-  confirmResetPassword(token: string, newPassword: string): Observable<boolean> {
-    // Set the session using the token received from the reset link
-    const setSessionPromise = this.supabaseService.client.auth.setSession({
-      access_token: token,
-      refresh_token: ''
-    });
+  confirmResetPassword(token: string, newPassword: string, refreshToken?: string): Observable<boolean> {
+    // Si supabase-js ya consumió el hash (#access_token=...) durante la inicialización,
+    // la sesión ya está establecida y solo debemos actualizar la contraseña.
+    const ensureSession = token
+      ? this.supabaseService.client.auth.setSession({
+          access_token: token,
+          refresh_token: refreshToken || ''
+        })
+      : this.supabaseService.client.auth.getSession();
 
-    const resetPromise = setSessionPromise.then(() => {
+    const resetPromise = ensureSession.then((sessionResponse: any) => {
+      if (sessionResponse.error) {
+        throw new Error(sessionResponse.error.message);
+      }
+      const session = sessionResponse.data?.session;
+      if (!session) {
+        throw new Error('No se pudo restaurar la sesión. Solicita nuevamente el enlace de recuperación.');
+      }
       return this.supabaseService.client.auth.updateUser({ password: newPassword });
     });
 
@@ -252,18 +263,6 @@ export class SupabaseAuthRepository implements AuthRepository {
         return true;
       })
     );
-  }
-
-  /** Generate a simple JWT-like token for password reset */
-  generateResetToken(email: string): Observable<string> {
-    const token = btoa(`${email}:${Date.now()}`);
-    return of(token).pipe(delay(500));
-  }
-
-  /** Reset password using token */
-  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean> {
-    // Reuse confirmResetPassword logic
-    return this.confirmResetPassword(token, newPassword);
   }
 
   /** Upload business assets like avatar or banner to Supabase Storage public bucket */

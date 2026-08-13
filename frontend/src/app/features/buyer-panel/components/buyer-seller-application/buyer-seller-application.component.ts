@@ -1,7 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoadingController, ToastController } from '@ionic/angular';
+import { firstValueFrom } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SellerApplicationRepository } from '../../../../core/repositories/seller-application.repository';
 import { AuthService } from '../../../../core/auth/auth.service';
 
@@ -23,6 +25,7 @@ export class BuyerSellerApplicationComponent implements OnInit {
   private toastCtrl = inject(ToastController);
   private applicationRepo = inject(SellerApplicationRepository);
   private authService = inject(AuthService);
+  private destroyRef = inject(DestroyRef);
 
   constructor() {
     this.applicationForm = this.fb.group({
@@ -42,7 +45,7 @@ export class BuyerSellerApplicationComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.currentProfile$.subscribe(profile => {
+    this.authService.currentProfile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(profile => {
       if (profile) {
         this.userId = profile.id;
         // Pre-fill some fields if possible
@@ -96,7 +99,7 @@ export class BuyerSellerApplicationComponent implements OnInit {
 
     try {
       // 1. Check if business name is unique
-      const isUnique = await this.applicationRepo.checkBusinessNameUnique(formValues.business_name.trim()).toPromise();
+      const isUnique = await firstValueFrom(this.applicationRepo.checkBusinessNameUnique(formValues.business_name.trim()));
       if (!isUnique) {
         loading.dismiss();
         this.showToast('El nombre del emprendimiento ya está en uso. Por favor, elige otro.', 'danger');
@@ -124,7 +127,7 @@ export class BuyerSellerApplicationComponent implements OnInit {
         delivery_points: formValues.delivery_points.trim()
       };
 
-      await this.applicationRepo.submitApplication(application, this.userId).toPromise();
+      await firstValueFrom(this.applicationRepo.submitApplication(application, this.userId));
 
       loading.dismiss();
       this.showToast('¡Solicitud enviada con éxito! Será revisada por un administrador.', 'success');

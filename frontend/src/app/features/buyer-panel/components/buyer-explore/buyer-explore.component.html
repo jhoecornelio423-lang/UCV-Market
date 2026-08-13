@@ -86,17 +86,16 @@
   <div class="sellers-scroll">
     <div class="seller-card" *ngFor="let seller of sellers" [routerLink]="['/buyer-panel/seller-store', seller.id]">
       <div class="seller-image-wrapper">
-        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="seller" onerror="this.src='https://ionicframework.com/docs/img/demos/avatar.svg'" />
+        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="seller" />
       </div>
       <div class="seller-info">
         <h3>{{ seller.full_name }}</h3>
         <p class="s-category">{{ seller.business_category || 'Emprendimiento' }}</p>
         <div class="s-meta">
-          <ion-icon name="star" class="star-icon"></ion-icon>
-          <span class="rating">{{ seller.rating_average || '5.0' | number:'1.1-1' }}</span>
-          <span class="dot">•</span>
-          <ion-icon name="location-outline" class="loc-icon"></ion-icon>
-          <span class="distance">{{ getSimulatedDistance(seller.id) }}</span>
+          <ng-container *ngIf="seller.rating_average">
+            <ion-icon name="star" class="star-icon"></ion-icon>
+            <span class="rating">{{ seller.rating_average | number:'1.1-1' }}</span>
+          </ng-container>
         </div>
       </div>
       <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
@@ -110,7 +109,7 @@
   <div class="products-list" *ngIf="filteredProducts$ | async as products">
     <div class="product-card" *ngFor="let product of products" [routerLink]="['/buyer-panel/product', product.id]">
       <div class="product-image">
-        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png'" alt="product" onerror="this.src='https://ionicframework.com/docs/img/demos/thumbnail.svg'" />
+        <img [src]="product.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png'" alt="product" />
       </div>
       <div class="product-details">
         <div class="p-header">
@@ -124,14 +123,10 @@
         </div>
         <p class="p-seller">{{ product.seller?.full_name || 'Vendedor' }}</p>
         <div class="p-meta">
-          <ion-icon name="star" class="star-icon"></ion-icon>
-          <span class="rating">{{ product.seller?.rating_average || '5.0' | number:'1.1-1' }}</span>
-          <span class="dot">•</span>
-          <ion-icon name="location-outline"></ion-icon>
-          <span class="distance">{{ getSimulatedDistance(product.seller_id) }}</span>
-          <span class="dot">•</span>
-          <ion-icon name="time-outline"></ion-icon>
-          <span class="time">{{ getSimulatedTime(product.id) }}</span>
+          <ng-container *ngIf="product.seller?.rating_average">
+            <ion-icon name="star" class="star-icon"></ion-icon>
+            <span class="rating">{{ product.seller?.rating_average | number:'1.1-1' }}</span>
+          </ng-container>
         </div>
         <div class="p-footer">
           <span class="price">S/ {{ product.price | number:'1.2-2' }}</span>

@@ -1,5 +1,5 @@
-$coral: #f4513f;
-$coral-light: #ff715b;
+$coral: #E8432D;
+$coral-light: #FF7B5E;
 $navy: #07152f;
 $muted: #7b8698;
 $line: #e8eaee;
@@ -156,7 +156,7 @@ $surface: #f7f8fa;
   right: -50px;
   width: 200px;
   height: 200px;
-  background-color: #E62020;
+  background-color: #E8432D;
   border-radius: 50%;
   z-index: 0;
 }
@@ -227,7 +227,7 @@ $surface: #f7f8fa;
   right: -40px;
   width: 100px;
   height: 100px;
-  background-color: #E62020;
+  background-color: #E8432D;
   border-radius: 50%;
   z-index: 0;
   pointer-events: none;
@@ -275,7 +275,7 @@ $surface: #f7f8fa;
   color: #7d879a;
   
   a {
-    color: #E62020;
+    color: #E8432D;
     font-weight: 700;
     text-decoration: none;
     
@@ -379,7 +379,7 @@ $surface: #f7f8fa;
 }
 
 .field-group.has-error {
-  border-color: #dc493a;
+  border-color: #cc3b28;
   background: #fffafa;
 }
 
@@ -403,6 +403,13 @@ $surface: #f7f8fa;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.account-hint {
+  margin: 10px 0 0;
+  color: #97a0af;
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .account-options label {
@@ -535,7 +542,7 @@ $surface: #f7f8fa;
   border: 0;
   border-radius: 16px;
   color: #ffffff;
-  background: linear-gradient(100deg, #ef4937, $coral-light);
+  background: linear-gradient(100deg, #E8432D, $coral-light);
   box-shadow: 0 13px 24px rgba(244, 81, 63, 0.23);
   font-size: 14px;
   font-weight: 850;
@@ -554,7 +561,7 @@ $surface: #f7f8fa;
 }
 
 .footer-links a {
-  color: #ef4938;
+  color: #E8432D;
   font-weight: 850;
   text-decoration: none;
 }

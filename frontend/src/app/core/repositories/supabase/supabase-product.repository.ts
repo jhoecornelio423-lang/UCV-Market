@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ProductRepository } from '../product.repository';
 import { SupabaseClientService } from '../../database/supabase.client';
 import { Product } from '../../models/product.model';
@@ -10,7 +10,7 @@ import { map, switchMap, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SupabaseProductRepository implements ProductRepository {
-  constructor(private supabaseService: SupabaseClientService) {}
+  private supabaseService = inject(SupabaseClientService);
 
   getCategories(): Observable<Category[]> {
     const query = this.supabaseService.client
@@ -47,7 +47,8 @@ export class SupabaseProductRepository implements ProductRepository {
       .select('*, product_images(*), seller:profiles!inner(*), category:categories(*)')
       .eq('is_active', true)
       .gt('stock', 0)
-      .eq('profiles.accepting_orders', true);
+      .eq('profiles.accepting_orders', true)
+      .not('profiles.role', 'in', '("suspended","suspended_buyer")');
 
     if (categoryId) {
       query = query.eq('category_id', categoryId);
@@ -172,19 +173,80 @@ export class SupabaseProductRepository implements ProductRepository {
     );
   }
 
-  updateProduct(id: string, product: Partial<Product>): Observable<Product> {
-    const query = this.supabaseService.client
+  updateProduct(id: string, product: Partial<Product>, images?: File[]): Observable<Product> {
+    const updateQuery = this.supabaseService.client
       .from('products')
       .update(product)
       .eq('id', id)
       .select()
       .single();
 
-    return from(query).pipe(
+    return from(updateQuery).pipe(
       switchMap(response => {
         if (response.error) throw new Error(response.error.message);
-        return this.getProductById(id);
-      })
+
+        // Si no hay imágenes nuevas, conservar las existentes
+        if (!images || images.length === 0) {
+          return this.getProductById(id);
+        }
+
+        // Reemplazar imágenes: eliminar las existentes y subir las nuevas
+        const deleteQuery = this.supabaseService.client
+          .from('product_images')
+          .delete()
+          .eq('product_id', id);
+
+        return from(deleteQuery).pipe(
+          switchMap((deleteResponse: any) => {
+            if (deleteResponse.error) throw new Error(deleteResponse.error.message);
+
+            const uploadTasks = images.map((file, index) => {
+              const fileExtension = file.name.split('.').pop();
+              const fileName = `${Date.now()}_${index}.${fileExtension}`;
+              const filePath = `products/${id}/${fileName}`;
+
+              const storagePromise = this.supabaseService.client.storage
+                .from('product-images')
+                .upload(filePath, file, {
+                  cacheControl: '3600',
+                  upsert: false
+                });
+
+              return from(storagePromise).pipe(
+                switchMap((uploadResponse: any) => {
+                  if (uploadResponse.error) {
+                    return throwError(() => new Error(uploadResponse.error.message));
+                  }
+                  const publicUrlResponse = this.supabaseService.client.storage
+                    .from('product-images')
+                    .getPublicUrl(filePath);
+                  const publicUrl = publicUrlResponse.data.publicUrl;
+
+                  const imageInsert = this.supabaseService.client
+                    .from('product_images')
+                    .insert({
+                      product_id: id,
+                      image_url: publicUrl,
+                      is_featured: index === 0
+                    });
+
+                  return from(imageInsert).pipe(
+                    map((res: any) => {
+                      if (res.error) throw new Error(res.error.message);
+                      return res.data;
+                    })
+                  );
+                })
+              );
+            });
+
+            return forkJoin(uploadTasks).pipe(
+              switchMap(() => this.getProductById(id))
+            );
+          })
+        );
+      }),
+      catchError(error => throwError(() => new Error(error.message)))
     );
   }
 

@@ -20,6 +20,9 @@ export class AdminDashboardComponent implements OnInit {
   
   pendingApplications: SellerApplication[] = [];
   reportedItems: any[] = [];
+
+  dashboardLoading = true;
+  loadError = false;
   
   // Weekly Sales Line Chart
   lineChartData: ChartConfiguration['data'] = {
@@ -74,19 +77,32 @@ export class AdminDashboardComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al cargar reportes:', err);
+        this.loadError = true;
       }
     });
   }
 
-  dismissReport(reportId: string) {
-    this.adminRepo.dismissReport(reportId).subscribe({
-      next: () => {
-        this.loadReports();
-      },
-      error: (err) => {
-        console.error('Error al descartar reporte:', err);
-      }
+  async dismissReport(reportId: string, productName?: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Resolver reporte',
+      message: `¿Estás seguro de que deseas resolver este reporte${productName ? ` de "${productName}"` : ''}? Se eliminará de la lista de pendientes.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Resolver',
+          handler: () => {
+            this.adminRepo.dismissReport(reportId).subscribe({
+              next: () => {
+                this.showToast('Reporte resuelto correctamente.', 'success');
+                this.loadReports();
+              },
+              error: () => this.showToast('Error al resolver el reporte.', 'danger')
+            });
+          }
+        }
+      ]
     });
+    await alert.present();
   }
 
   adjustChartOptions() {
@@ -98,45 +114,80 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadStats() {
-    this.adminRepo.getDashboardStats().subscribe(stats => {
-      this.stats = stats;
+    this.adminRepo.getDashboardStats().subscribe({
+      next: stats => {
+        this.stats = stats;
+        this.dashboardLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar estadísticas:', err);
+        this.dashboardLoading = false;
+        this.loadError = true;
+      }
     });
   }
 
   loadCharts() {
-    this.adminRepo.getWeeklySales().subscribe(sales => {
-      this.lineChartData = {
-        labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-        datasets: [
-          {
-            data: sales,
-            label: 'Ingresos (S/)',
-            borderColor: '#E8432D',
-            backgroundColor: 'rgba(232, 67, 45, 0.1)',
-            fill: true,
-          }
-        ]
-      };
+    this.adminRepo.getWeeklySales().subscribe({
+      next: sales => {
+        this.lineChartData = {
+          labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+          datasets: [
+            {
+              data: sales,
+              label: 'Ingresos (S/)',
+              borderColor: '#E8432D',
+              backgroundColor: 'rgba(232, 67, 45, 0.1)',
+              fill: true,
+            }
+          ]
+        };
+      },
+      error: (err) => {
+        console.error('Error al cargar ventas semanales:', err);
+        this.loadError = true;
+      }
     });
 
-    this.adminRepo.getSalesByCategory().subscribe(cats => {
-      this.doughnutChartData = {
-        labels: cats.map(c => c.label),
-        datasets: [
-          {
-            data: cats.map(c => c.value),
-            backgroundColor: ['#E8432D', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'],
-            borderWidth: 0
-          }
-        ]
-      };
+    this.adminRepo.getSalesByCategory().subscribe({
+      next: cats => {
+        this.doughnutChartData = {
+          labels: cats.map(c => c.label),
+          datasets: [
+            {
+              data: cats.map(c => c.value),
+              backgroundColor: ['#E8432D', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'],
+              borderWidth: 0
+            }
+          ]
+        };
+      },
+      error: (err) => {
+        console.error('Error al cargar ventas por categoría:', err);
+        this.loadError = true;
+      }
     });
   }
 
   loadApplications() {
-    this.adminRepo.getPendingApplications().subscribe(apps => {
-      this.pendingApplications = apps;
+    this.adminRepo.getPendingApplications().subscribe({
+      next: apps => {
+        this.pendingApplications = apps;
+      },
+      error: (err) => {
+        console.error('Error al cargar solicitudes:', err);
+        this.loadError = true;
+      }
     });
+  }
+
+  retry() {
+    this.loadError = false;
+    this.dashboardLoading = true;
+    this.loadStats();
+    this.loadCharts();
+    this.loadApplications();
+    this.loadReports();
   }
 
   async deactivateProduct(productId: string, productName: string) {

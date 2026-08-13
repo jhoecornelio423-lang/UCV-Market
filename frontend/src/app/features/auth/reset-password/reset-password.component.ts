@@ -13,6 +13,9 @@ import { SupabaseAuthRepository } from '../../../core/repositories/supabase/supa
 export class ResetPasswordComponent implements OnInit {
   resetForm!: FormGroup;
   showPassword = false;
+  hasUrlToken = false;
+
+  private refreshToken = '';
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -21,9 +24,20 @@ export class ResetPasswordComponent implements OnInit {
   private supabaseRepo = inject(SupabaseAuthRepository);
 
   ngOnInit() {
-    // Try to auto-populate the token if present in URL
-    const urlTree = this.router.parseUrl(this.router.url);
-    const tokenFromUrl = urlTree.queryParams['token'] || '';
+    // Supabase envía el token de recuperación en el hash de la URL (#access_token=...)
+    // Nota: en Angular el hash NO forma parte de router.url, se lee de window.location.hash
+    const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    const accessToken = hashParams.get('access_token') || '';
+    const refreshToken = hashParams.get('refresh_token') || '';
+    const recoveryType = hashParams.get('type') || '';
+
+    // Fallback: también aceptamos un token manual en la query (?token=...)
+    const tokenFromUrl = accessToken || this.router.parseUrl(this.router.url).queryParams['token'] || '';
+
+    this.hasUrlToken = accessToken.length > 0 && (recoveryType === 'recovery' || refreshToken.length > 0);
+    if (accessToken) {
+      this.refreshToken = refreshToken;
+    }
 
     this.resetForm = this.fb.group({
       token: [tokenFromUrl, Validators.required],
@@ -54,7 +68,7 @@ export class ResetPasswordComponent implements OnInit {
     });
     await loading.present();
 
-    this.supabaseRepo.confirmResetPassword(token, password).subscribe({
+    this.supabaseRepo.confirmResetPassword(token, password, this.refreshToken).subscribe({
       next: async () => {
         await loading.dismiss();
         await this.showToast('Contraseña restablecida correctamente', 'success');

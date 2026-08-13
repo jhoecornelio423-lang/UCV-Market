@@ -1,8 +1,10 @@
-import { Component, OnInit, inject, Inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
 import { AlertController, ToastController, LoadingController } from '@ionic/angular';
+import { filter } from 'rxjs/operators';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { PRODUCT_REPOSITORY, ProductRepository } from '../../core/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../core/repositories/product.repository';
 import { AuthService } from '../../core/auth/auth.service';
 import { Category } from '../../core/models/category.model';
 import { Profile } from '../../core/models/profile.model';
@@ -25,10 +27,8 @@ export class AdminPanelComponent implements OnInit {
   private loadingCtrl = inject(LoadingController);
   private router = inject(Router);
   private adminRepo = inject(AdminRepository);
-
-  constructor(
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
-  ) {}
+  private productRepository = inject(PRODUCT_REPOSITORY);
+  private destroyRef = inject(DestroyRef);
 
   get initials(): string {
     const name = this.userProfile?.full_name || 'Admin';
@@ -40,27 +40,56 @@ export class AdminPanelComponent implements OnInit {
   activeReportsCount = 0;
 
   ngOnInit() {
-    this.authService.currentProfile$.subscribe(profile => {
+    this.authService.currentProfile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(profile => {
       this.userProfile = profile;
     });
     this.loadBadges();
+
+    // Refrescar las insignias al navegar entre secciones (reportes resueltos, solicitudes atendidas, etc.)
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      this.loadBadges();
+    });
   }
 
   loadBadges() {
-    this.adminRepo.getPendingApplications().subscribe(apps => {
-      this.pendingApplicationsCount = apps.length;
+    this.adminRepo.getPendingApplications().subscribe({
+      next: apps => {
+        this.pendingApplicationsCount = apps.length;
+      },
+      error: (err) => {
+        console.error('Error al cargar solicitudes pendientes:', err);
+      }
     });
-    this.adminRepo.getSupportTickets().subscribe(tickets => {
-      this.openTicketsCount = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
+    this.adminRepo.getSupportTickets().subscribe({
+      next: tickets => {
+        this.openTicketsCount = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
+      },
+      error: (err) => {
+        console.error('Error al cargar tickets de soporte:', err);
+      }
     });
-    this.adminRepo.getReportedProducts().subscribe(reports => {
-      this.activeReportsCount = reports.length;
+    this.adminRepo.getReportedProducts().subscribe({
+      next: reports => {
+        // Solo reportes pendientes de moderación cuentan como activos
+        this.activeReportsCount = reports.filter((r: any) => !r.status || r.status === 'pending').length;
+      },
+      error: (err) => {
+        console.error('Error al cargar reportes de productos:', err);
+      }
     });
   }
 
   signOut() {
-    this.authService.signOut().subscribe(() => {
-      this.router.navigate(['/login']);
+    this.authService.signOut().subscribe({
+      next: () => {
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión:', err);
+      }
     });
   }
 }

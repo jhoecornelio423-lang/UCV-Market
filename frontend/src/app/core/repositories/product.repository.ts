@@ -11,7 +11,7 @@ export interface ProductRepository {
   getSellerProducts(sellerId: string): Observable<Product[]>;
   getProductById(id: string): Observable<Product>;
   createProduct(product: Partial<Product>, images: File[]): Observable<Product>;
-  updateProduct(id: string, product: Partial<Product>): Observable<Product>;
+  updateProduct(id: string, product: Partial<Product>, images?: File[]): Observable<Product>;
   deleteProduct(id: string): Observable<boolean>;
   incrementWhatsAppClicks(id: string): Observable<number>;
   createCategory(name: string, slug: string, icon: string): Observable<Category>;

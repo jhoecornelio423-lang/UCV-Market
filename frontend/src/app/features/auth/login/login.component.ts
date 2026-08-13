@@ -57,13 +57,9 @@ export class LoginComponent implements OnInit {
         
         const alert = await this.alertCtrl.create({
           header: 'Correo Enviado',
-          subHeader: 'Token de recuperación enviado',
-          message: 'Hemos enviado un correo a tu cuenta UCV con el token de recuperación. Copia el token del mensaje e ingrésalo en la pantalla de restablecimiento.',
+          subHeader: 'Enlace de recuperación enviado',
+          message: 'Hemos enviado un enlace a tu correo UCV. Ábrelo para restablecer tu contraseña de forma segura.',
           buttons: [
-            {
-              text: 'Cancelar',
-              role: 'cancel'
-            },
             {
               text: 'Restablecer',
               handler: () => {

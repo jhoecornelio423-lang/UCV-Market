@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./buyer-order-confirmed.component.scss'],
   standalone: false
 })
-export class BuyerOrderConfirmedComponent implements OnInit {
+export class BuyerOrderConfirmedComponent {
   orderNumber = '';
   location = '';
   time = '';
@@ -16,21 +16,36 @@ export class BuyerOrderConfirmedComponent implements OnInit {
 
   constructor() {
     const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      this.location = navigation.extras.state['location'] || 'Pabellón A';
-      this.time = navigation.extras.state['time'] || '12:00 pm';
-      this.orderId = navigation.extras.state['orderId'] || '';
-    } else {
-      this.location = 'Pabellón A';
-      this.time = '12:00 pm';
-    }
-    
-    // Generate a mock order number if no orderId
-    const randomNum = Math.floor(1000 + Math.random() * 9000);
-    this.orderNumber = this.orderId ? `#UCM-${this.orderId.substring(0, 4).toUpperCase()}` : `#UCM-${randomNum}`;
-  }
+    let orderId = '';
+    let location = '';
+    let time = '';
 
-  ngOnInit() {}
+    if (navigation?.extras.state) {
+      orderId = navigation.extras.state['orderId'] || '';
+      location = navigation.extras.state['location'] || '';
+      time = navigation.extras.state['time'] || '';
+    }
+
+    // Si se recargó la página, recuperamos los datos del último pedido registrado
+    if (!orderId) {
+      try {
+        const stored = sessionStorage.getItem('ucv_last_order');
+        if (stored) {
+          const lastOrder = JSON.parse(stored);
+          orderId = lastOrder.orderId || '';
+          location = lastOrder.location || '';
+          time = lastOrder.time || '';
+        }
+      } catch (e) {
+        // Datos de sesión inválidos; se ignora
+      }
+    }
+
+    this.orderId = orderId;
+    this.location = location;
+    this.time = time;
+    this.orderNumber = orderId ? `#UCM-${orderId.substring(0, 4).toUpperCase()}` : '';
+  }
 
   trackOrder() {
     if (this.orderId) {

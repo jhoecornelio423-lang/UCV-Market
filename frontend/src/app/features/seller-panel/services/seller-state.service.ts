@@ -18,7 +18,6 @@ export interface SellerStats {
   activeProductsCount: number;
   avgTicket: number;
   newCustomersCount: number;
-  monthlyData: any[];
   categoryStats: any[];
   salesData: any[];
   salesGrowthToday: number;
@@ -33,6 +32,7 @@ export interface SellerStats {
   rating: number;
   reviewsCount: number;
   todayOrdersCount: number;
+  totalOrders: number;
 }
 
 @Injectable({
@@ -94,6 +94,9 @@ export class SellerStateService {
     this.productRepository.getCategories().subscribe({
       next: (categories: Category[]) => {
         this.categoriesSubject.next(categories);
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
       }
     });
   }
@@ -108,8 +111,19 @@ export class SellerStateService {
   loadSellerData(sellerId: string) {
     this.loading$.next(true);
 
-    const products$ = this.productRepository.getSellerProducts(sellerId);
-    const orders$ = this.orderRepository.getSellerOrders(sellerId);
+    // Aislamiento de errores: si una fuente falla, no debe tumbar el resto de la carga
+    const products$ = this.productRepository.getSellerProducts(sellerId).pipe(
+      catchError(err => {
+        console.error('Error al cargar productos del vendedor:', err);
+        return of([] as Product[]);
+      })
+    );
+    const orders$ = this.orderRepository.getSellerOrders(sellerId).pipe(
+      catchError(err => {
+        console.error('Error al cargar pedidos del vendedor:', err);
+        return of([] as Order[]);
+      })
+    );
     const reviews$ = from(this.supabaseService.client
       .from('reviews')
       .select('id', { count: 'exact', head: true })
@@ -143,7 +157,7 @@ export class SellerStateService {
     stats.totalClicks = products.reduce((acc, p) => acc + (p.whatsapp_clicks || 0), 0);
 
     stats.pendingOrdersCount = orders.filter(o => o.status === 'pending').length;
-    stats.rating = this.userProfileSubject.value?.rating_average || 5.0;
+    stats.rating = reviewsCount > 0 ? (this.userProfileSubject.value?.rating_average || 0) : 0;
     stats.reviewsCount = reviewsCount;
 
     // Generar Notificaciones Dinámicas
@@ -160,15 +174,6 @@ export class SellerStateService {
         color: '#E8432D'
       });
     }
-    newNotifs.push({
-      id: 'sys-1',
-      title: '¡Bienvenido al nivel Pro! ⭐',
-      desc: 'Tu reputación ha subido gracias a tus excelentes entregas.',
-      time: '1h',
-      unread: !this.readNotificationIds.has('sys-1'),
-      icon: 'ribbon',
-      color: '#FBBF24'
-    });
     stats.notifications = newNotifs;
     stats.unreadNotifCount = newNotifs.filter(n => n.unread).length;
 
@@ -177,8 +182,7 @@ export class SellerStateService {
       .reduce((acc, o) => acc + o.total_price, 0);
 
     const activeOrders = orders
-      .filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status))
-      .slice(0, 2);
+      .filter(o => ['pending', 'accepted', 'preparing', 'ready'].includes(o.status));
     this.activeOrdersSubject.next(activeOrders);
 
     // Cálculos de Tiempo
@@ -194,6 +198,8 @@ export class SellerStateService {
 
     stats.todayOrdersCount = orders
       .filter(o => o.created_at?.startsWith(todayStr)).length;
+
+    stats.totalOrders = orders.length;
 
     const totalSalesYesterday = orders
       .filter(o => o.status === 'completed' && o.created_at?.startsWith(yesterdayStr))
@@ -360,22 +366,15 @@ export class SellerStateService {
     const customersLastWeek = new Set(lastWeekOrders.map(o => o.buyer_id)).size;
     stats.customerGrowth = this.calculatePercentChange(customersThisWeek, customersLastWeek);
 
-    stats.monthlyData = [
-      { label: 'S1', value: (stats.totalSales || 0) * 0.2 },
-      { label: 'S2', value: (stats.totalSales || 0) * 0.3 },
-      { label: 'S3', value: (stats.totalSales || 0) * 0.25 },
-      { label: 'S4', value: (stats.totalSales || 0) * 0.25 },
-    ];
-
     const productMap = new Map<string, { name: string, total: number, qty: number, image_url: string }>();
     products.forEach(p => {
-      productMap.set(p.id, { name: p.name, total: 0, qty: 0, image_url: p.product_images?.[0]?.image_url || 'assets/placeholder.png' });
+      productMap.set(p.id, { name: p.name, total: 0, qty: 0, image_url: p.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png' });
     });
 
     completedOrders.forEach(order => {
       order.order_items?.forEach((item: any) => {
         if (!item.product) return;
-        const current = productMap.get(item.product.id) || { name: item.product.name, total: 0, qty: 0, image_url: item.product.product_images?.[0]?.image_url || 'assets/placeholder.png' };
+        const current = productMap.get(item.product.id) || { name: item.product.name, total: 0, qty: 0, image_url: item.product.product_images?.[0]?.image_url || 'assets/images/placeholder-food.png' };
         current.total += (item.product.price * item.quantity);
         current.qty += item.quantity;
         productMap.set(item.product.id, current);
@@ -421,7 +420,7 @@ export class SellerStateService {
     startOfLastWeek.setDate(startOfLastWeek.getDate() - 7);
 
     orders.forEach(order => {
-      if (!order.created_at) return;
+      if (!order.created_at || order.status !== 'completed') return;
       const orderDate = new Date(order.created_at);
       if (orderDate >= startOfWeek) {
         const dayIdx = orderDate.getDay();

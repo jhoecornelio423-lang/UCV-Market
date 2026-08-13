@@ -13,8 +13,7 @@ export interface AuthRepository {
   getProfile(id: string): Observable<Profile>;
   updateProfile(profile: Partial<Profile>): Observable<Profile>;
   resetPassword(email: string): Observable<boolean>;
-  generateResetToken(email: string): Observable<string>;
-  resetPasswordWithToken(token: string, newPassword: string): Observable<boolean>;
+  confirmResetPassword(token: string, newPassword: string, refreshToken?: string): Observable<boolean>;
   uploadBusinessAsset(filePath: string, file: File): Observable<string>;
   getSellers(): Observable<Profile[]>;
 }

@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
 
   private updateSidebarVisibility() {
     const path = this.currentPath || this.router.url;
-    const hiddenRoutes = ['/login', '/register', '/welcome', '/admin'];
+    const hiddenRoutes = ['/login', '/admin'];
     const isHiddenRoute = hiddenRoutes.some(route => path.startsWith(route));
     this.showSidebar = !!this.userProfile && this.userProfile.role !== 'admin' && !isHiddenRoute;
   }

@@ -29,7 +29,7 @@
     <div class="application-card" *ngFor="let app of applications">
       <div class="card-header">
         <div class="avatar-circle">
-          {{ (app.full_name || 'U')[0].toUpperCase() }}{{ (app.full_name?.split(' ')?.[1] || '')[0]?.toUpperCase() || '' }}
+          {{ (app.full_name || 'U')[0].toUpperCase() }}{{ ((app.full_name || '').split(' ')[1] || '').charAt(0).toUpperCase() }}
         </div>
         <div class="info">
           <h4>{{ app.full_name }}</h4>
@@ -74,7 +74,6 @@
             <th>NEGOCIO</th>
             <th>CAMPUS</th>
             <th>REP.</th>
-            <th>VENTAS TOTALES</th>
             <th>ESTADO</th>
             <th></th>
           </tr>
@@ -99,9 +98,6 @@
               <span class="rating-cell">
                 <ion-icon name="star" class="star-icon"></ion-icon> {{ seller.rating_average || '0.0' }}
               </span>
-            </td>
-            <td>
-              <span class="text-bold">S/ {{ (seller.rating_average * 123) | number:'1.2-2' }}</span> <!-- Placeholder para ventas totales -->
             </td>
             <td>
               <span class="status-badge" [class.active]="seller.role === 'emprendedor'" [class.suspended]="seller.role !== 'emprendedor'">

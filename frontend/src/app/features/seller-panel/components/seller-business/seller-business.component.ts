@@ -28,9 +28,11 @@ export class SellerBusinessComponent implements OnInit {
   bAcceptingOrders: boolean = true;
   bPushEnabled: boolean = true;
   businessBannerUrl: string = 'assets/images/login-food-banner.jpg';
-  businessAvatarUrl: string = 'https://ionicframework.com/docs/img/demos/avatar.svg';
+  businessAvatarUrl: string = 'assets/images/default-avatar.png';
   selectedBannerFile: File | null = null;
   selectedAvatarFile: File | null = null;
+  private bannerFallbackApplied = false;
+  private avatarFallbackApplied = false;
 
   ngOnInit() {
     this.loadBusinessData();
@@ -40,16 +42,28 @@ export class SellerBusinessComponent implements OnInit {
     const userProfile = this.sellerState.currentUserProfile;
     if (userProfile) {
       this.bName = userProfile.full_name || 'Mi Emprendimiento';
-      this.bDescription = userProfile.business_description || 'Postres artesanales hechos con amor cada mañana. Desde brownies hasta cheesecakes, todo es fresco del día.';
-      this.bCategory = userProfile.business_category || 'Postres & Dulces';
-      this.bLocation = userProfile.business_location || 'Pabellón A, 1er piso';
+      this.bDescription = userProfile.business_description || '';
+      this.bCategory = userProfile.business_category || '';
+      this.bLocation = userProfile.business_location || '';
       this.bOpenTime = userProfile.open_time || '08:00';
       this.bCloseTime = userProfile.close_time || '18:00';
       this.bAcceptingOrders = userProfile.accepting_orders ?? true;
       this.bPushEnabled = userProfile.push_notifications_enabled ?? true;
       this.businessBannerUrl = userProfile.banner_url || 'assets/images/login-food-banner.jpg';
-      this.businessAvatarUrl = userProfile.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg';
+      this.businessAvatarUrl = userProfile.avatar_url || 'assets/images/default-avatar.png';
     }
+  }
+
+  onBannerError() {
+    if (this.bannerFallbackApplied) return;
+    this.bannerFallbackApplied = true;
+    this.businessBannerUrl = 'assets/images/login-food-banner.jpg';
+  }
+
+  onAvatarError() {
+    if (this.avatarFallbackApplied) return;
+    this.avatarFallbackApplied = true;
+    this.businessAvatarUrl = 'assets/images/default-avatar.png';
   }
 
   onBannerSelected(event: any) {

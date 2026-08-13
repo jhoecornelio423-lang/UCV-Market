@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, inject, Inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AUTH_REPOSITORY, AuthRepository } from '../../../../core/repositories/auth.repository';
-import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
+import { AUTH_REPOSITORY } from '../../../../core/repositories/auth.repository';
+import { PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
 import { Profile } from '../../../../core/models/profile.model';
 import { Product } from '../../../../core/models/product.model';
 import { FavoritesService } from '../../../../core/services/favorites.service';
@@ -18,20 +18,18 @@ export class BuyerSellerStoreComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private favoritesService = inject(FavoritesService);
   private supabaseService = inject(SupabaseClientService);
+  private authRepository = inject(AUTH_REPOSITORY);
+  private productRepository = inject(PRODUCT_REPOSITORY);
 
   seller: Profile | null = null;
   products: Product[] = [];
   loading = true;
   realtimeChannel: any = null;
+  bannerLoadFailed = false;
 
   // Pseudo-random variables for nice UI info
   simulatedDistance = '150 m';
   simulatedTime = '15 min';
-
-  constructor(
-    @Inject(AUTH_REPOSITORY) private authRepository: AuthRepository,
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
-  ) {}
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');

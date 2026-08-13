@@ -46,7 +46,7 @@ ion-alert.market-signout-alert .alert-wrapper::after {
   position: absolute;
   inset: 0 0 auto;
   height: 4px;
-  background: linear-gradient(90deg, #ef4937 0%, #ff765f 72%, #ffb39f 100%);
+  background: linear-gradient(90deg, #E8432D 0%, #FF7B5E 72%, #FF9B86 100%);
 }
 
 ion-alert.market-signout-alert .alert-head {
@@ -64,7 +64,7 @@ ion-alert.market-signout-alert .alert-head::before {
   border: 1px solid rgba(244, 81, 63, 0.14);
   border-radius: 19px;
   background: linear-gradient(145deg, #fff6f4 0%, #ffe8e3 100%);
-  color: #f4513f;
+  color: #E8432D;
   box-shadow: 0 10px 24px rgba(244, 81, 63, 0.14);
   font-family: 'Segoe UI Symbol', sans-serif;
   font-size: 30px;
@@ -81,7 +81,7 @@ ion-alert.market-signout-alert .alert-title {
 
 ion-alert.market-signout-alert .alert-sub-title {
   margin-top: 6px;
-  color: #f4513f;
+  color: #E8432D;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.25px;
@@ -130,7 +130,7 @@ ion-alert.market-signout-alert .alert-button.market-signout-cancel {
 ion-alert.market-signout-alert .alert-button.market-signout-confirm {
   --color: #ffffff !important;
   border: 1px solid rgba(239, 73, 55, 0.18);
-  background: linear-gradient(105deg, #ef4937 0%, #ff6f58 100%) !important;
+  background: linear-gradient(105deg, #E8432D 0%, #FF7B5E 100%) !important;
   box-shadow: 0 10px 20px rgba(244, 81, 63, 0.25) !important;
 }
 

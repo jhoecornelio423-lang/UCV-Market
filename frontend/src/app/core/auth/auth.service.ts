@@ -1,9 +1,10 @@
-import { Injectable, Inject, inject, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError, from } from 'rxjs';
 import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { Profile, UserRole } from '../models/profile.model';
 import { AuthRepository, AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { SupabaseClientService } from '../database/supabase.client';
+import { CartService } from '../cart/cart.service';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
@@ -18,6 +19,9 @@ export class AuthService {
   
   private router = inject(Router);
   private zone = inject(NgZone);
+  private authRepository = inject(AUTH_REPOSITORY);
+  private supabaseService = inject(SupabaseClientService);
+  private cartService = inject(CartService);
 
   /**
    * Señaliza cuando la sesión inicial ha sido evaluada (existe o no).
@@ -27,10 +31,7 @@ export class AuthService {
   
   private profileSubscriptionChannel: any = null;
 
-  constructor(
-    @Inject(AUTH_REPOSITORY) private authRepository: AuthRepository,
-    private supabaseService: SupabaseClientService
-  ) {
+  constructor() {
     this.initializeSession();
     this.setupNativeDeepLinks();
   }
@@ -147,6 +148,8 @@ export class AuthService {
     return this.authRepository.signOut().pipe(
       tap(() => {
         this.currentProfileSubject.next(null);
+        // Evitar que el carrito del usuario anterior quede en este dispositivo
+        this.cartService.clearCart();
       })
     );
   }
@@ -170,6 +173,15 @@ export class AuthService {
    */
   isAuthenticated(): boolean {
     return this.currentProfileSubject.value !== null;
+  }
+
+  /**
+   * Verifica contra Supabase si existe una sesión (sin depender del perfil en memoria).
+   */
+  hasActiveSession(): Promise<boolean> {
+    return this.supabaseService.client.auth.getSession().then(({ data, error }) => {
+      return !error && !!data?.session;
+    });
   }
 
   /**

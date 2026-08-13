@@ -14,7 +14,6 @@ export class SellerStatsComponent implements OnInit {
 
   stats$ = this.sellerState.stats$;
   userProfile$ = this.sellerState.userProfile$;
-  products$ = this.sellerState.products$;
 
   currentMonthYear = '';
 

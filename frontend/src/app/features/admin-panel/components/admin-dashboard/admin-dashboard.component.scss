@@ -60,6 +60,39 @@ $border-color: #F1F3F9;
   margin-bottom: 24px;
 }
 
+/* Loading / Error */
+.loader-state {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.load-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: $card-bg;
+  border-radius: 20px;
+  border: 1px solid #fee2e2;
+  margin-bottom: 24px;
+  text-align: center;
+
+  ion-icon { font-size: 40px; color: #EF4444; }
+  p { margin: 0; font-size: 14px; font-weight: 600; color: $navy; }
+  button {
+    background: $primary;
+    color: #fff;
+    border: none;
+    border-radius: 99px;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+}
+
 .stat-card {
   background: $card-bg;
   border-radius: 20px;

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { OrderRepository } from '../order.repository';
 import { SupabaseClientService } from '../../database/supabase.client';
 import { Order, OrderStatus } from '../../models/order.model';
@@ -9,7 +9,7 @@ import { map, switchMap, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class SupabaseOrderRepository implements OrderRepository {
-  constructor(private supabaseService: SupabaseClientService) {}
+  private supabaseService = inject(SupabaseClientService);
 
   createOrder(sellerId: string, deliveryPlace: string, items: { product_id: string; quantity: number }[]): Observable<string> {
     // Invocamos la función almacenada create_order (RPC) de PostgreSQL

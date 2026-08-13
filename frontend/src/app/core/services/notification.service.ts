@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { SupabaseClientService } from '../database/supabase.client';
 import { AuthService } from '../auth/auth.service';
@@ -31,10 +31,10 @@ export class NotificationService {
   private currentUserId: string | null = null;
   private channel: any;
 
-  constructor(
-    private supabaseService: SupabaseClientService,
-    private authService: AuthService
-  ) {
+  private supabaseService = inject(SupabaseClientService);
+  private authService = inject(AuthService);
+
+  constructor() {
     this.authService.currentProfile$.subscribe(user => {
       if (user) {
         this.currentUserId = user.id;

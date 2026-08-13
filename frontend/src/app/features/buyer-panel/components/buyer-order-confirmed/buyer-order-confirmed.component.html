@@ -19,8 +19,8 @@
     <!-- Order Card -->
     <div class="order-card">
       <p class="card-label">NÚMERO DE PEDIDO</p>
-      <h2 class="card-number">{{ orderNumber }}</h2>
-      <p class="card-details">{{ location }} · {{ time }}</p>
+      <h2 class="card-number">{{ orderNumber || 'Pedido registrado' }}</h2>
+      <p class="card-details" *ngIf="location">{{ location }}<span *ngIf="time"> · {{ time }}</span></p>
     </div>
 
     <!-- Actions -->

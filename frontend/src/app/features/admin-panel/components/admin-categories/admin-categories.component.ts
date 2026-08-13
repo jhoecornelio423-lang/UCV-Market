@@ -1,6 +1,6 @@
-import { Component, OnInit, inject, Inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { AlertController, ToastController, LoadingController } from '@ionic/angular';
-import { PRODUCT_REPOSITORY, ProductRepository } from '../../../../core/repositories/product.repository';
+import { PRODUCT_REPOSITORY } from '../../../../core/repositories/product.repository';
 import { Category } from '../../../../core/models/category.model';
 
 @Component({
@@ -16,10 +16,7 @@ export class AdminCategoriesComponent implements OnInit {
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
   private loadingCtrl = inject(LoadingController);
-
-  constructor(
-    @Inject(PRODUCT_REPOSITORY) private productRepository: ProductRepository
-  ) {}
+  private productRepository = inject(PRODUCT_REPOSITORY);
 
   ngOnInit() {
     this.loadCategories();

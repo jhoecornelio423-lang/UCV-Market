@@ -364,31 +364,31 @@ export class BuyerOrdersComponent implements OnInit, OnDestroy {
   submitProductReport() {
     if (!this.reportingProduct || !this.reportReason.trim()) return;
 
+    const profile = this.authService.currentProfileValue;
+    if (!profile) {
+      this.showToast('No se encontró la sesión activa.', 'danger');
+      this.submittingReport = false;
+      return;
+    }
+
     this.submittingReport = true;
-    this.authService.currentProfile$.subscribe(profile => {
-      if (!profile) {
-        this.submittingReport = false;
-        return;
-      }
+    const reason = this.reportReason.trim();
+    const productId = this.reportingProduct!.id;
 
-      const reason = this.reportReason.trim();
-      const productId = this.reportingProduct!.id;
-
-      if (this.selectedEvidenceFile) {
-        this.productRepository.uploadEvidence(this.selectedEvidenceFile, profile.id).subscribe({
-          next: (url) => {
-            this.sendReportData(productId, profile.id, reason, url);
-          },
-          error: (err) => {
-            console.error('Error al subir evidencia:', err);
-            this.showToast('Error al subir la imagen de evidencia.', 'danger');
-            this.submittingReport = false;
-          }
-        });
-      } else {
-        this.sendReportData(productId, profile.id, reason);
-      }
-    });
+    if (this.selectedEvidenceFile) {
+      this.productRepository.uploadEvidence(this.selectedEvidenceFile, profile.id).subscribe({
+        next: (url) => {
+          this.sendReportData(productId, profile.id, reason, url);
+        },
+        error: (err) => {
+          console.error('Error al subir evidencia:', err);
+          this.showToast('Error al subir la imagen de evidencia.', 'danger');
+          this.submittingReport = false;
+        }
+      });
+    } else {
+      this.sendReportData(productId, profile.id, reason);
+    }
   }
 
   private sendReportData(productId: string, reporterId: string, reason: string, evidenceUrl?: string) {
