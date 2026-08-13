@@ -39,12 +39,13 @@ const supabaseUrl = process.env.SUPABASE_URL || envFile.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || envFile.SUPABASE_KEY || '';
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error(
-    '[generate-env] ERROR: Faltan SUPABASE_URL y/o SUPABASE_KEY.\n' +
+  console.warn(
+    '[generate-env] AVISO: No se encontraron SUPABASE_URL/SUPABASE_KEY.\n' +
     'Configúralos como variables de entorno (Netlify/CI) o crea el archivo .env en frontend/ ' +
-    'basándote en .env.example.'
+    'basándote en .env.example.\n' +
+    '[generate-env] Los valores son públicos por diseño; se conservarán los archivos de entorno existentes.'
   );
-  process.exit(1);
+  process.exit(0);
 }
 
 const writeEnvFile = (target, production) => {
