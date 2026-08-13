@@ -77,6 +77,10 @@ export class SellerDashboardComponent {
     this.notificationService.markAllAsRead();
   }
 
+  testNotification() {
+    this.notificationService.testNotification('accepted');
+  }
+
   onNotificationClick(notif: any) {
     if (notif.unread) {
       this.notificationService.markAllAsRead();

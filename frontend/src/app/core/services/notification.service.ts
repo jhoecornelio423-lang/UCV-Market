@@ -34,6 +34,9 @@ export class NotificationService {
   private channels: any[] = [];
 
   private permissionsRequested = false;
+  private channelReady = false;
+
+  private static readonly CHANNEL_ID = 'pedidos';
 
   private supabaseService = inject(SupabaseClientService);
   private authService = inject(AuthService);
@@ -289,6 +292,55 @@ export class NotificationService {
   }
 
   /**
+   * Solicita el permiso de notificaciones apenas se abre la app
+   * (se muestra una sola vez en Android 13+). También deja listo el canal.
+   */
+  public async requestPermission(): Promise<boolean> {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await this.ensureChannel();
+        const perm = await LocalNotifications.requestPermissions();
+        if (perm.display === 'granted') {
+          this.permissionsRequested = true;
+          return true;
+        }
+        return false;
+      } else if (typeof window !== 'undefined' && 'Notification' in window) {
+        const result = await Notification.requestPermission();
+        return result === 'granted';
+      }
+      return true;
+    } catch (e) {
+      console.error('Error al solicitar permiso de notificaciones:', e);
+      return false;
+    }
+  }
+
+  /**
+   * Crea el canal de notificaciones (requerido en Android 8+ para mostrar
+   * notificaciones). Importancia ALTA (5) = banner heads-up + sonido del sistema
+   * + vibración, como WhatsApp. Un channelId sin canal creado hace que Android
+   * descarte la notificación silenciosamente.
+   */
+  private async ensureChannel() {
+    if (this.channelReady || !Capacitor.isNativePlatform()) return;
+    try {
+      await LocalNotifications.createChannel({
+        id: NotificationService.CHANNEL_ID,
+        name: 'Pedidos',
+        description: 'Notificaciones de nuevos pedidos y actualizaciones de estado',
+        importance: 5,
+        vibration: true,
+        lights: true,
+        lightColor: '#E8432D'
+      });
+    } catch (e) {
+      console.error('Error creando canal de notificaciones:', e);
+    }
+    this.channelReady = true;
+  }
+
+  /**
    * Dispara una notificación del sistema (celular) cuando la app está activa.
    * En navegador usa la API Web Notifications si hay permiso.
    */
@@ -300,13 +352,13 @@ export class NotificationService {
           const perm = await LocalNotifications.requestPermissions();
           if (perm.display !== 'granted') return;
         }
+        await this.ensureChannel();
         await LocalNotifications.schedule({
           notifications: [{
             id: Date.now(),
             title,
             body,
-            iconColor: '#E8432D',
-            channelId: 'pedidos'
+            channelId: NotificationService.CHANNEL_ID
           }]
         });
       } else if (typeof window !== 'undefined' && 'Notification' in window) {

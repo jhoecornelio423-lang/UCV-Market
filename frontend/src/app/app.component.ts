@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, NgZone } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from './core/auth/auth.service';
+import { NotificationService } from './core/services/notification.service';
 import { filter } from 'rxjs/operators';
 import { Profile } from './core/models/profile.model';
 
@@ -14,12 +15,16 @@ export class AppComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private zone = inject(NgZone);
+  private notificationService = inject(NotificationService);
 
   userProfile: Profile | null = null;
   showSidebar = false;
   currentPath = '';
 
   ngOnInit() {
+    // Pedir permiso de notificaciones apenas se abre la app (Android 13+)
+    this.notificationService.requestPermission();
+
     // 1. Escuchar perfil del usuario para saber el ROL
     this.authService.currentProfile$.subscribe(profile => {
       this.userProfile = profile;

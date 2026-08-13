@@ -12,7 +12,10 @@
         <div class="notif-dropdown" *ngIf="showNotifDropdown">
           <div class="dropdown-header">
             <h4>Notificaciones</h4>
-            <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+            <div class="dropdown-actions">
+              <button class="mark-read-btn" (click)="testNotification()">Probar popup</button>
+              <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+            </div>
           </div>
           <div class="notif-list" *ngIf="(notifications$ | async)?.length; else emptyNotifs">
             <div class="notif-item" *ngFor="let notif of (notifications$ | async)" [class.unread]="notif.unread" (click)="onNotificationClick(notif)" style="cursor: pointer;">
