@@ -44,14 +44,14 @@ BEGIN
     RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER AS $body$
     BEGIN
       PERFORM net.http_post(
-        '%s',
-        jsonb_build_object(
+        url := '%s',
+        body := jsonb_build_object(
           'type', 'INSERT',
           'table', 'orders',
           'record', to_jsonb(NEW)
         ),
-        jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
-        '5000'
+        headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
+        timeout_milliseconds := 5000
       );
       RETURN NEW;
     END $body$;
@@ -68,15 +68,15 @@ BEGIN
     BEGIN
       IF NEW.status IS DISTINCT FROM OLD.status THEN
         PERFORM net.http_post(
-          '%s',
-          jsonb_build_object(
+          url := '%s',
+          body := jsonb_build_object(
             'type', 'UPDATE',
             'table', 'orders',
             'record', to_jsonb(NEW),
             'old', to_jsonb(OLD)
           ),
-          jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
-          '5000'
+          headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
+          timeout_milliseconds := 5000
         );
       END IF;
       RETURN NEW;
@@ -94,15 +94,15 @@ BEGIN
     BEGIN
       IF NEW.status IS DISTINCT FROM OLD.status THEN
         PERFORM net.http_post(
-          '%s',
-          jsonb_build_object(
+          url := '%s',
+          body := jsonb_build_object(
             'type', 'UPDATE',
             'table', 'product_reports',
             'record', to_jsonb(NEW),
             'old', to_jsonb(OLD)
           ),
-          jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
-          '5000'
+          headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', '%s'),
+          timeout_milliseconds := 5000
         );
       END IF;
       RETURN NEW;
