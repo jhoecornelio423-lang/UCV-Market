@@ -7,6 +7,7 @@
     "ng": "ng",
     "start": "node generate-env.js && ng serve",
     "build": "node generate-env.js && ng build",
+    "deploy:web": "node generate-env.js && ng build && wrangler pages deploy www --project-name vallego --branch main",
     "generate-env": "node generate-env.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -63,7 +64,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.9.0"
+    "typescript": "~5.9.0",
+    "wrangler": "^4.123.0"
   },
   "description": "An Ionic project"
 }
