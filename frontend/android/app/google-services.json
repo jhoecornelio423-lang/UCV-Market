@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "336778533432",
+    "project_id": "vallego-dc178",
+    "storage_bucket": "vallego-dc178.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336778533432:android:1491677dda7599cb1e24cd",
+        "android_client_info": {
+          "package_name": "com.vallego.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAndIJ_sesxNiEBghVEFeUIw12zWGENNwg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

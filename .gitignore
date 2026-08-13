@@ -1,0 +1,12 @@
+# Secrets locales (nunca subir)
+push-secrets.env
+service-account.json
+*.firebase-service-account*.json
+*firebase-adminsdk*.json
+
+# Supabase CLI (archivos temporales de proyecto vinculado)
+supabase/.temp/
+
+# Sistema
+Thumbs.db
+.DS_Store

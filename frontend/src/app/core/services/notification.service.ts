@@ -1,7 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { PushNotifications, Token } from '@capacitor/push-notifications';
 import { SupabaseClientService } from '../database/supabase.client';
 import { AuthService } from '../auth/auth.service';
 
@@ -31,7 +33,9 @@ export class NotificationService {
 
   private storageKey = 'ucv_market_buyer_notifications';
   private currentUserId: string | null = null;
+  private currentRole: string | null = null;
   private channels: any[] = [];
+  private pushListenerHandles: any[] = [];
 
   private permissionsRequested = false;
   private channelReady = false;
@@ -40,19 +44,24 @@ export class NotificationService {
 
   private supabaseService = inject(SupabaseClientService);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   constructor() {
     this.authService.currentProfile$.subscribe(user => {
       if (user) {
         this.currentUserId = user.id;
+        this.currentRole = user.role;
         this.storageKey = `ucv_market_buyer_notifs_${user.id}`;
         this.loadFromStorage();
         this.setupRealtimeSubscriptions();
+        this.setupPushNotifications();
       } else {
         this.currentUserId = null;
+        this.currentRole = null;
         this.notificationsSubject.next([]);
         this.updateUnreadCount();
         this.removeChannels();
+        this.removePushListeners();
       }
     });
   }
@@ -66,6 +75,72 @@ export class NotificationService {
       }
     });
     this.channels = [];
+  }
+
+  /**
+   * Push notifications (FCM): registra el dispositivo y guarda el token en Supabase.
+   * La notificación la muestra el propio sistema, incluso con la app cerrada.
+   */
+  private async setupPushNotifications() {
+    if (!Capacitor.isNativePlatform() || !this.currentUserId) return;
+    try {
+      const perm = await PushNotifications.checkPermissions();
+      if (perm.receive !== 'granted') {
+        const req = await PushNotifications.requestPermissions();
+        if (req.receive !== 'granted') return;
+      }
+      await PushNotifications.register();
+
+      this.pushListenerHandles.push(
+        await PushNotifications.addListener('registration', (token: Token) => {
+          this.savePushToken(token.value);
+        })
+      );
+      this.pushListenerHandles.push(
+        await PushNotifications.addListener('registrationError', (err: any) => {
+          console.error('Error registrando FCM:', err);
+        })
+      );
+      this.pushListenerHandles.push(
+        await PushNotifications.addListener('pushNotificationActionPerformed', (action: any) => {
+          this.handlePushTap(action);
+        })
+      );
+    } catch (e) {
+      console.error('Error configurando push notifications:', e);
+    }
+  }
+
+  private async savePushToken(token: string) {
+    if (!this.currentUserId) return;
+    try {
+      await this.supabaseService.client
+        .from('push_tokens')
+        .upsert(
+          { user_id: this.currentUserId, token, platform: Capacitor.getPlatform() },
+          { onConflict: 'token' }
+        );
+    } catch (e) {
+      console.error('Error guardando token push:', e);
+    }
+  }
+
+  private handlePushTap(action: any) {
+    const notif = action?.notification || action;
+    const orderId = notif?.data?.order_id;
+    const target = this.currentRole === 'emprendedor' ? '/seller/orders' : '/buyer/orders';
+    this.router.navigate([target], orderId ? { queryParams: { order: orderId } } : {});
+  }
+
+  private removePushListeners() {
+    this.pushListenerHandles.forEach(handle => {
+      try {
+        handle.remove();
+      } catch (e) {
+        console.error('Error removiendo listener push', e);
+      }
+    });
+    this.pushListenerHandles = [];
   }
 
   private loadFromStorage() {

@@ -1,4 +1,4 @@
-package com.ucvmarket.app;
+package com.vallego.app;
 
 import com.getcapacitor.BridgeActivity;
 

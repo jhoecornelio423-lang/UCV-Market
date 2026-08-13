@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.ucvmarket.app',
+  appId: 'com.vallego.app',
   appName: 'VALLE-GO',
   webDir: 'www'
 };

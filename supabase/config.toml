@@ -1,15 +1,34 @@
-# UCV Market - Supabase Local Configuration
+# UCV Market - Supabase Config
 
 project_id = "ucv-market"
 
 [api]
+enabled = true
 port = 54321
 schemas = ["public", "graphql"]
 extra_search_path = ["public"]
 
+[realtime]
+enabled = true
+
+[studio]
+enabled = true
+port = 54323
+
 [db]
+enabled = true
 port = 54322
 shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+enabled = false
+
+[db.migrator]
+enabled = true
+
+[db.seed]
+enabled = true
 
 [storage]
 enabled = true
@@ -19,6 +38,3 @@ enabled = true
 site_url = "http://localhost:8100"
 additional_redirect_urls = ["https://ucvmarket.pe"]
 jwt_expiry = 86400 # 24 horas
-
-[functions]
-enabled = true
