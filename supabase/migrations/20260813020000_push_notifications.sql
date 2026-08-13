@@ -1,7 +1,11 @@
 -- ============================================================
--- Push notifications (FCM
+-- Push notifications (FCM)
 -- Tabla de tokens + triggers que disparan la Edge Function send-push
 -- ============================================================
+
+-- Habilitar la extensión pg_net para peticiones HTTP
+CREATE EXTENSION IF NOT EXISTS pg_net;
+
 
 -- 1) Tabla de tokens por usuario
 CREATE TABLE IF NOT EXISTS public.push_tokens (
