@@ -1,6 +1,6 @@
 # VALLE-GO 🛒 - Marketplace Universitario
 
-¡Bienvenido al repositorio oficial de **VALLE-GO** (antes UCV Market)! Una plataforma diseñada específicamente para la comunidad estudiantil de la Universidad César Vallejo, permitiendo a los alumnos emprender y comprar productos dentro del campus de manera segura y eficiente.
+¡Bienvenido al repositorio oficial de **VALLE-GO**! Una plataforma diseñada específicamente para la comunidad estudiantil de la Universidad César Vallejo, permitiendo a los alumnos emprender y comprar productos dentro del campus de manera segura y eficiente.
 
 ---
 

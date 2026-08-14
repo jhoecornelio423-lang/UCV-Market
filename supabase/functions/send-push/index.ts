@@ -196,15 +196,18 @@ Deno.serve(async (req) => {
 
   try {
     const event = await req.json();
+    console.log('send-push: evento recibido', JSON.stringify({ type: event.type, table: event.table, id: event.record?.id, status: event.record?.status }));
     const msg = buildMessage(event);
     if (!msg) {
       return Response.json({ skipped: true, reason: 'evento no relevante' });
     }
+    console.log('send-push: destinatario userId=', msg.userId);
 
     const { data: tokens } = await supabase
       .from('push_tokens')
       .select('token')
       .eq('user_id', msg.userId);
+    console.log('send-push: tokens encontrados =', tokens?.length ?? 0);
 
     if (!tokens || tokens.length === 0) {
       return Response.json({ skipped: true, reason: 'sin tokens para el usuario' });
@@ -222,6 +225,7 @@ Deno.serve(async (req) => {
       results.push({ ok: !response.error, error: response.error ?? null });
     }
 
+    console.log('send-push: resultados', JSON.stringify(results));
     return Response.json({ sent: results.filter(r => r.ok).length, results });
   } catch (err: any) {
     console.error('send-push error:', err);

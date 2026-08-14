@@ -34,6 +34,7 @@ export class NotificationService {
   private storageKey = 'ucv_market_buyer_notifications';
   private currentUserId: string | null = null;
   private currentRole: string | null = null;
+  private currentPushToken: string | null = null;
   private channels: any[] = [];
   private pushListenerHandles: any[] = [];
 
@@ -58,6 +59,7 @@ export class NotificationService {
       } else {
         this.currentUserId = null;
         this.currentRole = null;
+        this.currentPushToken = null;
         this.notificationsSubject.next([]);
         this.updateUnreadCount();
         this.removeChannels();
@@ -92,6 +94,7 @@ export class NotificationService {
 
       this.pushListenerHandles.push(
         await PushNotifications.addListener('registration', (token: Token) => {
+          this.currentPushToken = token.value;
           this.savePushToken(token.value);
         })
       );
@@ -103,6 +106,11 @@ export class NotificationService {
       this.pushListenerHandles.push(
         await PushNotifications.addListener('pushNotificationActionPerformed', (action: any) => {
           this.handlePushTap(action);
+        })
+      );
+      this.pushListenerHandles.push(
+        await PushNotifications.addListener('pushNotificationReceived', (notification: any) => {
+          console.log('[FCM] Notificación recibida vía FCM:', JSON.stringify(notification));
         })
       );
 
@@ -123,6 +131,29 @@ export class NotificationService {
         );
     } catch (e) {
       console.error('Error guardando token push:', e);
+    }
+  }
+
+  /**
+   * Elimina el token push del dispositivo en Supabase y desregistra el dispositivo
+   * en FCM. Debe llamarse ANTES de cerrar sesión (con la sesión aún activa) para
+   * que la política RLS permita borrar el token.
+   */
+  public async cleanupPushRegistration(): Promise<void> {
+    try {
+      const token = this.currentPushToken;
+      if (token) {
+        await this.supabaseService.client
+          .from('push_tokens')
+          .delete()
+          .eq('token', token);
+      }
+      if (Capacitor.isNativePlatform()) {
+        await PushNotifications.unregister();
+      }
+      this.currentPushToken = null;
+    } catch (e) {
+      console.error('Error al desregistrar push notifications:', e);
     }
   }
 

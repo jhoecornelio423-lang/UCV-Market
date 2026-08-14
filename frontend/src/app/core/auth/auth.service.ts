@@ -1,10 +1,11 @@
-import { Injectable, inject, NgZone } from '@angular/core';
+import { Injectable, inject, NgZone, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError, from } from 'rxjs';
 import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
 import { Profile, UserRole } from '../models/profile.model';
 import { AuthRepository, AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { SupabaseClientService } from '../database/supabase.client';
 import { CartService } from '../cart/cart.service';
+import { NotificationService } from '../services/notification.service';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { App, URLOpenListenerEvent } from '@capacitor/app';
@@ -22,6 +23,7 @@ export class AuthService {
   private authRepository = inject(AUTH_REPOSITORY);
   private supabaseService = inject(SupabaseClientService);
   private cartService = inject(CartService);
+  private injector = inject(Injector);
 
   /**
    * Señaliza cuando la sesión inicial ha sido evaluada (existe o no).
@@ -145,7 +147,11 @@ export class AuthService {
    * Cierra la sesión activa.
    */
   signOut(): Observable<void> {
-    return this.authRepository.signOut().pipe(
+    // Desregistrar las notificaciones push del dispositivo ANTES de invalidar
+    // la sesión, para que la política RLS permita borrar el token en push_tokens.
+    const notificationService = this.injector.get(NotificationService);
+    return from(notificationService.cleanupPushRegistration()).pipe(
+      switchMap(() => this.authRepository.signOut()),
       tap(() => {
         this.currentProfileSubject.next(null);
         // Evitar que el carrito del usuario anterior quede en este dispositivo
