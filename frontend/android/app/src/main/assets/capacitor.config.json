@@ -1,5 +1,16 @@
 {
-	"appId": "com.ucvmarket.app",
+	"appId": "com.vallego.app",
 	"appName": "VALLE-GO",
-	"webDir": "www"
+	"webDir": "www",
+	"plugins": {
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert",
+				"banner",
+				"list"
+			]
+		}
+	}
 }

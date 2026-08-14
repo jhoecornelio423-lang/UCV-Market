@@ -89,7 +89,6 @@ export class NotificationService {
         const req = await PushNotifications.requestPermissions();
         if (req.receive !== 'granted') return;
       }
-      await PushNotifications.register();
 
       this.pushListenerHandles.push(
         await PushNotifications.addListener('registration', (token: Token) => {
@@ -106,6 +105,8 @@ export class NotificationService {
           this.handlePushTap(action);
         })
       );
+
+      await PushNotifications.register();
     } catch (e) {
       console.error('Error configurando push notifications:', e);
     }
