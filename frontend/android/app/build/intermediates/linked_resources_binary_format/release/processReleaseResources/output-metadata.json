@@ -4,7 +4,7 @@
     "type": "LINKED_RESOURCES_BINARY_FORMAT",
     "kind": "Directory"
   },
-  "applicationId": "io.ionic.starter",
+  "applicationId": "com.vallego.app",
   "variantName": "release",
   "elements": [
     {

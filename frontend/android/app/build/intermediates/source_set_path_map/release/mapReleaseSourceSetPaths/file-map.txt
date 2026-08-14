@@ -1,38 +1,49 @@
-io.ionic.starter.app-pngs-0 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\res\pngs\release
-io.ionic.starter.app-resValues-1 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\res\resValues\release
-io.ionic.starter.app-updated_navigation_xml-2 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\updated_navigation_xml\release
-io.ionic.starter.app-packageReleaseResources-3 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
-io.ionic.starter.app-packageReleaseResources-4 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
-io.ionic.starter.app-release-5 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\merged_res\release\mergeReleaseResources
-io.ionic.starter.app-main-6 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\res
-io.ionic.starter.app-release-7 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\release\res
-io.ionic.starter.app-release-8 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\capacitor-cordova-android-plugins\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-release-9 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\android\capacitor\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-release-10 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\app\android\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-release-11 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\haptics\android\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-release-12 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\keyboard\android\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-release-13 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\status-bar\android\build\intermediates\packaged_res\release\packageReleaseResources
-io.ionic.starter.app-core-1.17.0-14 C:\Users\djald\.gradle\caches\8.14.3\transforms\11094a199bb7945826b161d8a9c17beb\transformed\core-1.17.0\res
-io.ionic.starter.app-lifecycle-process-2.6.2-15 C:\Users\djald\.gradle\caches\8.14.3\transforms\14a3b51da1167f75215e7e32d2231e74\transformed\lifecycle-process-2.6.2\res
-io.ionic.starter.app-annotation-experimental-1.4.1-16 C:\Users\djald\.gradle\caches\8.14.3\transforms\1d9ef0194f51a6e0da4e440575587814\transformed\annotation-experimental-1.4.1\res
-io.ionic.starter.app-emoji2-views-helper-1.3.0-17 C:\Users\djald\.gradle\caches\8.14.3\transforms\25a881cfd51f0b690442a74b496782fd\transformed\emoji2-views-helper-1.3.0\res
-io.ionic.starter.app-emoji2-1.3.0-18 C:\Users\djald\.gradle\caches\8.14.3\transforms\353d69426d62513a7e19e841051a3a44\transformed\emoji2-1.3.0\res
-io.ionic.starter.app-savedstate-1.2.1-19 C:\Users\djald\.gradle\caches\8.14.3\transforms\3f2ab0b27a59a3dfe1466c241ece8334\transformed\savedstate-1.2.1\res
-io.ionic.starter.app-activity-1.11.0-20 C:\Users\djald\.gradle\caches\8.14.3\transforms\4ce00e85fb17003296e7add5523825c1\transformed\activity-1.11.0\res
-io.ionic.starter.app-core-splashscreen-1.2.0-21 C:\Users\djald\.gradle\caches\8.14.3\transforms\4f5eb2e1ae45a07736e2f6ed862ea36a\transformed\core-splashscreen-1.2.0\res
-io.ionic.starter.app-core-runtime-2.2.0-22 C:\Users\djald\.gradle\caches\8.14.3\transforms\56c299ca5cc1351fb9b11d94695125dc\transformed\core-runtime-2.2.0\res
-io.ionic.starter.app-core-ktx-1.17.0-23 C:\Users\djald\.gradle\caches\8.14.3\transforms\6443194ff2cd53b8a19f0de2b31832a0\transformed\core-ktx-1.17.0\res
-io.ionic.starter.app-startup-runtime-1.1.1-24 C:\Users\djald\.gradle\caches\8.14.3\transforms\7179ce4c01b9a0b75718a869351620f5\transformed\startup-runtime-1.1.1\res
-io.ionic.starter.app-fragment-1.8.9-25 C:\Users\djald\.gradle\caches\8.14.3\transforms\754c4f1b691d2a1223e4f8f413992fee\transformed\fragment-1.8.9\res
-io.ionic.starter.app-lifecycle-livedata-2.6.2-26 C:\Users\djald\.gradle\caches\8.14.3\transforms\8d83e436f29a9ad9858ae8c630f3448b\transformed\lifecycle-livedata-2.6.2\res
-io.ionic.starter.app-core-viewtree-1.0.0-27 C:\Users\djald\.gradle\caches\8.14.3\transforms\9275faa7fc56368462609e8a34802ec7\transformed\core-viewtree-1.0.0\res
-io.ionic.starter.app-lifecycle-viewmodel-2.6.2-28 C:\Users\djald\.gradle\caches\8.14.3\transforms\ab32e4c3e2bf096654fd9e14504854dc\transformed\lifecycle-viewmodel-2.6.2\res
-io.ionic.starter.app-lifecycle-livedata-core-2.6.2-29 C:\Users\djald\.gradle\caches\8.14.3\transforms\b5655c5df44c26433ffde34d45e6b2a4\transformed\lifecycle-livedata-core-2.6.2\res
-io.ionic.starter.app-appcompat-resources-1.7.1-30 C:\Users\djald\.gradle\caches\8.14.3\transforms\bee8f78bb28e6cb788edd05c601f4778\transformed\appcompat-resources-1.7.1\res
-io.ionic.starter.app-webkit-1.14.0-31 C:\Users\djald\.gradle\caches\8.14.3\transforms\c2f70b51baa62bcee94ea5c7e05791a1\transformed\webkit-1.14.0\res
-io.ionic.starter.app-appcompat-1.7.1-32 C:\Users\djald\.gradle\caches\8.14.3\transforms\c3f09e8abd8bb01c9314454bd06bb337\transformed\appcompat-1.7.1\res
-io.ionic.starter.app-tracing-1.2.0-33 C:\Users\djald\.gradle\caches\8.14.3\transforms\dcfd9b438b7b1dc562c63a5efe9cf4a0\transformed\tracing-1.2.0\res
-io.ionic.starter.app-lifecycle-viewmodel-savedstate-2.6.2-34 C:\Users\djald\.gradle\caches\8.14.3\transforms\de2a1b5c01db4d02ef6d13f0f4e2cf96\transformed\lifecycle-viewmodel-savedstate-2.6.2\res
-io.ionic.starter.app-lifecycle-runtime-2.6.2-35 C:\Users\djald\.gradle\caches\8.14.3\transforms\ebf9360ba611f1d20f2bddac6f1045ca\transformed\lifecycle-runtime-2.6.2\res
-io.ionic.starter.app-coordinatorlayout-1.3.0-36 C:\Users\djald\.gradle\caches\8.14.3\transforms\ef97883a45eaa5cc79115d450cce1dbe\transformed\coordinatorlayout-1.3.0\res
-io.ionic.starter.app-profileinstaller-1.4.0-37 C:\Users\djald\.gradle\caches\8.14.3\transforms\f95ab50c54d3211c648684c462933e30\transformed\profileinstaller-1.4.0\res
+com.vallego.app-pngs-0 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\res\pngs\release
+com.vallego.app-res-1 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\res\processReleaseGoogleServices
+com.vallego.app-resValues-2 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\res\resValues\release
+com.vallego.app-updated_navigation_xml-3 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\generated\updated_navigation_xml\release
+com.vallego.app-packageReleaseResources-4 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.vallego.app-packageReleaseResources-5 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.vallego.app-release-6 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\build\intermediates\merged_res\release\mergeReleaseResources
+com.vallego.app-main-7 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\main\res
+com.vallego.app-release-8 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\app\src\release\res
+com.vallego.app-release-9 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\android\capacitor-cordova-android-plugins\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-10 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\android\capacitor\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-11 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\app\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-12 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\haptics\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-13 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\keyboard\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-14 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\local-notifications\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-15 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\push-notifications\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-release-16 C:\PROYECTOS\UCV MARKET\UCV-Market\frontend\node_modules\@capacitor\status-bar\android\build\intermediates\packaged_res\release\packageReleaseResources
+com.vallego.app-datastore-release-17 C:\Users\djald\.gradle\caches\8.14.3\transforms\05a89d3dc8b5c67fd2491ba4357fe820\transformed\datastore-release\res
+com.vallego.app-core-1.17.0-18 C:\Users\djald\.gradle\caches\8.14.3\transforms\11094a199bb7945826b161d8a9c17beb\transformed\core-1.17.0\res
+com.vallego.app-play-services-basement-18.3.0-19 C:\Users\djald\.gradle\caches\8.14.3\transforms\114baedee36b8bdac268f5386a7e6897\transformed\play-services-basement-18.3.0\res
+com.vallego.app-lifecycle-process-2.6.2-20 C:\Users\djald\.gradle\caches\8.14.3\transforms\14a3b51da1167f75215e7e32d2231e74\transformed\lifecycle-process-2.6.2\res
+com.vallego.app-annotation-experimental-1.4.1-21 C:\Users\djald\.gradle\caches\8.14.3\transforms\1d9ef0194f51a6e0da4e440575587814\transformed\annotation-experimental-1.4.1\res
+com.vallego.app-emoji2-views-helper-1.3.0-22 C:\Users\djald\.gradle\caches\8.14.3\transforms\25a881cfd51f0b690442a74b496782fd\transformed\emoji2-views-helper-1.3.0\res
+com.vallego.app-datastore-preferences-release-23 C:\Users\djald\.gradle\caches\8.14.3\transforms\311c3575769e20e5e56d5dc0a0a79dc1\transformed\datastore-preferences-release\res
+com.vallego.app-emoji2-1.3.0-24 C:\Users\djald\.gradle\caches\8.14.3\transforms\353d69426d62513a7e19e841051a3a44\transformed\emoji2-1.3.0\res
+com.vallego.app-savedstate-1.2.1-25 C:\Users\djald\.gradle\caches\8.14.3\transforms\3f2ab0b27a59a3dfe1466c241ece8334\transformed\savedstate-1.2.1\res
+com.vallego.app-play-services-base-18.1.0-26 C:\Users\djald\.gradle\caches\8.14.3\transforms\4aef5d6dbfa2eab3e0cf75d9b9b7eb7a\transformed\play-services-base-18.1.0\res
+com.vallego.app-activity-1.11.0-27 C:\Users\djald\.gradle\caches\8.14.3\transforms\4ce00e85fb17003296e7add5523825c1\transformed\activity-1.11.0\res
+com.vallego.app-core-splashscreen-1.2.0-28 C:\Users\djald\.gradle\caches\8.14.3\transforms\4f5eb2e1ae45a07736e2f6ed862ea36a\transformed\core-splashscreen-1.2.0\res
+com.vallego.app-core-runtime-2.2.0-29 C:\Users\djald\.gradle\caches\8.14.3\transforms\56c299ca5cc1351fb9b11d94695125dc\transformed\core-runtime-2.2.0\res
+com.vallego.app-core-ktx-1.17.0-30 C:\Users\djald\.gradle\caches\8.14.3\transforms\6443194ff2cd53b8a19f0de2b31832a0\transformed\core-ktx-1.17.0\res
+com.vallego.app-datastore-preferences-core-release-31 C:\Users\djald\.gradle\caches\8.14.3\transforms\6f56b386da98fd76bd907abf5837b86e\transformed\datastore-preferences-core-release\res
+com.vallego.app-startup-runtime-1.1.1-32 C:\Users\djald\.gradle\caches\8.14.3\transforms\7179ce4c01b9a0b75718a869351620f5\transformed\startup-runtime-1.1.1\res
+com.vallego.app-fragment-1.8.9-33 C:\Users\djald\.gradle\caches\8.14.3\transforms\754c4f1b691d2a1223e4f8f413992fee\transformed\fragment-1.8.9\res
+com.vallego.app-lifecycle-livedata-2.6.2-34 C:\Users\djald\.gradle\caches\8.14.3\transforms\8d83e436f29a9ad9858ae8c630f3448b\transformed\lifecycle-livedata-2.6.2\res
+com.vallego.app-core-viewtree-1.0.0-35 C:\Users\djald\.gradle\caches\8.14.3\transforms\9275faa7fc56368462609e8a34802ec7\transformed\core-viewtree-1.0.0\res
+com.vallego.app-lifecycle-viewmodel-2.6.2-36 C:\Users\djald\.gradle\caches\8.14.3\transforms\ab32e4c3e2bf096654fd9e14504854dc\transformed\lifecycle-viewmodel-2.6.2\res
+com.vallego.app-lifecycle-livedata-core-2.6.2-37 C:\Users\djald\.gradle\caches\8.14.3\transforms\b5655c5df44c26433ffde34d45e6b2a4\transformed\lifecycle-livedata-core-2.6.2\res
+com.vallego.app-appcompat-resources-1.7.1-38 C:\Users\djald\.gradle\caches\8.14.3\transforms\bee8f78bb28e6cb788edd05c601f4778\transformed\appcompat-resources-1.7.1\res
+com.vallego.app-webkit-1.14.0-39 C:\Users\djald\.gradle\caches\8.14.3\transforms\c2f70b51baa62bcee94ea5c7e05791a1\transformed\webkit-1.14.0\res
+com.vallego.app-appcompat-1.7.1-40 C:\Users\djald\.gradle\caches\8.14.3\transforms\c3f09e8abd8bb01c9314454bd06bb337\transformed\appcompat-1.7.1\res
+com.vallego.app-firebase-common-22.0.1-41 C:\Users\djald\.gradle\caches\8.14.3\transforms\cb546919c09df4bb1e2d2127157bcaa2\transformed\firebase-common-22.0.1\res
+com.vallego.app-datastore-core-release-42 C:\Users\djald\.gradle\caches\8.14.3\transforms\d69119d46c7440cf0598cfe4478dcec7\transformed\datastore-core-release\res
+com.vallego.app-tracing-1.2.0-43 C:\Users\djald\.gradle\caches\8.14.3\transforms\dcfd9b438b7b1dc562c63a5efe9cf4a0\transformed\tracing-1.2.0\res
+com.vallego.app-lifecycle-viewmodel-savedstate-2.6.2-44 C:\Users\djald\.gradle\caches\8.14.3\transforms\de2a1b5c01db4d02ef6d13f0f4e2cf96\transformed\lifecycle-viewmodel-savedstate-2.6.2\res
+com.vallego.app-lifecycle-runtime-2.6.2-45 C:\Users\djald\.gradle\caches\8.14.3\transforms\ebf9360ba611f1d20f2bddac6f1045ca\transformed\lifecycle-runtime-2.6.2\res
+com.vallego.app-coordinatorlayout-1.3.0-46 C:\Users\djald\.gradle\caches\8.14.3\transforms\ef97883a45eaa5cc79115d450cce1dbe\transformed\coordinatorlayout-1.3.0\res
+com.vallego.app-profileinstaller-1.4.0-47 C:\Users\djald\.gradle\caches\8.14.3\transforms\f95ab50c54d3211c648684c462933e30\transformed\profileinstaller-1.4.0\res
+com.vallego.app-firebase-messaging-25.0.1-48 C:\Users\djald\.gradle\caches\8.14.3\transforms\fee7827030cf30b9c64fc7d59fae02bb\transformed\firebase-messaging-25.0.1\res

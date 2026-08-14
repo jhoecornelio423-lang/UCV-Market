@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "io.ionic.starter.app-mergeReleaseResources-2:/values-en-rXC/values-en-rXC.xml",
+            "outputFile": "com.vallego.app-mergeReleaseResources-3:/values-en-rXC/values-en-rXC.xml",
             "map": [
                 {
                     "source": "C:\\Users\\djald\\.gradle\\caches\\8.14.3\\transforms\\11094a199bb7945826b161d8a9c17beb\\transformed\\core-1.17.0\\res\\values-en-rXC\\values-en-rXC.xml",
