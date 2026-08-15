@@ -11,6 +11,9 @@ import { SellerProductFormComponent } from './components/seller-product-form/sel
 import { SellerStatsComponent } from './components/seller-stats/seller-stats.component';
 import { SellerBusinessComponent } from './components/seller-business/seller-business.component';
 import { SellerOrdersComponent } from './components/seller-orders/seller-orders.component';
+import { SellerNotificationsComponent } from './components/seller-notifications/seller-notifications.component';
+import { SupportModule } from '../support/support.module';
+import { SupportPageComponent } from '../support/support-page.component';
 
 const routes: Routes = [
   {
@@ -23,6 +26,8 @@ const routes: Routes = [
       { path: 'orders', component: SellerOrdersComponent },
       { path: 'stats', component: SellerStatsComponent },
       { path: 'business', component: SellerBusinessComponent },
+      { path: 'notifications', component: SellerNotificationsComponent },
+      { path: 'support', component: SupportPageComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   }
@@ -36,13 +41,15 @@ const routes: Routes = [
     SellerProductFormComponent,
     SellerStatsComponent,
     SellerBusinessComponent,
-    SellerOrdersComponent
+    SellerOrdersComponent,
+    SellerNotificationsComponent
   ],
   imports: [
     CommonModule,
     IonicModule,
     FormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    SupportModule
   ]
 })
 export class SellerPanelModule { }

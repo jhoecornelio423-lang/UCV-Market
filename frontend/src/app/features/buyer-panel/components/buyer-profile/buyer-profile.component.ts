@@ -163,7 +163,7 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
           text: 'Contactar Soporte',
           icon: 'chatbubbles-outline',
           handler: () => {
-            this.showPendingSection('Soporte');
+            this.router.navigate(['/buyer-panel/support']);
           }
         },
         {

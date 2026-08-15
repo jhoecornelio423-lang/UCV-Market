@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { SellerStateService } from '../../services/seller-state.service';
@@ -69,8 +69,23 @@ export class SellerDashboardComponent {
       );
   }
 
-  showNotifications() {
-    this.showNotifDropdown = !this.showNotifDropdown;
+  showNotifications(event: Event) {
+    event.stopPropagation();
+    if (window.innerWidth >= 860) {
+      this.showNotifDropdown = !this.showNotifDropdown;
+    } else {
+      this.router.navigate(['/seller/notifications']);
+    }
+  }
+
+  openAllNotifications() {
+    this.showNotifDropdown = false;
+    this.router.navigate(['/seller/notifications']);
+  }
+
+  @HostListener('document:click')
+  closeDropdown() {
+    this.showNotifDropdown = false;
   }
 
   markAllRead() {
@@ -88,7 +103,9 @@ export class SellerDashboardComponent {
 
     this.showNotifDropdown = false;
 
-    if (notif.order_id) {
+    if (notif.ticket_id) {
+      this.router.navigate(['/seller/support']);
+    } else if (notif.order_id) {
       this.router.navigate(['/seller/orders']);
     } else {
       this.router.navigate(['/seller/orders']);

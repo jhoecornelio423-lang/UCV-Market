@@ -164,6 +164,28 @@ $bg: #f4f6f9;
           color: $muted;
           font-size: 13px;
         }
+
+        .dropdown-footer {
+          border-top: 1px solid #f3f4f6;
+          padding: 8px 16px;
+
+          .see-all-btn {
+            width: 100%;
+            background: $primary;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.15s;
+
+            &:hover {
+              opacity: 0.9;
+            }
+          }
+        }
       }
     }
   }

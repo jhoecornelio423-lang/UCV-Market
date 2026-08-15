@@ -1,0 +1,178 @@
+<ion-content [fullscreen]="true" class="support-content">
+  <div class="support-main-shell">
+
+    <!-- ============ VISTA: LISTA DE TICKETS ============ -->
+    <div class="main-content-wrapper" *ngIf="!selectedTicket">
+      <header class="support-header ion-no-border">
+        <ion-toolbar class="header-toolbar">
+          <ion-buttons slot="start">
+            <ion-back-button defaultHref="{{ backHref }}" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+          </ion-buttons>
+          <ion-title>Centro de Soporte</ion-title>
+        </ion-toolbar>
+      </header>
+
+      <div class="support-intro">
+        <div class="intro-icon">
+          <ion-icon name="headset-outline"></ion-icon>
+        </div>
+        <h2>¿En qué podemos ayudarte?</h2>
+        <p>Elige un tema y un agente de soporte te atenderá por chat.</p>
+        <button type="button" class="new-ticket-btn" (click)="toggleNewTicketForm()">
+          <ion-icon [name]="showNewTicketForm ? 'close' : 'add'"></ion-icon>
+          {{ showNewTicketForm ? 'Cerrar' : 'Solicitar ayuda' }}
+        </button>
+      </div>
+
+      <!-- Formulario de solicitud de ayuda -->
+      <div class="new-ticket-panel" *ngIf="showNewTicketForm">
+        <h3>¿Qué tipo de ayuda necesitas?</h3>
+        <div class="category-grid">
+          <button type="button" class="category-card" *ngFor="let cat of helpCategories"
+                  [class.active]="newTicketCategory === cat.value"
+                  (click)="chooseCategory(cat.value)">
+            <ion-icon [name]="cat.icon"></ion-icon>
+            <span>{{ cat.label }}</span>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Asunto</label>
+          <input type="text" [(ngModel)]="newTicketSubject"
+                 placeholder="Resume tu problema en una frase" />
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <p class="field-hint">{{ selectedCategory.hint }}</p>
+          <textarea rows="4" [(ngModel)]="newTicketMessage"
+                    [placeholder]="selectedCategory.placeholder"></textarea>
+        </div>
+        <button type="button" class="submit-btn" (click)="submitNewTicket()"
+                [disabled]="!newTicketSubject.trim() || !newTicketMessage.trim()">
+          <ion-icon name="send"></ion-icon>
+          Enviar solicitud
+        </button>
+      </div>
+
+      <div class="tickets-section">
+        <div class="section-title">
+          <h3>Mis conversaciones</h3>
+          <span class="count" *ngIf="tickets.length">{{ tickets.length }}</span>
+        </div>
+
+        <div class="spinner-wrap" *ngIf="loading">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && tickets.length === 0">
+          <ion-icon name="chatbubbles-outline"></ion-icon>
+          <p>Aún no tienes conversaciones con soporte.</p>
+          <p class="sub">Cuando envíes una solicitud, aparecerá aquí.</p>
+        </div>
+
+        <div class="ticket-card" *ngFor="let ticket of tickets"
+             [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed' || ticket.status === 'rejected'"
+             (click)="openConversation(ticket)">
+          <div class="ticket-head">
+            <span class="priority-dot" [ngClass]="ticket.priority || 'medio'"></span>
+            <div class="ticket-title">
+              <strong>{{ ticket.subject }}</strong>
+              <span class="code">{{ ticket.ticket_code || '' }}</span>
+            </div>
+            <span class="status-badge" [ngClass]="ticket.status">{{ statusLabel(ticket.status) }}</span>
+          </div>
+          <p class="ticket-message">{{ ticket.message }}</p>
+          <div class="ticket-meta">
+            <span class="thread-tag" [class.seller]="myThread === 'seller' && userId === ticket.seller_id"
+                  *ngIf="userId === ticket.seller_id">
+              <ion-icon name="storefront-outline"></ion-icon> Vendedor
+            </span>
+            <span class="txn" *ngIf="ticket.order">
+              <ion-icon name="receipt-outline"></ion-icon>
+              {{ ticket.order.order_code }} · S/ {{ ticket.order.total_price | number:'1.2-2' }}
+            </span>
+            <span class="ticket-date">{{ ticket.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ VISTA: CONVERSACIÓN ============ -->
+    <div class="conversation-shell" *ngIf="selectedTicket">
+      <header class="conversation-header">
+        <button type="button" class="back-btn" (click)="backToList()">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+        </button>
+        <div class="conv-title">
+          <span class="conv-code">{{ selectedTicket.ticket_code || 'Ticket' }}</span>
+          <h2>{{ selectedTicket.subject }}</h2>
+        </div>
+        <span class="status-badge" [ngClass]="selectedTicket.status">{{ statusLabel(selectedTicket.status) }}</span>
+      </header>
+
+      <div class="conv-participants">
+        <div class="p">
+          <div class="avatar buyer">{{ initials(selectedTicket.profiles?.full_name) }}</div>
+          <div>
+            <strong>Comprador</strong>
+            <span>{{ selectedTicket.profiles?.full_name || '—' }}</span>
+          </div>
+        </div>
+        <div class="p">
+          <div class="avatar seller">{{ initials(selectedTicket.seller?.full_name) }}</div>
+          <div>
+            <strong>Vendedor</strong>
+            <span>{{ selectedTicket.seller?.full_name || 'No vinculado' }}</span>
+          </div>
+        </div>
+        <div class="p you">
+          <div class="avatar you">{{ initials(authName()) }}</div>
+          <div>
+            <strong>Tú</strong>
+            <span>{{ myThread === 'buyer' ? 'Comprador' : 'Vendedor' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="privacy-note">
+        <ion-icon name="lock-closed"></ion-icon>
+        Conversación privada entre tú y el equipo de soporte.
+      </div>
+
+      <div class="conversation" #threadScroll>
+        <ng-container *ngFor="let item of timeline">
+          <div class="event-capsule" *ngIf="item.kind === 'event'"
+               [class.warning]="item.event_type === 'warning_issued' || item.event_type === 'seller_banned'"
+               [class.system]="item.event_type === 'seller_linked' || item.event_type === 'order_linked'">
+            <ion-icon [name]="item.event_type === 'warning_issued' || item.event_type === 'seller_banned' ? 'warning-outline' : 'ellipse'"></ion-icon>
+            {{ item.description }}
+          </div>
+          <div class="bubble" *ngIf="item.kind === 'message'"
+               [class.mine]="item.sender_role !== 'admin'">
+            <div class="bubble-meta">{{ senderName(item) }}</div>
+            <div class="bubble-body">{{ item.body }}</div>
+            <div class="bubble-time">{{ item.created_at | date:'dd/MM HH:mm' }}</div>
+          </div>
+        </ng-container>
+        <div class="thread-loading" *ngIf="loadingThread">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      </div>
+
+      <div class="composer" *ngIf="canWrite">
+        <input
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          placeholder="Escribe un mensaje para el equipo de soporte..." />
+        <button (click)="sendMessage()" [disabled]="!newMessage.trim()">
+          <ion-icon name="send"></ion-icon>
+        </button>
+      </div>
+      <div class="composer-locked" *ngIf="!canWrite">
+        <ion-icon name="lock-closed"></ion-icon>
+        Esta conversación está cerrada.
+      </div>
+    </div>
+
+  </div>
+</ion-content>

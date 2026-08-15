@@ -11,9 +11,12 @@
         <span>ADMIN PANEL</span>
       </div>
     </div>
-    <button class="logout-btn" (click)="signOut()" title="Cerrar Sesión">
-      <ion-icon name="log-out-outline"></ion-icon>
-    </button>
+    <div class="header-actions">
+      <app-admin-notifications></app-admin-notifications>
+      <button class="logout-btn" (click)="signOut()" title="Cerrar Sesión">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </button>
+    </div>
   </header>
 
   <!-- Sidebar (Desktop) -->
@@ -69,6 +72,7 @@
           <h4>{{ userProfile?.full_name || 'Admin' }}</h4>
           <span>Super Admin</span>
         </div>
+        <app-admin-notifications direction="up"></app-admin-notifications>
         <ion-icon name="log-out-outline" class="bell-icon" style="cursor: pointer; color: #EF4444;" (click)="signOut()" title="Cerrar sesión"></ion-icon>
       </div>
     </div>

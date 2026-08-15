@@ -1,74 +1,205 @@
-<div class="admin-page-container">
-  <div class="page-header">
-    <div class="header-title">
-      <h1>Centro de Soporte</h1>
-      <p>Bandeja de entrada de reportes y consultas de los usuarios.</p>
-    </div>
-  </div>
+<div class="support-desk">
 
-  <div class="table-card glass-panel">
-    <div *ngIf="loading" class="spinner-container">
+  <!-- ============ SIDEBAR: lista de disputas ============ -->
+  <aside class="support-sidebar">
+    <div class="sidebar-header">
+      <h1>Soporte</h1>
+      <p><strong>{{ openCount }}</strong> disputas abiertas</p>
+    </div>
+
+    <div class="sidebar-tools">
+      <div class="search-box">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar por código, nombre, pedido..." />
+      </div>
+      <div class="filter-chips">
+        <button type="button" *ngFor="let f of filterOptions"
+                [class.active]="statusFilter === f.value"
+                (click)="statusFilter = f.value">
+          {{ f.label }}
+        </button>
+      </div>
+    </div>
+
+    <div class="ticket-list" *ngIf="!loading">
+      <div class="ticket-item" *ngFor="let t of filteredTickets"
+           [class.selected]="selectedTicket?.id === t.id"
+           [class.resolved]="['resolved','rejected','closed'].includes(t.status)"
+           (click)="selectTicket(t)">
+        <div class="ticket-top">
+          <span class="priority-dot" [ngClass]="t.priority || 'medio'"></span>
+          <span class="ticket-code">{{ t.ticket_code || shortId(t.id) }}</span>
+          <span class="status-badge" [ngClass]="t.status">{{ statusLabel(t.status) }}</span>
+        </div>
+        <h4 class="ticket-subject">{{ t.subject }}</h4>
+        <p class="ticket-preview">{{ t.message }}</p>
+        <div class="ticket-meta">
+          <span class="meta-line">
+            <ion-icon name="person-outline"></ion-icon>
+            {{ t.profiles?.full_name }} · Comprador
+          </span>
+          <span class="meta-line" [class.no-seller]="!t.seller">
+            <ion-icon name="storefront-outline"></ion-icon>
+            {{ t.seller?.full_name || 'Vendedor sin vincular' }}
+          </span>
+          <span class="meta-line txn" *ngIf="t.order">
+            <ion-icon name="receipt-outline"></ion-icon>
+            {{ t.order.order_code }} · S/ {{ t.order.total_price | number:'1.2-2' }}
+          </span>
+          <span class="ticket-date">{{ t.created_at | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+      <div class="empty-filter" *ngIf="!loading && filteredTickets.length === 0 && tickets.length > 0">
+        <p>Sin resultados para tu búsqueda.</p>
+      </div>
+    </div>
+
+    <div class="spinner-side" *ngIf="loading">
       <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-
-    <div *ngIf="!loading && tickets.length === 0" class="empty-state">
+    <div class="empty-side" *ngIf="!loading && tickets.length === 0">
       <ion-icon name="chatbubbles-outline"></ion-icon>
-      <p>No hay tickets de soporte pendientes.</p>
+      <p>No hay disputas todavía.</p>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN: conversación ============ -->
+  <main class="support-main" *ngIf="selectedTicket; else emptyMain">
+
+    <header class="dispute-header">
+      <div class="header-left">
+        <span class="code">{{ selectedTicket.ticket_code || shortId(selectedTicket.id) }}</span>
+        <span class="priority-badge" [ngClass]="selectedTicket.priority || 'medio'">{{ priorityLabel(selectedTicket.priority) }}</span>
+        <span class="status-badge" [ngClass]="selectedTicket.status">{{ statusLabel(selectedTicket.status) }}</span>
+      </div>
+      <div class="header-right">
+        <select class="mini-select" [ngModel]="selectedTicket.priority || 'medio'" (ngModelChange)="onPriorityChange($event)" title="Prioridad">
+          <option *ngFor="let p of priorityOptions" [value]="p.value">{{ p.label }}</option>
+        </select>
+        <select class="mini-select" [ngModel]="selectedTicket.status" (ngModelChange)="onStatusChange($event)" title="Estado">
+          <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+        </select>
+        <button class="link-btn" *ngIf="!selectedTicket.seller_id" (click)="linkSeller()">
+          <ion-icon name="link-outline"></ion-icon> Vincular vendedor
+        </button>
+        <button class="link-btn" *ngIf="!selectedTicket.order_id" (click)="linkOrder()">
+          <ion-icon name="receipt-outline"></ion-icon> Vincular pedido
+        </button>
+      </div>
+    </header>
+
+    <div class="dispute-body">
+
+      <section class="dispute-info">
+        <h3>{{ selectedTicket.subject }}</h3>
+        <p class="message">{{ selectedTicket.message }}</p>
+        <div class="txn" *ngIf="selectedTicket.order">
+          <ion-icon name="receipt-outline"></ion-icon>
+          {{ selectedTicket.order.order_code }} · S/ {{ selectedTicket.order.total_price | number:'1.2-2' }} ·
+          {{ selectedTicket.order.created_at | date:'dd/MM/yyyy' }}
+        </div>
+
+        <div class="participants">
+          <div class="participant">
+            <div class="avatar buyer">{{ initials(selectedTicket.profiles?.full_name) }}</div>
+            <div class="p-info">
+              <strong>Comprador</strong>
+              <span>{{ selectedTicket.profiles?.full_name || '—' }}</span>
+            </div>
+          </div>
+          <div class="participant" *ngIf="selectedTicket.seller">
+            <div class="avatar seller">{{ initials(selectedTicket.seller.full_name) }}</div>
+            <div class="p-info">
+              <strong>Vendedor</strong>
+              <span>{{ selectedTicket.seller.full_name }}</span>
+            </div>
+          </div>
+          <div class="participant muted" *ngIf="!selectedTicket.seller">
+            <div class="avatar seller">—</div>
+            <div class="p-info">
+              <strong>Vendedor</strong>
+              <span>Sin vincular</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="thread-tabs">
+        <button [class.active]="selectedThread === 'buyer'" (click)="setThread('buyer')">
+          <ion-icon name="person-outline"></ion-icon> Comprador
+          <span class="priv">
+            <ion-icon name="lock-closed"></ion-icon>
+          </span>
+        </button>
+        <button [class.active]="selectedThread === 'seller'" (click)="setThread('seller')"
+                [class.disabled]="!selectedTicket.seller_id">
+          <ion-icon name="storefront-outline"></ion-icon> Vendedor
+          <span class="priv">
+            <ion-icon name="lock-closed"></ion-icon>
+          </span>
+        </button>
+      </div>
+
+      <div class="thread-notice">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        Canales privados: el comprador y el vendedor nunca ven los mensajes del otro.
+      </div>
+
+      <div class="conversation" #threadScroll>
+        <ng-container *ngFor="let item of timeline">
+          <div class="event-capsule" *ngIf="item.kind === 'event'"
+               [class.warning]="item.event_type === 'warning_issued' || item.event_type === 'seller_banned'"
+               [class.system]="item.event_type === 'seller_linked' || item.event_type === 'order_linked'">
+            <ion-icon [name]="item.event_type === 'warning_issued' || item.event_type === 'seller_banned' ? 'warning-outline' : 'ellipse'"></ion-icon>
+            {{ item.description }}
+          </div>
+          <div class="bubble" *ngIf="item.kind === 'message'"
+               [class.admin]="item.sender_role === 'admin'">
+            <div class="bubble-meta">{{ senderName(item) }}</div>
+            <div class="bubble-body">{{ item.body }}</div>
+            <div class="bubble-time">{{ item.created_at | date:'HH:mm' }}</div>
+          </div>
+        </ng-container>
+        <div class="thread-loading" *ngIf="loadingThread">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      </div>
+
+      <div class="composer" *ngIf="canWrite">
+        <input
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          placeholder="Escribe un mensaje para {{ selectedThread === 'buyer' ? 'el comprador' : 'el vendedor' }}..." />
+        <button (click)="sendMessage()" [disabled]="!newMessage.trim()" title="Enviar">
+          <ion-icon name="send"></ion-icon>
+        </button>
+      </div>
+      <div class="composer-locked" *ngIf="!canWrite">
+        <ion-icon name="lock-closed"></ion-icon>
+        Esta disputa está cerrada.
+      </div>
+
     </div>
 
-    <div class="table-responsive" *ngIf="!loading && tickets.length > 0">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>Usuario</th>
-            <th>Asunto</th>
-            <th>Mensaje</th>
-            <th>Fecha</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let ticket of tickets" [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed'">
-            <td>
-              <div class="user-cell">
-                <div class="avatar">{{ (ticket.profiles?.full_name || 'U')[0].toUpperCase() }}</div>
-                <div class="info">
-                  <span class="name">{{ ticket.profiles?.full_name || 'Desconocido' }}</span>
-                  <span class="email">{{ ticket.profiles?.email || 'Sin correo' }}</span>
-                </div>
-              </div>
-            </td>
-            <td>
-              <span class="subject">{{ ticket.subject }}</span>
-            </td>
-            <td class="message-cell">
-              <p class="message-text">{{ ticket.message }}</p>
-            </td>
-            <td>
-              <span class="text-muted">{{ ticket.created_at | date:'dd/MM/yy HH:mm' }}</span>
-            </td>
-            <td>
-              <span class="status-badge" 
-                [class.open]="ticket.status === 'open'"
-                [class.progress]="ticket.status === 'in_progress'"
-                [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed'">
-                {{ ticket.status === 'open' ? 'Abierto' : ticket.status === 'in_progress' ? 'En Progreso' : 'Resuelto' }}
-              </span>
-            </td>
-            <td>
-              <div class="actions">
-                <button class="action-btn success" 
-                        *ngIf="ticket.status !== 'resolved' && ticket.status !== 'closed'"
-                        (click)="markAsResolved(ticket)" 
-                        title="Marcar como Resuelto">
-                  <ion-icon name="checkmark-done-outline"></ion-icon>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <footer class="action-bar">
+      <button class="act dismiss" (click)="dismissTicket()">
+        <ion-icon name="close-circle-outline"></ion-icon> Desestimar reporte
+      </button>
+      <button class="act warn" (click)="warnSeller()" [disabled]="!selectedTicket.seller_id">
+        <ion-icon name="warning-outline"></ion-icon> Advertir emprendedor
+      </button>
+      <button class="act ban" (click)="banSeller()" [disabled]="!selectedTicket.seller_id">
+        <ion-icon name="ban-outline"></ion-icon> Banear emprendedor
+      </button>
+    </footer>
+
+  </main>
+
+  <ng-template #emptyMain>
+    <main class="support-main empty">
+      <ion-icon name="chatbubbles-outline"></ion-icon>
+      <p>Selecciona una disputa para gestionarla.</p>
+    </main>
+  </ng-template>
+
 </div>

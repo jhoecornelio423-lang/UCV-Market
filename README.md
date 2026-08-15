@@ -16,6 +16,8 @@ Dentro de los campus universitarios, el comercio entre estudiantes (venta de pos
 **VALLE-GO** centraliza la oferta y demanda del campus en una aplicación híbrida (Web/Móvil) con interfaces modernas basadas en un diseño **Premium Figma**.
 - **Para Compradores:** Un catálogo categorizado con buscador inteligente, carruseles de productos populares y seguimiento vertical de pedidos en tiempo real.
 - **Para Emprendedores:** Un Dashboard profesional con métricas de ventas, gestión de inventario con carga de imágenes "drag & drop" y un sistema de control de estados (Aceptar -> Preparar -> Listo).
+- **Notificaciones Push:** Alertas en tiempo real vía **Firebase Cloud Messaging (FCM)** y Realtime de Supabase: pedidos nuevos, cambios de estado y cancelaciones (aviso al vendedor cuando el comprador cancela), además de avisos de reportes de producto al panel de administración.
+- **Centro de Soporte:** Compradores y vendedores crean tickets de soporte; el equipo administrador responde y gestiona el estado, con notificaciones al autor del ticket.
 - **Seguridad:** Registro exclusivo para correos institucionales `@ucv.edu.pe` o `@ucvvirtual.edu.pe`.
 
 ---
@@ -79,6 +81,15 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
    npx cap open android
    ```
 4. **Ejecutar desde Android Studio** en tu dispositivo físico o emulador.
+
+---
+
+## 📚 Documentación Técnica
+La documentación detallada del proyecto (requisitos, arquitectura y UML, diseño de módulos, y estrategia de DevOps) se encuentra en la carpeta [`docs/`](docs/):
+- `01_requirements_analysis.md` — Análisis de requisitos, historias de usuario y sprints.
+- `02_architecture_and_uml.md` — Arquitectura, diagramas de componentes y despliegue.
+- `03_module_and_feature_design.md` — Diseño de módulos, RLS, transacciones y notificaciones serverless.
+- `04_devops_and_business_strategy.md` — Pipeline de despliegue, estrategia de negocio y buenas prácticas.
 
 ---
 

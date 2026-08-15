@@ -266,6 +266,12 @@ $text-muted: #8F95B2;
     }
   }
 
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   .logout-btn {
     background: none;
     border: none;

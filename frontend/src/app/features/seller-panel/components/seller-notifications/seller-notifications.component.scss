@@ -1,0 +1,184 @@
+$primary: #E8432D;
+$navy: #07152f;
+$muted: #818a9b;
+$bg: #f8f9fb;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .notifications-content {
+    --background: #{$bg};
+    --color: #{$navy};
+  }
+
+  .notifications-main-shell {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .main-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .notifications-header {
+    --background: white;
+    border-bottom: none;
+
+    .header-toolbar {
+      --background: white;
+      --color: #{$navy};
+      --padding-start: 12px;
+      --padding-end: 16px;
+      padding-top: calc(env(safe-area-inset-top) + 10px);
+
+      ion-title {
+        font-weight: 900;
+        font-size: 18px;
+      }
+
+      .back-btn {
+        color: $navy;
+      }
+
+      .mark-all-btn {
+        background: transparent;
+        border: none;
+        color: $primary;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .notifications-list {
+    padding: 20px 16px 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .notification-card {
+    position: relative;
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+    border: 1px solid #F3F4F6;
+    overflow: hidden;
+
+    .unread-indicator {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+      background: $primary;
+      border-radius: 4px 0 0 4px;
+    }
+
+    .notif-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+      z-index: 1;
+    }
+
+    .notif-content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 1;
+
+      .title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+
+        h4 {
+          font-size: 15px;
+          font-weight: 900;
+          color: $navy;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        .time {
+          font-size: 12px;
+          color: #9CA3AF;
+          font-weight: 600;
+          margin-right: auto;
+          margin-left: 8px;
+        }
+
+        .red-dot {
+          width: 8px;
+          height: 8px;
+          background: $primary;
+          border-radius: 50%;
+          margin-left: 8px;
+        }
+      }
+
+      p {
+        font-size: 13px;
+        color: $muted;
+        margin: 0;
+        line-height: 1.4;
+      }
+    }
+  }
+
+  .empty-state-figma {
+    text-align: center;
+    padding: 80px 20px;
+
+    .empty-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: #F3F4F6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 32px;
+      color: #818a9b;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 900;
+      color: #07152f;
+      margin: 0 0 12px;
+    }
+
+    p {
+      font-size: 14px;
+      color: #818a9b;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+}

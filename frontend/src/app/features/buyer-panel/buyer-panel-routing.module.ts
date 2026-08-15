@@ -14,6 +14,7 @@ import { BuyerProductDetailComponent } from './components/buyer-product-detail/b
 import { BuyerOrderTrackingComponent } from './components/buyer-order-tracking/buyer-order-tracking.component';
 import { BuyerSellerApplicationComponent } from './components/buyer-seller-application/buyer-seller-application.component';
 import { BuyerSellerStoreComponent } from './components/buyer-seller-store/buyer-seller-store.component';
+import { SupportPageComponent } from '../support/support-page.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,7 @@ const routes: Routes = [
       { path: 'product/:id', component: BuyerProductDetailComponent },
       { path: 'notifications', component: BuyerNotificationsComponent },
       { path: 'seller-store/:id', component: BuyerSellerStoreComponent },
+      { path: 'support', component: SupportPageComponent },
       { path: '', redirectTo: 'catalog', pathMatch: 'full' }
     ]
   }

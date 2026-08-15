@@ -291,7 +291,7 @@ export class AdminRepository {
   }
 
   /**
-   * Obtiene todos los tickets de soporte
+   * Obtiene todos los tickets de soporte (con comprador, vendedor y pedido)
    */
   getSupportTickets(): Observable<SupportTicket[]> {
     return from(
@@ -301,17 +301,77 @@ export class AdminRepository {
           *,
           profiles:user_id (
             full_name,
-            email,
+            student_code,
             avatar_url
-          )
+          ),
+          seller:profiles!seller_id(id, full_name, avatar_url),
+          order:orders!order_id(order_code, total_price, created_at, status)
         `)
         .order('created_at', { ascending: false })
-        .then(res => res.data as SupportTicket[] || [])
+        .then(res => {
+          if (res.error) throw res.error;
+          return res.data as SupportTicket[] || [];
+        })
     );
   }
 
   /**
-   * Cambia el estado de un ticket
+   * Mensajes del hilo SELECCIONADO de una disputa. El admin ve los
+   * dos hilos, pero uno a la vez (filtro estricto por thread para
+   * no mezclar conversaciones del comprador y del vendedor).
+   */
+  getTicketMessages(ticketId: string, thread: 'buyer' | 'seller'): Observable<any[]> {
+    return from(
+      this.supabaseService.client
+        .from('support_messages')
+        .select('*, profiles:participant_id(full_name, avatar_url)')
+        .eq('ticket_id', ticketId)
+        .eq('thread', thread)
+        .order('created_at', { ascending: true })
+        .then(res => {
+          if (res.error) throw res.error;
+          return (res.data as any[]) || [];
+        })
+    );
+  }
+
+  /**
+   * Eventos / historial de una disputa.
+   */
+  getTicketEvents(ticketId: string): Observable<any[]> {
+    return from(
+      this.supabaseService.client
+        .from('support_events')
+        .select('*')
+        .eq('ticket_id', ticketId)
+        .order('created_at', { ascending: true })
+        .then(res => {
+          if (res.error) throw res.error;
+          return (res.data as any[]) || [];
+        })
+    );
+  }
+
+  /**
+   * El admin envía un mensaje al participante del hilo indicado.
+   * participant_id = destinatario (para el push), sender_role = admin.
+   */
+  sendAdminMessage(ticketId: string, thread: 'buyer' | 'seller', recipientId: string, body: string): Observable<any> {
+    return from(
+      this.supabaseService.client
+        .from('support_messages')
+        .insert({ ticket_id: ticketId, participant_id: recipientId, sender_role: 'admin', thread, body })
+        .select()
+        .single()
+        .then(res => {
+          if (res.error) throw res.error;
+          return res.data;
+        })
+    );
+  }
+
+  /**
+   * Cambia el estado de un ticket y lo registra en el historial.
    */
   updateTicketStatus(ticketId: string, status: string): Observable<void> {
     return from(
@@ -319,10 +379,159 @@ export class AdminRepository {
         .from('support_tickets')
         .update({ status })
         .eq('id', ticketId)
-        .then(({ error }) => {
+        .then(async ({ error }) => {
           if (error) throw error;
+          await this.addEvent(ticketId, 'status_changed', `Estado cambiado a "${status}"`);
         })
     );
+  }
+
+  /**
+   * Cambia la prioridad del ticket.
+   */
+  setTicketPriority(ticketId: string, priority: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('support_tickets')
+        .update({ priority })
+        .eq('id', ticketId)
+        .then(async ({ error }) => {
+          if (error) throw error;
+          await this.addEvent(ticketId, 'priority_changed', `Prioridad cambiada a "${priority}"`);
+        })
+    );
+  }
+
+  /**
+   * Vincula el vendedor involucrado a la disputa.
+   */
+  linkSeller(ticketId: string, sellerId: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('support_tickets')
+        .update({ seller_id: sellerId })
+        .eq('id', ticketId)
+        .then(async ({ error }) => {
+          if (error) throw error;
+          await this.addEvent(ticketId, 'seller_linked', 'Vendedor vinculado a la disputa');
+        })
+    );
+  }
+
+  /**
+   * Vincula el pedido (transacción) a la disputa.
+   */
+  linkOrder(ticketId: string, orderId: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('support_tickets')
+        .update({ order_id: orderId })
+        .eq('id', ticketId)
+        .then(async ({ error }) => {
+          if (error) throw error;
+          await this.addEvent(ticketId, 'order_linked', 'Pedido vinculado a la disputa');
+        })
+    );
+  }
+
+  /**
+   * Desestima el reporte: cierra la disputa con estado 'rejected'.
+   */
+  dismissTicket(ticketId: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('support_tickets')
+        .update({ status: 'rejected' })
+        .eq('id', ticketId)
+        .then(async ({ error }) => {
+          if (error) throw error;
+          await this.addEvent(ticketId, 'rejected', 'Disputa desestimada por el equipo de soporte');
+        })
+    );
+  }
+
+  /**
+   * Emite una advertencia formal al emprendedor y la registra.
+   */
+  warnSeller(ticketId: string, sellerId: string, reason: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('profile_warnings')
+        .insert({ profile_id: sellerId, reason, ticket_id: ticketId })
+        .then(async ({ error }) => {
+          if (error) throw error;
+          await this.addEvent(ticketId, 'warning_issued', `Advertencia emitida al vendedor: ${reason}`);
+        })
+    );
+  }
+
+  /**
+   * Banea al emprendedor: suspende la cuenta y cierra la disputa.
+   */
+  banSeller(ticketId: string, sellerId: string, reason: string): Observable<void> {
+    return from(
+      this.supabaseService.client
+        .from('profiles')
+        .update({ role: 'suspended', suspension_reason: reason })
+        .eq('id', sellerId)
+        .select()
+        .single()
+        .then(async ({ error, data }) => {
+          if (error) throw error;
+          if (!data) throw new Error('No se pudo actualizar. Permisos insuficientes.');
+          await this.supabaseService.client
+            .from('products')
+            .update({ is_active: false })
+            .eq('seller_id', sellerId)
+            .eq('is_active', true);
+          await this.supabaseService.client
+            .from('support_tickets')
+            .update({ status: 'closed' })
+            .eq('id', ticketId);
+          await this.addEvent(ticketId, 'seller_banned', `Emprendedor baneado: ${reason}`);
+        })
+    );
+  }
+
+  /**
+   * Pedidos recientes para vincular a una disputa.
+   */
+  getOrdersForLinking(): Observable<any[]> {
+    return from(
+      this.supabaseService.client
+        .from('orders')
+        .select('id, order_code, total_price, status, created_at, buyer:profiles!buyer_id(full_name), seller:profiles!seller_id(full_name)')
+        .order('created_at', { ascending: false })
+        .limit(50)
+        .then(res => {
+          if (res.error) throw res.error;
+          return (res.data as any[]) || [];
+        })
+    );
+  }
+
+  /**
+   * Historial de advertencias de un perfil.
+   */
+  getProfileWarnings(profileId: string): Observable<any[]> {
+    return from(
+      this.supabaseService.client
+        .from('profile_warnings')
+        .select('*')
+        .eq('profile_id', profileId)
+        .order('created_at', { ascending: false })
+        .then(res => {
+          if (res.error) throw res.error;
+          return (res.data as any[]) || [];
+        })
+    );
+  }
+
+  private async addEvent(ticketId: string, eventType: string, description: string): Promise<void> {
+    const { error } = await this.supabaseService.client
+      .from('support_events')
+      .insert({ ticket_id: ticketId, event_type: eventType, description });
+    if (error) throw error;
   }
 
   /**

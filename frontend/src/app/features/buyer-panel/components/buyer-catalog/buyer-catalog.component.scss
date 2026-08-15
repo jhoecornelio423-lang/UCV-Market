@@ -73,6 +73,7 @@ $surface: #f5f6f8;
 }
 
 .header-actions {
+  position: relative;
   display: flex;
   gap: 12px;
   .header-icon {
@@ -330,8 +331,9 @@ $surface: #f5f6f8;
 .notif-dropdown {
   position: absolute;
   top: 55px;
-  right: 0;
+  left: 0;
   width: 320px;
+  max-width: calc(100vw - 24px);
   background: white;
   border-radius: 20px;
   box-shadow: 0 10px 30px rgba(7, 21, 47, 0.12);

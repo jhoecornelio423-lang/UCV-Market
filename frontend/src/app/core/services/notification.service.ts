@@ -10,6 +10,8 @@ import { AuthService } from '../auth/auth.service';
 export interface AppNotification {
   id: string;
   order_id?: string;
+  report_id?: string;
+  ticket_id?: string;
   title: string;
   body: string;
   time: string;
@@ -160,6 +162,17 @@ export class NotificationService {
   private handlePushTap(action: any) {
     const notif = action?.notification || action;
     const orderId = notif?.data?.order_id;
+    const reportId = notif?.data?.report_id;
+    const ticketId = notif?.data?.ticket_id;
+    if (this.currentRole === 'admin') {
+      this.router.navigate([reportId || ticketId ? '/admin/reports' : '/admin/dashboard']);
+      return;
+    }
+    if (ticketId) {
+      const target = this.currentRole === 'emprendedor' ? '/seller/support' : '/buyer-panel/support';
+      this.router.navigate([target]);
+      return;
+    }
     const target = this.currentRole === 'emprendedor' ? '/seller/orders' : '/buyer/orders';
     this.router.navigate([target], orderId ? { queryParams: { order: orderId } } : {});
   }
@@ -249,7 +262,25 @@ export class NotificationService {
       .subscribe();
     this.channels.push(sellerChannel);
 
-    // 3) Comprador: cambio de estado de sus reportes de producto
+    // 3) Vendedor: su pedido fue cancelado por el comprador
+    const sellerCancelChannel = this.supabaseService.client
+      .channel('seller-order-cancelled')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'orders',
+          filter: `seller_id=eq.${userId}`
+        },
+        (payload: any) => {
+          this.handleBuyerCancelledOrder(payload.old, payload.new);
+        }
+      )
+      .subscribe();
+    this.channels.push(sellerCancelChannel);
+
+    // 4) Comprador: cambio de estado de sus reportes de producto
     const reportChannel = this.supabaseService.client
       .channel('buyer-report-status')
       .on(
@@ -266,6 +297,80 @@ export class NotificationService {
       )
       .subscribe();
     this.channels.push(reportChannel);
+
+    // 5) Usuario (comprador o vendedor): respuesta/resolución de sus tickets de soporte
+    const supportChannel = this.supabaseService.client
+      .channel('user-support-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'support_tickets',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload: any) => {
+          this.handleSupportTicketChange(payload.old, payload.new);
+        }
+      )
+      .subscribe();
+    this.channels.push(supportChannel);
+
+    // 7) Usuario: nuevo mensaje del admin en su hilo de soporte
+    const userSupportMsgChannel = this.supabaseService.client
+      .channel(`user-support-messages-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'support_messages',
+          filter: `participant_id=eq.${userId}`
+        },
+        (payload: any) => {
+          if (payload.new?.sender_role === 'admin') {
+            this.handleNewSupportMessage(payload.new);
+          }
+        }
+      )
+      .subscribe();
+    this.channels.push(userSupportMsgChannel);
+
+    // 8) Admin: nuevo reporte o nuevo mensaje de usuario en soporte
+    if (this.currentRole === 'admin') {
+      const adminReportChannel = this.supabaseService.client
+        .channel('admin-new-report')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'product_reports'
+          },
+          (payload: any) => {
+            this.handleNewReport(payload.new);
+          }
+        )
+        .subscribe();
+      this.channels.push(adminReportChannel);
+
+      const adminSupportMsgChannel = this.supabaseService.client
+        .channel('admin-support-messages')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'support_messages',
+            filter: 'sender_role=neq.admin'
+          },
+          (payload: any) => {
+            this.handleNewSupportMessage(payload.new);
+          }
+        )
+        .subscribe();
+      this.channels.push(adminSupportMsgChannel);
+    }
   }
 
   private handleNewOrder(newOrder: any) {
@@ -351,6 +456,103 @@ export class NotificationService {
       timestamp: Date.now()
     };
 
+    this.pushNotification(newNotif);
+    this.fireLocalNotification(title, body);
+  }
+
+  private handleBuyerCancelledOrder(oldOrder: any, newOrder: any) {
+    if (oldOrder.status === newOrder.status) return;
+    if (newOrder.status !== 'cancelled') return;
+    if (newOrder.cancelled_by === this.currentUserId) return;
+
+    const newNotif: AppNotification = {
+      id: Math.random().toString(36).substr(2, 9),
+      order_id: newOrder.id,
+      title: 'Pedido cancelado por el comprador',
+      body: 'Un comprador canceló su pedido.',
+      time: 'Justo ahora',
+      icon: 'close-circle',
+      iconBg: '#FEF2F2',
+      iconColor: '#EF4444',
+      unread: true,
+      type: 'order',
+      timestamp: Date.now()
+    };
+    this.pushNotification(newNotif);
+    this.fireLocalNotification('Pedido cancelado por el comprador', 'Un comprador canceló su pedido.');
+  }
+
+  private handleNewReport(newReport: any) {
+    const newNotif: AppNotification = {
+      id: Math.random().toString(36).substr(2, 9),
+      report_id: newReport.id,
+      title: 'Nuevo reporte de producto',
+      body: 'Un usuario reportó un producto como inapropiado. Revísalo en la sección de reportes.',
+      time: 'Justo ahora',
+      icon: 'flag',
+      iconBg: '#FEF2F2',
+      iconColor: '#EF4444',
+      unread: true,
+      type: 'report',
+      timestamp: Date.now()
+    };
+    this.pushNotification(newNotif);
+    this.fireLocalNotification('Nuevo reporte de producto', 'Un usuario reportó un producto. Revísalo en la sección de reportes.');
+  }
+
+  private handleSupportTicketChange(oldTicket: any, newTicket: any) {
+    const replyAdded = !!newTicket?.admin_reply && newTicket.admin_reply !== oldTicket?.admin_reply;
+    const statusChanged = newTicket?.status !== oldTicket?.status;
+
+    let title = '';
+    let body = '';
+    if (replyAdded) {
+      title = 'Respuesta del equipo de soporte';
+      body = `Respondimos tu ticket "${newTicket.subject}". Revisa la sección de soporte.`;
+    } else if (statusChanged && (newTicket.status === 'resolved' || newTicket.status === 'closed')) {
+      title = 'Ticket resuelto';
+      body = `Tu ticket "${newTicket.subject}" fue resuelto.`;
+    } else {
+      return;
+    }
+
+    const newNotif: AppNotification = {
+      id: Math.random().toString(36).substr(2, 9),
+      ticket_id: newTicket.id,
+      title,
+      body,
+      time: 'Justo ahora',
+      icon: 'headset',
+      iconBg: '#F3E8FF',
+      iconColor: '#9333EA',
+      unread: true,
+      type: 'support',
+      timestamp: Date.now()
+    };
+    this.pushNotification(newNotif);
+    this.fireLocalNotification(title, body);
+  }
+
+  private handleNewSupportMessage(message: any) {
+    const isAdmin = this.currentRole === 'admin';
+    const title = isAdmin ? 'Nuevo mensaje de soporte' : 'Nuevo mensaje del equipo de soporte';
+    const body = isAdmin
+      ? 'Un usuario respondió en un ticket. Revisa el centro de disputas.'
+      : 'El equipo de soporte te respondió. Revisa tu conversación.';
+
+    const newNotif: AppNotification = {
+      id: Math.random().toString(36).substr(2, 9),
+      ticket_id: message.ticket_id,
+      title,
+      body,
+      time: 'Justo ahora',
+      icon: 'headset',
+      iconBg: '#F3E8FF',
+      iconColor: '#9333EA',
+      unread: true,
+      type: 'support',
+      timestamp: Date.now()
+    };
     this.pushNotification(newNotif);
     this.fireLocalNotification(title, body);
   }

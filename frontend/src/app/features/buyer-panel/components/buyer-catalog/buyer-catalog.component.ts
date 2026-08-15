@@ -391,7 +391,9 @@ export class BuyerCatalogComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onNotificationClick(notif: any) {
     this.showNotifDropdown = false;
-    if (notif.order_id) {
+    if (notif.ticket_id) {
+      this.router.navigate(['/buyer-panel/support']);
+    } else if (notif.order_id) {
       this.router.navigate(['/buyer-panel/orders']);
     }
   }

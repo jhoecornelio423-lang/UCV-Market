@@ -1,0 +1,159 @@
+.notif-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.notif-btn {
+  position: relative;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    background-color: #E8432D;
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 99px;
+  }
+}
+
+.notif-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 105;
+  background: transparent;
+}
+
+.notif-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 340px;
+  max-width: calc(100vw - 24px);
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  z-index: 110;
+  overflow: hidden;
+
+  .dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #EEF0F4;
+
+    h4 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1A1F36;
+    }
+
+    .mark-read-btn {
+      background: none;
+      border: none;
+      color: #E8432D;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 6px;
+    }
+  }
+
+  .notif-list {
+    max-height: 340px;
+    overflow-y: auto;
+
+    .notif-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #F3F4F6;
+      transition: background 0.15s;
+
+      &:hover {
+        background-color: #FAFAFC;
+      }
+
+      &.unread {
+        background-color: #FFF6F4;
+
+        &:hover {
+          background-color: #FFEFEC;
+        }
+      }
+
+      .notif-icon {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+      }
+
+      .notif-content {
+        flex: 1;
+        min-width: 0;
+
+        strong {
+          display: block;
+          font-size: 13px;
+          color: #1A1F36;
+          margin-bottom: 2px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 12px;
+          color: #8F95B2;
+          line-height: 1.4;
+        }
+
+        .time {
+          display: block;
+          margin-top: 4px;
+          font-size: 11px;
+          color: #B4B9CC;
+        }
+      }
+    }
+  }
+
+  .empty-notifs {
+    padding: 32px 16px;
+    text-align: center;
+    color: #8F95B2;
+    font-size: 13px;
+  }
+}
+
+.notif-wrap.open-up .notif-dropdown {
+  top: auto;
+  bottom: calc(100% + 10px);
+}

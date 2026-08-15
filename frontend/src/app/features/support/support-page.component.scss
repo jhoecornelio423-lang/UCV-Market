@@ -1,0 +1,628 @@
+.support-content {
+  --background: #F8F9FB;
+}
+
+.support-main-shell {
+  min-height: 100%;
+  background: #F8F9FB;
+}
+
+.main-content-wrapper {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+.support-header {
+  .header-toolbar {
+    --background: transparent;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  ion-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1A1F36;
+  }
+}
+
+.support-intro {
+  text-align: center;
+  padding: 28px 16px;
+  margin-bottom: 8px;
+
+  .intro-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #F3E8FF;
+    color: #9333EA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+  }
+
+  h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #1A1F36;
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: 13px;
+    color: #8F95B2;
+  }
+
+  .new-ticket-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #E8432D;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(232, 67, 45, 0.35);
+
+    ion-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+/* ============ Formulario de solicitud de ayuda ============ */
+.new-ticket-panel {
+  background: white;
+  border: 1px solid #EEF0F4;
+  border-radius: 16px;
+  padding: 18px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #1A1F36;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    .category-card {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F8F9FB;
+      border: 1px solid #EEF0F4;
+      border-radius: 12px;
+      padding: 12px 10px;
+      cursor: pointer;
+      text-align: left;
+      color: #1A1F36;
+      transition: all 0.15s;
+
+      ion-icon {
+        font-size: 18px;
+        color: #8F95B2;
+      }
+
+      span {
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      &.active {
+        background: #FFF1EE;
+        border-color: #E8432D;
+
+        ion-icon { color: #E8432D; }
+        span { color: #E8432D; font-weight: 800; }
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 14px;
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #1A1F36;
+      margin-bottom: 6px;
+    }
+
+    .field-hint {
+      margin: 0 0 6px;
+      font-size: 11.5px;
+      color: #8F95B2;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid #EEF0F4;
+      border-radius: 12px;
+      padding: 11px 13px;
+      font-size: 13.5px;
+      color: #1A1F36;
+      background: #FAFBFC;
+      outline: none;
+      resize: none;
+      font-family: inherit;
+
+      &::placeholder { color: #B4B9CC; }
+      &:focus { border-color: #E8432D; background: white; }
+    }
+  }
+
+  .submit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #E8432D;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 13px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+
+    &:disabled { opacity: 0.45; cursor: default; }
+  }
+}
+
+.tickets-section {
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #1A1F36;
+    }
+
+    .count {
+      background: #FFF1EE;
+      color: #E8432D;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+      margin-bottom: 12px;
+    }
+  }
+
+  .spinner-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px 16px;
+    color: #8F95B2;
+
+    ion-icon {
+      font-size: 44px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    p.sub {
+      font-size: 11.5px;
+      margin-top: 4px;
+      color: #B4B9CC;
+    }
+  }
+
+  .ticket-card {
+    background: white;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #EEF0F4;
+    border-left: 4px solid #E8432D;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+
+    &:active {
+      transform: scale(0.99);
+    }
+
+    &.resolved {
+      border-left-color: #10B981;
+      opacity: 0.7;
+    }
+
+    .ticket-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+
+      .priority-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 4px;
+
+        &.alto { background: #F59E0B; }
+        &.medio { background: #FACC15; }
+        &.critico { background: #EF4444; }
+      }
+
+      .ticket-title {
+        flex: 1;
+        min-width: 0;
+
+        strong {
+          display: block;
+          font-size: 14px;
+          font-weight: 700;
+          color: #1A1F36;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .code {
+          font-size: 10.5px;
+          font-weight: 800;
+          color: #E8432D;
+          letter-spacing: 0.4px;
+        }
+      }
+
+      .status-badge {
+        flex-shrink: 0;
+      }
+    }
+
+    .ticket-message {
+      margin: 8px 0 6px;
+      font-size: 13px;
+      color: #6B7280;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .ticket-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+
+      .thread-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 10.5px;
+        font-weight: 800;
+        color: #7C3AED;
+        background: #F3E8FF;
+        padding: 3px 8px;
+        border-radius: 99px;
+
+        ion-icon { font-size: 12px; }
+      }
+
+      .txn {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11.5px;
+        font-weight: 700;
+        color: #E8432D;
+
+        ion-icon { font-size: 13px; }
+      }
+
+      .ticket-date {
+        font-size: 11px;
+        color: #B4B9CC;
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+/* ================= ESTADO / PRIORIDAD ================= */
+.status-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+
+  &.open { background: #FEF3C7; color: #B45309; }
+  &.in_progress { background: #DBEAFE; color: #1D4ED8; }
+  &.in_review { background: #E0E7FF; color: #4338CA; }
+  &.waiting_buyer, &.waiting_seller { background: #FCE7F3; color: #BE185D; }
+  &.evidence_received { background: #CCFBF1; color: #0F766E; }
+  &.resolved { background: #D1FAE5; color: #047857; }
+  &.rejected { background: #FEE2E2; color: #B91C1C; }
+  &.closed { background: #E2E8F0; color: #475569; }
+}
+
+/* ================= CONVERSACIÓN ================= */
+.conversation-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 16px 16px;
+}
+
+.conversation-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 0;
+  border-bottom: 1px solid #EEF0F4;
+
+  .back-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 10px;
+    background: white;
+    color: #1A1F36;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: pointer;
+  }
+
+  .conv-title {
+    flex: 1;
+    min-width: 0;
+
+    .conv-code {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: #E8432D;
+      letter-spacing: 0.4px;
+    }
+
+    h2 {
+      margin: 2px 0 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: #1A1F36;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+.conv-participants {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #EEF0F4;
+  margin-bottom: 10px;
+  overflow-x: auto;
+
+  .p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+
+      &.buyer { background: linear-gradient(135deg, #0284C7, #38BDF8); }
+      &.seller { background: linear-gradient(135deg, #7C3AED, #A78BFA); }
+      &.you { background: linear-gradient(135deg, #E8432D, #F97316); }
+    }
+
+    strong {
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      color: #1A1F36;
+    }
+
+    span {
+      font-size: 11.5px;
+      color: #8F95B2;
+    }
+  }
+}
+
+.privacy-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #EEF2FF;
+  color: #4338CA;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 99px;
+  margin: 0 auto 10px;
+  max-width: fit-content;
+
+  ion-icon { font-size: 13px; }
+}
+
+.conversation {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 2px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .event-capsule {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #EEF2FF;
+    color: #4338CA;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 99px;
+    max-width: 90%;
+    text-align: center;
+
+    ion-icon { font-size: 6px; }
+
+    &.warning {
+      background: #FEF3C7;
+      color: #92400E;
+
+      ion-icon { font-size: 13px; }
+    }
+
+    &.system {
+      background: #ECFDF5;
+      color: #065F46;
+
+      ion-icon { font-size: 13px; }
+    }
+  }
+
+  .bubble {
+    max-width: 78%;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: white;
+    border: 1px solid #EEF0F4;
+    align-self: flex-start;
+
+    .bubble-meta {
+      font-size: 11px;
+      font-weight: 800;
+      color: #7C3AED;
+      margin-bottom: 3px;
+    }
+
+    .bubble-body {
+      font-size: 13.5px;
+      color: #1A1F36;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bubble-time {
+      margin-top: 4px;
+      font-size: 10.5px;
+      color: #B4B9CC;
+      text-align: right;
+    }
+
+    &.mine {
+      align-self: flex-end;
+      background: #E8432D;
+      border-color: #E8432D;
+
+      .bubble-meta { color: rgba(255,255,255,0.85); }
+      .bubble-body { color: white; }
+      .bubble-time { color: rgba(255,255,255,0.7); }
+    }
+  }
+
+  .thread-loading {
+    align-self: center;
+    padding: 20px 0;
+  }
+}
+
+.composer {
+  display: flex;
+  gap: 10px;
+  background: white;
+  border: 1px solid #EEF0F4;
+  border-radius: 14px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    color: #1A1F36;
+    background: transparent;
+
+    &::placeholder { color: #B4B9CC; }
+  }
+
+  button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 12px;
+    background: #E8432D;
+    color: white;
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:disabled { opacity: 0.4; }
+  }
+}
+
+.composer-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: #F1F5F9;
+  border-radius: 12px;
+  color: #8F95B2;
+  font-size: 13px;
+
+  ion-icon { font-size: 15px; }
+}

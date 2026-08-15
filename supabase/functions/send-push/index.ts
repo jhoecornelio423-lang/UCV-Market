@@ -101,7 +101,7 @@ async function getAccessToken(): Promise<string> {
 
 // --- Mensajes según el evento ---
 
-function buildMessage(event: any): { userId: string; title: string; body: string; data: Record<string, string> } | null {
+function buildMessage(event: any): { userId?: string; admins?: boolean; title: string; body: string; data: Record<string, string> } | null {
   const { type, table, record } = event;
   if (!record) return null;
 
@@ -115,6 +115,14 @@ function buildMessage(event: any): { userId: string; title: string; body: string
   }
 
   if (table === 'orders' && type === 'UPDATE') {
+    if (record.status === 'cancelled' && record.cancelled_by === record.buyer_id) {
+      return {
+        userId: record.seller_id,
+        title: 'Pedido cancelado por el comprador',
+        body: 'Un comprador canceló su pedido.',
+        data: { type: 'order', order_id: record.id },
+      };
+    }
     const map: Record<string, { title: string; body: string }> = {
       accepted: { title: 'Pedido aceptado', body: 'Tu pedido ha sido aceptado por el vendedor y está en cola.' },
       preparing: { title: 'Preparándose', body: 'Tu pedido ya se está preparando. ¡Casi listo!' },
@@ -129,6 +137,15 @@ function buildMessage(event: any): { userId: string; title: string; body: string
       title: m.title,
       body: m.body,
       data: { type: 'order', order_id: record.id },
+    };
+  }
+
+  if (table === 'product_reports' && type === 'INSERT') {
+    return {
+      admins: true,
+      title: 'Nuevo reporte de producto',
+      body: 'Un usuario reportó un producto como inapropiado. Revísalo en la sección de reportes.',
+      data: { type: 'report', report_id: record.id },
     };
   }
 
@@ -147,6 +164,48 @@ function buildMessage(event: any): { userId: string; title: string; body: string
         title: 'Reporte rechazado',
         body: 'Tu reporte fue evaluado y rechazado por los moderadores. Si tienes dudas, escríbenos a soporte.',
         data: { type: 'report', report_id: record.id },
+      };
+    }
+  }
+
+  if (table === 'support_tickets' && type === 'UPDATE') {
+    const old = event.old ?? {};
+    const replyAdded = !!record.admin_reply && record.admin_reply !== old.admin_reply;
+    const statusChanged = record.status !== old.status;
+    if (replyAdded) {
+      return {
+        userId: record.user_id,
+        title: 'Respuesta del equipo de soporte',
+        body: `Respondimos tu ticket "${record.subject}". Revisa la sección de soporte.`,
+        data: { type: 'support', ticket_id: record.id },
+      };
+    }
+    if (statusChanged && (record.status === 'resolved' || record.status === 'closed')) {
+      return {
+        userId: record.user_id,
+        title: 'Ticket resuelto',
+        body: `Tu ticket "${record.subject}" fue resuelto.`,
+        data: { type: 'support', ticket_id: record.id },
+      };
+    }
+  }
+
+  if (table === 'support_messages' && type === 'INSERT') {
+    const snippet = (record.body ?? '').slice(0, 120);
+    if (record.sender_role === 'admin') {
+      return {
+        userId: record.participant_id,
+        title: 'Nuevo mensaje de soporte',
+        body: `El equipo de soporte te escribió: "${snippet}"`,
+        data: { type: 'support', ticket_id: record.ticket_id },
+      };
+    }
+    if (record.sender_role === 'buyer' || record.sender_role === 'seller') {
+      return {
+        admins: true,
+        title: 'Nuevo mensaje en una disputa',
+        body: `Un participante respondió: "${snippet}"`,
+        data: { type: 'support', ticket_id: record.ticket_id },
       };
     }
   }
@@ -201,12 +260,30 @@ Deno.serve(async (req) => {
     if (!msg) {
       return Response.json({ skipped: true, reason: 'evento no relevante' });
     }
-    console.log('send-push: destinatario userId=', msg.userId);
+
+    let userIds: string[];
+    if (msg.admins) {
+      const { data: admins } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('role', 'admin');
+      userIds = (admins ?? []).map((a: any) => a.id);
+      console.log('send-push: destinatarios admins =', userIds.length);
+    } else if (msg.userId) {
+      userIds = [msg.userId];
+      console.log('send-push: destinatario userId=', msg.userId);
+    } else {
+      return Response.json({ skipped: true, reason: 'sin destinatario' });
+    }
+
+    if (userIds.length === 0) {
+      return Response.json({ skipped: true, reason: 'sin destinatarios' });
+    }
 
     const { data: tokens } = await supabase
       .from('push_tokens')
       .select('token')
-      .eq('user_id', msg.userId);
+      .in('user_id', userIds);
     console.log('send-push: tokens encontrados =', tokens?.length ?? 0);
 
     if (!tokens || tokens.length === 0) {

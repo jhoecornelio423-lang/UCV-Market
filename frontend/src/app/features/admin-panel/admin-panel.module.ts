@@ -10,6 +10,7 @@ import { AdminCategoriesComponent } from './components/admin-categories/admin-ca
 import { AdminSupportComponent } from './components/admin-support/admin-support.component';
 import { AdminUsersComponent } from './components/admin-users/admin-users.component';
 import { AdminReportsComponent } from './components/admin-reports/admin-reports.component';
+import { AdminNotificationsComponent } from './components/admin-notifications/admin-notifications.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 const routes: Routes = [
@@ -40,7 +41,8 @@ import { FormsModule } from '@angular/forms';
     AdminCategoriesComponent,
     AdminSupportComponent,
     AdminUsersComponent,
-    AdminReportsComponent
+    AdminReportsComponent,
+    AdminNotificationsComponent
   ],
   imports: [
     CommonModule,

@@ -78,12 +78,14 @@ La simplificación de la infraestructura serverless elimina la necesidad de orqu
 2. **Control de Versiones de Base de Datos (Migraciones):**
    - Cada alteración al esquema de la base de datos se registra como un script SQL incremental dentro de la carpeta `supabase/migrations/` en el repositorio Git.
    - Para aplicar cambios a producción, se utiliza el CLI de Supabase: `supabase db push` o se integran en GitHub Actions.
+   - La migración de notificaciones (`20260814000000_notify_seller_on_cancel.sql`) agrega la columna `orders.cancelled_by` y su trigger, y **debe aplicarse antes** de redesplegar `send-push`.
 
 3. **Despliegue del Frontend (Web / PWA):**
    - El código de Ionic/Angular se integra con plataformas CDN globales como **Vercel** o **Netlify**. Con cada commit en la rama principal (`main`), estas plataformas compilan el código automáticamente (`npm run build --prod`) y distribuyen los archivos estáticos a escala global con latencia mínima de carga.
 
 4. **Despliegue de Edge Functions:**
    - La función en Deno para envío de notificaciones push se despliega directamente desde la consola con la instrucción: `supabase functions deploy send-push --project-ref <proyecto-id>`.
+   - El webhook (trigger `pg_net`) apunta a la URL de la función con un `WEBHOOK_SECRET` compartido; los secrets `WEBHOOK_SECRET` y `FIREBASE_SERVICE_ACCOUNT` se configuran en `Settings -> Functions -> Secrets` de Supabase.
 
 ---
 

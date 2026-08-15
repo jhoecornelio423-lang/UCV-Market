@@ -18,6 +18,8 @@ import { BuyerProductDetailComponent } from './components/buyer-product-detail/b
 import { BuyerOrderTrackingComponent } from './components/buyer-order-tracking/buyer-order-tracking.component';
 import { BuyerSellerApplicationComponent } from './components/buyer-seller-application/buyer-seller-application.component';
 import { BuyerSellerStoreComponent } from './components/buyer-seller-store/buyer-seller-store.component';
+import { SupportModule } from '../support/support.module';
+import { SupportPageComponent } from '../support/support-page.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { BuyerSellerStoreComponent } from './components/buyer-seller-store/buyer
     IonicModule,
     FormsModule,
     ReactiveFormsModule,
-    BuyerPanelRoutingModule
+    BuyerPanelRoutingModule,
+    SupportModule
   ]
 })
 export class BuyerPanelModule { }

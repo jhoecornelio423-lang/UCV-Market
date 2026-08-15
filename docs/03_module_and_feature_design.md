@@ -335,57 +335,88 @@ USING (auth.uid() = buyer_id OR auth.uid() = seller_id);
 
 ### 25. Sistema de Notificaciones Serverless (PostgreSQL + Deno Edge Functions + FCM)
 
-Para enviar notificaciones push en tiempo real a los teléfonos móviles sin un servidor intermedio permanente, implementamos una arquitectura orientada a eventos usando **PostgreSQL Triggers** y **Supabase Edge Functions**.
+Para enviar notificaciones push en tiempo real a los teléfonos móviles sin un servidor intermedio permanente, implementamos una arquitectura orientada a eventos usando **PostgreSQL Triggers** (con la extensión `pg_net`), **Supabase Edge Functions** (Deno) y **Firebase Cloud Messaging** (FCM). Complementariamente, la app escucha **Realtime de Supabase** (`postgres_changes`) para notificar en segundo plano/abierto sin pasar por FCM.
 
 ```
   orders Table             Postgres Trigger          Supabase Edge Function          Firebase FCM
- (Status Change)           (pg_net extension)          (Deno TypeScript)               Gateway
+ (INSERT/UPDATE)           (pg_net webhook)           (Deno TypeScript)               Gateway
 ┌──────────────┐           ┌────────────────┐         ┌──────────────────┐       ┌─────────────────┐
-│ status='ready│ ────────> │ Invoca HTTP    │ ──────> │ Obtiene Token FCM│ ────> │ Envía Push a    │
+│ status/cancel│ ────────> │ Invoca HTTP    │ ──────> │ Decide receptor  │ ────> │ Envía Push a    │
 │              │           │ POST a Edge F. │         │ y despacha a FCM │       │ Dispositivo     │
 └──────────────┘           └────────────────┘         └──────────────────┘       └─────────────────┘
 ```
 
-1. **Trigger de Base de Datos en la tabla `orders`:**
-   Al cambiar el estado de un pedido (por ejemplo, a `ready` - Listo para entrega), un Trigger de PostgreSQL intercepta el evento e invoca asincrónicamente una función Edge utilizando la extensión `pg_net` de Supabase.
+1. **Triggers de Base de Datos en la tabla `orders`:**
+
+   a. **Webhook de notificación** (`trg_order_status_push`): al insertar o cambiar el estado de un pedido, se invoca asincrónicamente la Edge Function `send-push` enviando el registro **completo** (`to_jsonb(NEW)` y `to_jsonb(OLD)`). La tabla tiene `REPLICA IDENTITY FULL`, de modo que `NEW` incluye todas las columnas (incluida `cancelled_by`).
 
 ```sql
-CREATE OR REPLACE FUNCTION public.trigger_order_status_notification()
-RETURNS TRIGGER 
-LANGUAGE plpgsql
-AS $$
+CREATE OR REPLACE FUNCTION public.trg_order_status_push_fn()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $body$
 BEGIN
-  -- Ejecuta una petición HTTP POST no bloqueante a la Edge Function de Supabase
   IF NEW.status IS DISTINCT FROM OLD.status THEN
     PERFORM net.http_post(
-      url := 'https://<proyecto-id>.supabase.co/functions/v1/send-push',
-      headers := jsonb_build_object(
-        'Content-Type', 'application/json',
-        'Authorization', 'Bearer ' || run_as_admin_service_role_token() -- Token seguro interno
-      ),
+      url := 'https://<proyecto-id>.functions.supabase.co/send-push',
       body := jsonb_build_object(
-        'order_id', NEW.id,
-        'buyer_id', NEW.buyer_id,
-        'seller_id', NEW.seller_id,
-        'new_status', NEW.status
-      )::TEXT
+        'type', 'UPDATE', 'table', 'orders',
+        'record', to_jsonb(NEW), 'old', to_jsonb(OLD)
+      ),
+      headers := jsonb_build_object('Content-Type', 'application/json', 'Authorization', '<WEBHOOK_SECRET>'),
+      timeout_milliseconds := 5000
     );
   END IF;
   RETURN NEW;
-END;
-$$;
+END $body$;
 
-CREATE TRIGGER tr_order_status_change
+CREATE TRIGGER trg_order_status_push
   AFTER UPDATE OF status ON public.orders
+  FOR EACH ROW EXECUTE FUNCTION public.trg_order_status_push_fn();
+```
+
+   b. **Registro del actor de cancelación** (`trg_order_cancelled_by`): la columna `cancelled_by` guarda `auth.uid()` para saber **quién** canceló el pedido (comprador o vendedor). Se setea en un trigger `BEFORE UPDATE`, por lo que el webhook `AFTER UPDATE` ya lo incluye en `record`.
+
+```sql
+ALTER TABLE public.orders
+  ADD COLUMN IF NOT EXISTS cancelled_by UUID REFERENCES public.profiles(id);
+
+CREATE OR REPLACE FUNCTION public.set_order_cancelled_by()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  NEW.cancelled_by := auth.uid();
+  RETURN NEW;
+END $$;
+
+CREATE TRIGGER trg_order_cancelled_by
+  BEFORE UPDATE OF status ON public.orders
   FOR EACH ROW
-  EXECUTE FUNCTION public.trigger_order_status_notification();
+  WHEN (NEW.status = 'cancelled')
+  EXECUTE FUNCTION public.set_order_cancelled_by();
 ```
 
 2. **Supabase Edge Function (`supabase/functions/send-push/index.ts`):**
-   Función TypeScript que se ejecuta en el Deno Runtime en el Edge de Supabase:
-   - Recibe el `buyer_id` y el `new_status`.
-   - Consulta el token FCM del comprador guardado en la tabla `profiles`.
-   - Envía el payload JSON de notificación push formateado de forma segura a las APIs de Google Firebase Cloud Messaging (FCM) usando las credenciales guardadas en las variables de entorno de Supabase.
+   Función TypeScript que se ejecuta en el Deno Runtime en el Edge de Supabase. Según el evento (`table`, `type`, `record`) decide el **receptor** y el mensaje:
+
+   | Evento | Condición | Receptor | Mensaje |
+   |---|---|---|---|
+   | `orders` INSERT | — | Vendedor | "¡Nuevo pedido recibido!" |
+   | `orders` UPDATE | `status` normal (`accepted`, `preparing`, `ready`, `completed`, `cancelled`) | Comprador | Mensaje según estado |
+   | `orders` UPDATE | `status = 'cancelled'` y `cancelled_by = buyer_id` | Vendedor | "Pedido cancelado por el comprador" |
+   | `product_reports` INSERT | — | **Todos los admins** | "Nuevo reporte de producto" |
+   | `product_reports` UPDATE | `status = 'resolved'` / `'rejected'` | Reporter | Aviso de resolución del reporte |
+   | `support_tickets` UPDATE | Se agregó `admin_reply` o `status = resolved/closed` | Autor del ticket | "Respuesta del equipo" / "Ticket resuelto" |
+
+   - Consulta el/los token(s) FCM del usuario en la tabla `push_tokens` y envía el payload con `priority: HIGH` y el canal Android `pedidos`. Cuando el receptor es "todos los admins", obtiene los `id` de `profiles` con `role = 'admin'` y envía a los tokens de cada uno.
+   - Si un token responde `404`/`410` (dispositivo desinstalado), lo elimina de `push_tokens`.
+
+3. **Realtime en la app (Ionic/Angular):**
+   El servicio `NotificationService` se suscribe a `postgres_changes` para reflejar notificaciones en la bandeja y mostrar notificaciones locales sin depender de FCM:
+   - Comprador: cambios de estado de sus pedidos (`buyer_id`).
+   - Vendedor: pedidos nuevos (`seller_id` INSERT) y pedidos cancelados por el comprador (`seller_id` UPDATE + `cancelled_by != seller_id`).
+   - Comprador: resolución de sus reportes (`reporter_id`).
+   - **Admin:** nuevos reportes de producto (INSERT en `product_reports` sin filtro; el RLS solo deja ver el evento al admin). La bandeja del admin se muestra desde el panel con una campana en el header móvil y en el sidebar de escritorio (componente `AdminNotificationsComponent`).
+   - **Todos los usuarios:** respuesta/resolución de sus tickets de soporte (`user_id` en `support_tickets`).
+
+> **Nota Android:** el push se muestra aunque la app esté en segundo plano, pero si el usuario la **forzó a detener** o el fabricante la **optimizó en batería** (Xiaomi/Huawei/Samsung), Android bloquea la entrega hasta reabrir la app. No es un defecto del código.
 
 ---
 
@@ -401,3 +432,31 @@ generateWhatsAppLink(orderId: string, sellerPhone: string, buyerName: string, de
 }
 ```
 *Experiencia de Usuario:* Al hacer click en "Contactar por WhatsApp" desde la pantalla de pedido en Ionic, el flujo se desvía directamente a WhatsApp de forma instantánea, cerrando la brecha de comunicación con el vendedor.
+
+---
+
+### 27. Flujo de Soporte (Comprador y Vendedor)
+
+El centro de soporte permite a **compradores** y **vendedores** crear tickets ante el equipo de administración, y al **admin** responderlos y gestionar su estado. Accesible desde `/buyer-panel/support` y `/seller/support` (ambos renderizan el mismo componente compartido `SupportPageComponent` en `features/support/`).
+
+**Modelo de datos (`support_tickets`):**
+
+| Columna | Tipo | Descripción |
+|---|---|---|
+| `id` | UUID PK | Identificador |
+| `user_id` | UUID FK → profiles | Autor del ticket (comprador o vendedor) |
+| `subject` | TEXT | Asunto |
+| `message` | TEXT | Descripción del problema/consulta |
+| `status` | TEXT | `open` → `in_progress` → `resolved` / `closed` |
+| `admin_reply` | TEXT | Respuesta del equipo de soporte |
+| `created_at` / `updated_at` | TIMESTAMPTZ | Fechas (con trigger `set_updated_at`) |
+
+**Políticas RLS:**
+- **INSERT:** el usuario crea tickets solo bajo su propio `user_id` (`auth.uid() = user_id`).
+- **SELECT:** el usuario ve sus propios tickets; el admin ve todos.
+- **UPDATE:** solo el admin (estado y `admin_reply`).
+
+**Flujo:**
+1. El comprador o vendedor abre "Centro de Soporte" (desde *Ayuda* en su perfil o *Contactar con Soporte* en Negocio) y crea un ticket con asunto y mensaje.
+2. El admin lo ve en **Admin → Soporte** (tabla `support_tickets`), puede **responder** (guarda `admin_reply` y marca `resolved`) o **resolver** sin respuesta.
+3. El usuario recibe **notificación push (FCM)** y **notificación en la bandeja (Realtime)** cuando el equipo responde o resuelve su ticket; al tocar navega a su centro de soporte.

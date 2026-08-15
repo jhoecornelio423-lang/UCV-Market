@@ -4,16 +4,15 @@
     <div class="header-top">
       <span class="subtitle">Dashboard vendedor</span>
       <div class="actions">
-        <button class="icon-btn notif-btn" (click)="showNotifications()">
+        <button class="icon-btn notif-btn" (click)="showNotifications($event)">
           <ion-icon name="notifications-outline"></ion-icon>
           <span class="badge" *ngIf="(unreadCount$ | async)! > 0">{{ unreadCount$ | async }}</span>
         </button>
         <!-- Notif Dropdown -->
-        <div class="notif-dropdown" *ngIf="showNotifDropdown">
+        <div class="notif-dropdown" *ngIf="showNotifDropdown" (click)="$event.stopPropagation()">
           <div class="dropdown-header">
             <h4>Notificaciones</h4>
             <div class="dropdown-actions">
-              <button class="mark-read-btn" (click)="testNotification()">Probar popup</button>
               <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
             </div>
           </div>
@@ -34,6 +33,9 @@
               <p>No tienes notificaciones</p>
             </div>
           </ng-template>
+          <div class="dropdown-footer">
+            <button class="see-all-btn" (click)="openAllNotifications()">Ver todas</button>
+          </div>
         </div>
         
         <button class="icon-btn profile-btn" (click)="signOut()">

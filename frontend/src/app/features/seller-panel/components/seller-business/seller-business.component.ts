@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { SellerStateService } from '../../services/seller-state.service';
-import { LoadingController, ToastController, ActionSheetController } from '@ionic/angular';
+import { LoadingController, ToastController } from '@ionic/angular';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { Profile } from '../../../../core/models/profile.model';
 import { Observable } from 'rxjs';
@@ -17,7 +18,7 @@ export class SellerBusinessComponent implements OnInit {
   private loadingCtrl = inject(LoadingController);
   private toastCtrl = inject(ToastController);
   private authService = inject(AuthService);
-  private actionSheetCtrl = inject(ActionSheetController);
+  private router = inject(Router);
 
   bName: string = '';
   bCategory: string = '';
@@ -188,43 +189,6 @@ export class SellerBusinessComponent implements OnInit {
   }
 
   async contactSupport() {
-    const actionSheet = await this.actionSheetCtrl.create({
-      header: '¿En qué podemos ayudarte?',
-      cssClass: 'support-action-sheet',
-      buttons: [
-        {
-          text: 'Reportar un problema',
-          icon: 'warning-outline',
-          handler: () => this.sendSupportEmail('Reportar un problema')
-        },
-        {
-          text: 'Ayuda con la aplicación',
-          icon: 'help-circle-outline',
-          handler: () => this.sendSupportEmail('Ayuda con la aplicación')
-        },
-        {
-          text: 'Error en productos o pagos',
-          icon: 'bug-outline',
-          handler: () => this.sendSupportEmail('Error en productos o pagos')
-        },
-        {
-          text: 'Otro motivo',
-          icon: 'ellipsis-horizontal-outline',
-          handler: () => this.sendSupportEmail('Soporte VALLE-GO')
-        },
-        {
-          text: 'Cancelar',
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await actionSheet.present();
-  }
-
-  private sendSupportEmail(subject: string) {
-    const email = 'soporte@ucvmarket.com';
-    const body = 'Hola equipo de soporte,%0A%0AEscribo por el siguiente motivo:%0A%0A';
-    window.location.href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${body}`;
+    this.router.navigate(['/seller/support']);
   }
 }
