@@ -1,6 +1,6 @@
 /**
  * Genera los archivos src/environments/environment.ts y environment.prod.ts
- * a partir de variables de entorno (Netlify/CI) o de un archivo .env local.
+ * a partir de variables de entorno (Cloudflare/CI) o de un archivo .env local.
  *
  * Uso:
  *   node generate-env.js
@@ -39,13 +39,12 @@ const supabaseUrl = process.env.SUPABASE_URL || envFile.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_KEY || envFile.SUPABASE_KEY || '';
 
 if (!supabaseUrl || !supabaseKey) {
-  console.warn(
-    '[generate-env] AVISO: No se encontraron SUPABASE_URL/SUPABASE_KEY.\n' +
-    'Configúralos como variables de entorno (Netlify/CI) o crea el archivo .env en frontend/ ' +
-    'basándote en .env.example.\n' +
-    '[generate-env] Los valores son públicos por diseño; se conservarán los archivos de entorno existentes.'
+  console.error(
+    '[generate-env] ERROR: faltan SUPABASE_URL y/o SUPABASE_KEY.\n' +
+    'Configúralas como variables de entorno (Cloudflare/CI) o crea frontend/.env ' +
+    'a partir de frontend/.env.example.'
   );
-  process.exit(0);
+  process.exit(1);
 }
 
 const writeEnvFile = (target, production) => {

@@ -5,13 +5,21 @@
   "homepage": "https://ionicframework.com/",
   "scripts": {
     "ng": "ng",
-    "start": "node generate-env.js && ng serve",
-    "build": "node generate-env.js && ng build",
+    "prestart": "npm run generate-env",
+    "start": "ng serve",
+    "prebuild": "npm run generate-env",
+    "build": "ng build",
     "deploy:web": "node generate-env.js && ng build && wrangler pages deploy www --project-name vallego --branch main",
     "generate-env": "node generate-env.js",
     "watch": "ng build --watch --configuration development",
+    "pretest": "npm run generate-env",
     "test": "ng test",
+    "prelint": "npm run generate-env",
     "lint": "ng lint"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0",
+    "npm": ">=8.0.0"
   },
   "private": true,
   "dependencies": {

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { SellerDashboardComponent } from './seller-dashboard.component';
+import { TEST_PROVIDERS } from 'src/testing/test-providers';
 
 describe('SellerDashboardComponent', () => {
   let component: SellerDashboardComponent;
@@ -10,12 +11,12 @@ describe('SellerDashboardComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ SellerDashboardComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot()],
+      providers: TEST_PROVIDERS
     }).compileComponents();
 
     fixture = TestBed.createComponent(SellerDashboardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   }));
 
   it('should create', () => {

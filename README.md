@@ -36,9 +36,9 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
 ## 🚀 Cómo Ejecutar el Proyecto
 
 ### Requisitos Previos
-- Node.js (v18 o superior)
+- Node.js 22 (consulta `.nvmrc`; Angular también admite las versiones indicadas en `frontend/package.json`)
 - Ionic CLI (`npm install -g @ionic/cli`)
-- Una cuenta/proyecto en Supabase (opcional para desarrollo local si ya tienes las keys).
+- Una cuenta/proyecto en Supabase y sus credenciales públicas de cliente.
 
 ### Pasos para Web
 1. **Clonar el repositorio:**
@@ -48,7 +48,7 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
    ```
 2. **Instalar dependencias:**
    ```bash
-   npm install
+   npm ci
    ```
 3. **Configurar variables de entorno:**
    Crea el archivo `.env` a partir de la plantilla y completa tus credenciales de Supabase:
@@ -60,10 +60,10 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
    SUPABASE_URL=TU_URL_DE_SUPABASE
    SUPABASE_KEY=TU_ANON_KEY
    ```
-   > Los archivos `src/environments/environment.ts` y `environment.prod.ts` se generan automáticamente con `npm run generate-env` (incluido en `npm start` y `npm run build`). En Netlify/CI define `SUPABASE_URL` y `SUPABASE_KEY` como variables de entorno del proyecto.
+   > Los archivos `src/environments/environment.ts` y `environment.prod.ts` se generan automáticamente y no se versionan. En Cloudflare Pages y CI define `SUPABASE_URL` y `SUPABASE_KEY` como variables del proyecto.
 4. **Ejecutar el servidor de desarrollo:**
    ```bash
-   ionic serve
+   npm start
    ```
    *La app se abrirá en `http://localhost:8100`*
 
@@ -82,6 +82,43 @@ Para garantizar robustez y escalabilidad, hemos utilizado un stack de última ge
    ```
 4. **Ejecutar desde Android Studio** en tu dispositivo físico o emulador.
 
+### Validaciones antes de abrir un Pull Request
+
+Desde `frontend/`, con las variables de entorno configuradas:
+
+```bash
+npm run lint
+npm test -- --watch=false --browsers=ChromeHeadless
+npm run build
+```
+
+### Despliegue web en Cloudflare Pages
+
+Cloudflare Pages es el hosting web oficial. El proyecto compila desde `frontend/` con `npm run build` y publica el directorio `www/`. El despliegue manual autorizado puede ejecutarse con:
+
+```bash
+npm run deploy:web
+```
+
+El despliegue automático debe ejecutarse únicamente desde `main` después de superar las validaciones.
+
+---
+
+## 🗂️ Estructura del repositorio
+
+```text
+UCV-Market/
+├── .github/             # CI y plantilla de Pull Request
+├── docs/                # Arquitectura, requisitos y operación
+├── frontend/            # Ionic/Angular y proyecto nativo Capacitor
+└── supabase/
+    ├── functions/       # Edge Functions
+    ├── migrations/      # Única fuente de verdad del esquema SQL
+    └── seed.sql
+```
+
+Los APK/AAB y las carpetas `build/` o `www/` son productos generados y no se guardan en Git.
+
 ---
 
 ## 📚 Documentación Técnica
@@ -94,7 +131,7 @@ La documentación detallada del proyecto (requisitos, arquitectura y UML, diseñ
 ---
 
 ## 👨‍💻 Contribuciones
-Este proyecto fue desarrollado siguiendo principios de **Clean Architecture** y **Diseño Responsivo**. Si deseas contribuir, por favor abre un *Pull Request* o reporta un *Issue*.
+La rama `main` debe permanecer desplegable. Trabaja en una rama corta, ejecuta las validaciones y abre un Pull Request para revisión del compañero. Consulta [`CONTRIBUTING.md`](CONTRIBUTING.md) para las reglas de ramas, commits, migraciones y despliegues.
 
 ---
 *Desarrollado para la comunidad de la Universidad César Vallejo.*

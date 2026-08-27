@@ -1,8 +1,28 @@
 # Secrets locales (nunca subir)
+.env
+.env.*
+!.env.example
 push-secrets.env
 service-account.json
 *.firebase-service-account*.json
 *firebase-adminsdk*.json
+
+# Dependencias y resultados de compilación
+node_modules/
+frontend/www/
+frontend/dist/
+frontend/coverage/
+frontend/android/.gradle/
+frontend/android/app/build/
+frontend/android/app/release/
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Entornos Angular generados
+frontend/src/environments/environment.ts
+frontend/src/environments/environment.prod.ts
 
 # Supabase CLI (archivos temporales de proyecto vinculado)
 supabase/.temp/
@@ -10,3 +30,7 @@ supabase/.temp/
 # Sistema
 Thumbs.db
 .DS_Store
+
+# Editores
+.idea/
+*.code-workspace

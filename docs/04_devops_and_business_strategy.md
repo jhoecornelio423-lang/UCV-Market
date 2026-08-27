@@ -68,7 +68,7 @@ La simplificación de la infraestructura serverless elimina la necesidad de orqu
          ▼ (Auto-Build & Deploy)                                             ▼ (db push / deploy)
 ┌──────────────────┐                                                ┌──────────────────┐
 │  Hosting Web /   │                                                │  Supabase Cloud  │
-│  Vercel CDN      │                                                │  (Postgres/Edge) │
+│ Cloudflare Pages │                                                │  (Postgres/Edge) │
 └──────────────────┘                                                └──────────────────┘
 ```
 
@@ -81,7 +81,7 @@ La simplificación de la infraestructura serverless elimina la necesidad de orqu
    - La migración de notificaciones (`20260814000000_notify_seller_on_cancel.sql`) agrega la columna `orders.cancelled_by` y su trigger, y **debe aplicarse antes** de redesplegar `send-push`.
 
 3. **Despliegue del Frontend (Web / PWA):**
-   - El código de Ionic/Angular se integra con plataformas CDN globales como **Vercel** o **Netlify**. Con cada commit en la rama principal (`main`), estas plataformas compilan el código automáticamente (`npm run build --prod`) y distribuyen los archivos estáticos a escala global con latencia mínima de carga.
+   - **Cloudflare Pages** compila el frontend desde `frontend/` con `npm run build` y publica `www/`. Solo la rama `main`, después de superar CI, se considera apta para producción.
 
 4. **Despliegue de Edge Functions:**
    - La función en Deno para envío de notificaciones push se despliega directamente desde la consola con la instrucción: `supabase functions deploy send-push --project-ref <proyecto-id>`.
@@ -91,8 +91,8 @@ La simplificación de la infraestructura serverless elimina la necesidad de orqu
 
 ### 41. Buenas Prácticas y Calidad de Código
 
-1. **Clean Code en Angular 18:**
-   - Empleo de Standalone Components para eliminar los archivos redundantes de módulos (`NgModule`), agilizando el arranque del frontend.
+1. **Clean Code en Angular 20:**
+   - Organización por módulos funcionales con carga diferida para separar comprador, vendedor, administrador y autenticación.
    - Uso intensivo del inyector de dependencias declarativo con la función `inject()` de Angular (e.g., `private authService = inject(AuthService)`), simplificando la legibilidad sobre los constructores tradicionales.
 
 2. **Principios SOLID en la Capa del Cliente:**

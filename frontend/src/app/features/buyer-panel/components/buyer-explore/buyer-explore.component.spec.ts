@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
 import { BuyerExploreComponent } from './buyer-explore.component';
+import { TEST_PROVIDERS } from 'src/testing/test-providers';
 
 describe('BuyerExploreComponent', () => {
   let component: BuyerExploreComponent;
@@ -10,12 +11,12 @@ describe('BuyerExploreComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ BuyerExploreComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [IonicModule.forRoot()],
+      providers: TEST_PROVIDERS
     }).compileComponents();
 
     fixture = TestBed.createComponent(BuyerExploreComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   }));
 
   it('should create', () => {
