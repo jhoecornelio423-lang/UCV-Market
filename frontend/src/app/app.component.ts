@@ -4,6 +4,7 @@ import { AuthService } from './core/auth/auth.service';
 import { NotificationService } from './core/services/notification.service';
 import { filter } from 'rxjs/operators';
 import { Profile } from './core/models/profile.model';
+import { isBuyerPrimaryRoute, normalizeAppPath } from './core/navigation/buyer-navigation';
 
 @Component({
   selector: 'app-root',
@@ -41,7 +42,7 @@ export class AppComponent implements OnInit {
   }
 
   private updateSidebarVisibility() {
-    const path = this.normalizePath(this.currentPath || this.router.url);
+    const path = normalizeAppPath(this.currentPath || this.router.url);
     const hiddenRoutes = ['/login', '/admin'];
     const isHiddenRoute = hiddenRoutes.some(route => path.startsWith(route));
 
@@ -51,23 +52,11 @@ export class AppComponent implements OnInit {
     }
 
     if (this.userProfile.role === 'comprador') {
-      const buyerPrimaryRoutes = new Set([
-        '/buyer-panel/catalog',
-        '/buyer-panel/explore',
-        '/buyer-panel/orders',
-        '/buyer-panel/favorites',
-        '/buyer-panel/profile',
-      ]);
-      this.showSidebar = buyerPrimaryRoutes.has(path);
+      this.showSidebar = isBuyerPrimaryRoute(path);
       return;
     }
 
     this.showSidebar = true;
-  }
-
-  private normalizePath(path: string): string {
-    const cleanPath = path.split(/[?#]/, 1)[0];
-    return cleanPath.length > 1 ? cleanPath.replace(/\/+$/, '') : cleanPath;
   }
 
   // Métodos de navegación globales

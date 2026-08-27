@@ -27,6 +27,7 @@ describe('AuthGuard', () => {
     campus: 'Lima Norte',
   };
   const seller: Profile = { ...buyer, id: 'seller-1', role: 'emprendedor' };
+  const admin: Profile = { ...buyer, id: 'admin-1', role: 'admin' };
   const suspended: Profile = { ...buyer, role: 'suspended_buyer' };
 
   let guard: AuthGuard;
@@ -70,13 +71,22 @@ describe('AuthGuard', () => {
     expect(router.serializeUrl(result as UrlTree)).toBe('/login');
   });
 
-  it('rejects a profile that does not have the expected role', async () => {
+  it('returns a seller to the seller panel when the buyer role is required', async () => {
     auth.profile.next(seller);
     auth.initialized.next(true);
 
     const result = await firstValueFrom(guard.canActivate(routeFor('comprador'), state));
 
-    expect(router.serializeUrl(result as UrlTree)).toBe('/buyer-panel');
+    expect(router.serializeUrl(result as UrlTree)).toBe('/seller');
+  });
+
+  it('returns an administrator to the admin panel when the buyer role is required', async () => {
+    auth.profile.next(admin);
+    auth.initialized.next(true);
+
+    const result = await firstValueFrom(guard.canActivate(routeFor('comprador'), state));
+
+    expect(router.serializeUrl(result as UrlTree)).toBe('/admin');
   });
 
   it('redirects a suspended buyer to login', async () => {

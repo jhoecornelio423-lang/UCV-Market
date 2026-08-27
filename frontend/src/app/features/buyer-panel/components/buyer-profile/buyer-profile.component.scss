@@ -67,17 +67,24 @@ $bg: #f4f6f9;
       width: 44px;
       height: 44px;
       border-radius: 50%;
-      background: $primary;
+      background: transparent;
       color: white;
-      border: 2px solid white;
+      border: 0;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: none;
 
       ion-icon {
-        font-size: 14px;
+        width: 28px;
+        height: 28px;
+        padding: 5px;
+        border: 2px solid white;
+        border-radius: 50%;
+        background: $primary;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        font-size: 16px;
       }
     }
   }

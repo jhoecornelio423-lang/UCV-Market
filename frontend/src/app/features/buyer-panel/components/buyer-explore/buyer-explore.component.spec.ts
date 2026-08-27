@@ -99,4 +99,26 @@ describe('BuyerExploreComponent', () => {
     expect(fixture.nativeElement.querySelector('.favorite-btn').getAttribute('aria-label'))
       .toBe('Agregar Brownie de chocolate a favoritos');
   });
+
+  it('uses the singular result label for one product', () => {
+    const product: Product = {
+      id: 'product-1',
+      seller_id: 'seller-1',
+      category_id: 'category-1',
+      name: 'Brownie de chocolate',
+      description: 'Brownie artesanal',
+      price: 5,
+      stock: 4,
+      is_active: true,
+      pickup_location: 'Campus UCV',
+    };
+    fixture.detectChanges();
+    component.filteredProducts$ = of([product]);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.results-count').textContent.trim())
+      .toBe('1 resultado');
+    expect(fixture.nativeElement.querySelector('.product-image img').getAttribute('alt'))
+      .toBe('Brownie de chocolate');
+  });
 });

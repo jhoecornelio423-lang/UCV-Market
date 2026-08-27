@@ -2,6 +2,7 @@ import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { isBuyerPrimaryRoute } from '../../core/navigation/buyer-navigation';
 
 @Component({
   selector: 'app-buyer-panel',
@@ -28,7 +29,7 @@ export class BuyerPanelComponent implements OnInit {
     this.currentPath = this.router.url;
   }
 
-  goTo(path: string) {
-    this.router.navigate([path]);
+  get showPrimaryNavigation(): boolean {
+    return isBuyerPrimaryRoute(this.currentPath);
   }
 }

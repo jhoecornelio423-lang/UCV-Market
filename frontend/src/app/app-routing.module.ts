@@ -7,7 +7,8 @@ const routes: Routes = [
   {
     path: 'buyer-panel',
     loadChildren: () => import('./features/buyer-panel/buyer-panel.module').then(m => m.BuyerPanelModule),
-    canActivate: [AuthGuard]
+    canActivate: [AuthGuard],
+    data: { expectedRoles: ['comprador'] }
   },
   {
     path: 'login',

@@ -1,7 +1,9 @@
 # Fase 1 de mejora de interfaces del comprador
 
-**Fecha:** 2026-08-27  
-**Estado:** pendiente de aprobación  
+**Fecha:** 2026-08-27
+
+**Estado:** aprobado e implementado
+
 **Alcance:** experiencia del rol comprador
 
 ## Objetivo

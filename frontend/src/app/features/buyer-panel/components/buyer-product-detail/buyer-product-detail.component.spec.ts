@@ -48,6 +48,14 @@ describe('BuyerProductDetailComponent', () => {
       stock: 4,
       is_active: true,
       pickup_location: 'Campus UCV',
+      seller: {
+        id: 'seller-1',
+        full_name: 'Postres UCV',
+        phone: '999999999',
+        role: 'emprendedor',
+        rating_average: 4.8,
+        campus: 'Lima Norte',
+      },
     };
     component.product = product;
     component.loading = false;
@@ -61,5 +69,9 @@ describe('BuyerProductDetailComponent', () => {
     expect(labels).toContain('Abrir carrito');
     expect(labels).toContain('Disminuir cantidad');
     expect(labels).toContain('Aumentar cantidad');
+    expect(fixture.nativeElement.querySelector('.image-header img').getAttribute('alt'))
+      .toBe('Brownie de chocolate');
+    expect(fixture.nativeElement.querySelector('.stat-label').textContent.trim())
+      .toBe('Calificación');
   });
 });

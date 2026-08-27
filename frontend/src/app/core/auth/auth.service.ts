@@ -1,6 +1,6 @@
 import { Injectable, inject, NgZone, Injector } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError, from } from 'rxjs';
-import { tap, catchError, map, switchMap, filter } from 'rxjs/operators';
+import { tap, catchError, switchMap, finalize, shareReplay } from 'rxjs/operators';
 import { Profile, UserRole } from '../models/profile.model';
 import { AuthRepository, AUTH_REPOSITORY } from '../repositories/auth.repository';
 import { SupabaseClientService } from '../database/supabase.client';
@@ -32,7 +32,13 @@ export class AuthService {
   public isInitialized$: Observable<boolean> = this.isInitializedSubject.asObservable();
   
   private profileSubscriptionChannel: any = null;
+  private profileSubscriptionUserId: string | null = null;
   private initialSessionResolved = false;
+  private sessionRevision = 0;
+  private activeSessionUserId: string | null = null;
+  private profileLoad$: Observable<Profile> | null = null;
+  private profileLoadUserId: string | null = null;
+  private profileLoadSessionRevision: number | null = null;
 
   constructor() {
     this.initializeSession();
@@ -44,6 +50,7 @@ export class AuthService {
    */
   private initializeSession(): void {
     const isOAuthCallback = window.location.hash.includes('access_token=') || window.location.search.includes('code=');
+    const bootstrapRevision = this.sessionRevision;
 
     // Fallback: si es callback pero no se inicializa en 3.5 segundos, forzar inicialización
     if (isOAuthCallback) {
@@ -72,6 +79,10 @@ export class AuthService {
       .then(({ data, error }) => {
         this.initialSessionResolved = true;
 
+        if (this.sessionRevision !== bootstrapRevision) {
+          return;
+        }
+
         if (error) {
           console.error('Error al recuperar la sesión inicial:', error);
           this.clearSessionState();
@@ -90,6 +101,9 @@ export class AuthService {
       })
       .catch(error => {
         this.initialSessionResolved = true;
+        if (this.sessionRevision !== bootstrapRevision) {
+          return;
+        }
         console.error('Error inesperado al inicializar la sesión:', error);
         this.clearSessionState();
       });
@@ -102,10 +116,45 @@ export class AuthService {
     }
 
     const userId = session.user.id;
-    if (!this.profileSubscriptionChannel) {
+    const revision = this.prepareSession(userId);
+
+    this.getOrLoadCurrentProfile(userId, revision).pipe(
+      catchError(err => {
+        if (!this.isCurrentSession(revision, userId)) {
+          return of(null);
+        }
+        console.error('Error al recuperar el perfil del usuario:', err);
+        this.currentProfileSubject.next(null);
+        this.isInitializedSubject.next(true);
+        return of(null);
+      })
+    ).subscribe();
+  }
+
+  private prepareSession(userId: string): number {
+    const isDifferentUser = this.activeSessionUserId !== userId;
+    if (isDifferentUser) {
+      this.sessionRevision++;
+    }
+    const revision = this.sessionRevision;
+    this.activeSessionUserId = userId;
+
+    if (isDifferentUser) {
+      this.currentProfileSubject.next(null);
+      this.isInitializedSubject.next(false);
+    }
+
+    if (this.profileSubscriptionUserId !== userId) {
+      if (this.profileSubscriptionChannel) {
+        this.supabaseService.client.removeChannel(this.profileSubscriptionChannel);
+      }
       this.profileSubscriptionChannel = this.supabaseService.client.channel(`profile-updates-${userId}`);
+      this.profileSubscriptionUserId = userId;
       this.profileSubscriptionChannel
         .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload: any) => {
+          if (this.activeSessionUserId !== userId) {
+            return;
+          }
           const updatedProfile = payload.new as Profile;
           if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
             this.zone.run(() => {
@@ -118,25 +167,63 @@ export class AuthService {
         .subscribe();
     }
 
-    this.authRepository.getProfile(userId).pipe(
-      tap(profile => {
-        this.currentProfileSubject.next(profile);
-        this.isInitializedSubject.next(true);
+    return revision;
+  }
+
+  private publishProfile(profile: Profile): void {
+    this.currentProfileSubject.next(profile);
+    this.isInitializedSubject.next(true);
+  }
+
+  private getOrLoadCurrentProfile(userId: string, revision: number): Observable<Profile> {
+    if (
+      this.profileLoad$ &&
+      this.profileLoadUserId === userId &&
+      this.profileLoadSessionRevision === revision
+    ) {
+      return this.profileLoad$;
+    }
+
+    let request$: Observable<Profile>;
+    request$ = this.authRepository.getProfile(userId).pipe(
+      switchMap(profile => {
+        if (!this.isCurrentSession(revision, userId)) {
+          return this.authenticationCancelled();
+        }
+        this.publishProfile(profile);
+        return of(profile);
       }),
-      catchError(err => {
-        console.error('Error al recuperar el perfil del usuario:', err);
-        this.currentProfileSubject.next(null);
-        this.isInitializedSubject.next(true);
-        return of(null);
-      })
-    ).subscribe();
+      finalize(() => {
+        if (this.profileLoad$ === request$) {
+          this.profileLoad$ = null;
+          this.profileLoadUserId = null;
+          this.profileLoadSessionRevision = null;
+        }
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+
+    this.profileLoad$ = request$;
+    this.profileLoadUserId = userId;
+    this.profileLoadSessionRevision = revision;
+    return request$;
+  }
+
+  private isCurrentSession(revision: number, userId: string): boolean {
+    return this.sessionRevision === revision && this.activeSessionUserId === userId;
   }
 
   private clearSessionState(): void {
+    this.sessionRevision++;
+    this.activeSessionUserId = null;
     if (this.profileSubscriptionChannel) {
       this.supabaseService.client.removeChannel(this.profileSubscriptionChannel);
       this.profileSubscriptionChannel = null;
     }
+    this.profileSubscriptionUserId = null;
+    this.profileLoad$ = null;
+    this.profileLoadUserId = null;
+    this.profileLoadSessionRevision = null;
     this.currentProfileSubject.next(null);
     this.isInitializedSubject.next(true);
   }
@@ -145,10 +232,14 @@ export class AuthService {
    * Registra un nuevo estudiante UCV.
    */
   signUp(email: string, password: string, fullName: string, phone: string, studentCode: string, role: UserRole, campus: string): Observable<Profile> {
+    const requestRevision = this.sessionRevision;
     return this.authRepository.signUp(email, password, fullName, phone, studentCode, role, campus).pipe(
-      tap(profile => {
-        // La sesión se inicia automáticamente en el cliente tras el registro en Supabase
-        this.currentProfileSubject.next(profile);
+      switchMap(profile => {
+        const profileRevision = this.resolveAuthenticationRevision(requestRevision, profile.id);
+        if (profileRevision === null) {
+          return this.authenticationCancelled();
+        }
+        return this.getOrLoadCurrentProfile(profile.id, profileRevision);
       })
     );
   }
@@ -157,17 +248,32 @@ export class AuthService {
    * Inicia sesión con correo institucional y contraseña.
    */
   signIn(email: string, password: string): Observable<Profile> {
+    const requestRevision = this.sessionRevision;
     return this.authRepository.signIn(email, password).pipe(
       switchMap(sessionData => {
         if (!sessionData.user) {
           return throwError(() => new Error('Error al iniciar sesión: Usuario no retornado'));
         }
-        return this.authRepository.getProfile(sessionData.user.id);
-      }),
-      tap(profile => {
-        this.currentProfileSubject.next(profile);
+        const userId = sessionData.user.id;
+        const revision = this.resolveAuthenticationRevision(requestRevision, userId);
+        if (revision === null) {
+          return this.authenticationCancelled();
+        }
+        return this.getOrLoadCurrentProfile(userId, revision);
       })
     );
+  }
+
+  private resolveAuthenticationRevision(requestRevision: number, userId: string): number | null {
+    if (this.sessionRevision === requestRevision) {
+      return this.prepareSession(userId);
+    }
+
+    return this.activeSessionUserId === userId ? this.sessionRevision : null;
+  }
+
+  private authenticationCancelled(): Observable<never> {
+    return throwError(() => new Error('La operación de autenticación fue cancelada por un cambio de sesión.'));
   }
 
   /**
@@ -187,7 +293,7 @@ export class AuthService {
     return from(notificationService.cleanupPushRegistration()).pipe(
       switchMap(() => this.authRepository.signOut()),
       tap(() => {
-        this.currentProfileSubject.next(null);
+        this.clearSessionState();
         // Evitar que el carrito del usuario anterior quede en este dispositivo
         this.cartService.clearCart();
       })
