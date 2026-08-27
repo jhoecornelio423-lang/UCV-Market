@@ -11,7 +11,7 @@
       <ion-icon name="search-outline"></ion-icon>
       <input type="text" placeholder="Busca productos o emprendedores..." (input)="onSearch($event)">
     </div>
-    <button class="filter-btn" (click)="toggleFilters($event)">
+    <button type="button" class="filter-btn" (click)="toggleFilters($event)" aria-label="Abrir filtros" title="Abrir filtros">
       <ion-icon name="filter-outline" [class.active-filter]="(sortBy$ | async) !== 'none' || (onlyAvailable$ | async)"></ion-icon>
     </button>
 
@@ -80,27 +80,29 @@
   </div>
 
   <!-- Emprendimientos (Sellers) -->
-  <div class="section-title">
-    <h2>EMPRENDIMIENTOS</h2>
-  </div>
-  <div class="sellers-scroll">
-    <div class="seller-card" *ngFor="let seller of sellers" [routerLink]="['/buyer-panel/seller-store', seller.id]">
-      <div class="seller-image-wrapper">
-        <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" alt="seller" />
-      </div>
-      <div class="seller-info">
-        <h3>{{ seller.full_name }}</h3>
-        <p class="s-category">{{ seller.business_category || 'Emprendimiento' }}</p>
-        <div class="s-meta">
-          <ng-container *ngIf="seller.rating_average">
-            <ion-icon name="star" class="star-icon"></ion-icon>
-            <span class="rating">{{ seller.rating_average | number:'1.1-1' }}</span>
-          </ng-container>
-        </div>
-      </div>
-      <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+  <section class="sellers-section" *ngIf="sellers.length > 0">
+    <div class="section-title">
+      <h2>EMPRENDIMIENTOS</h2>
     </div>
-  </div>
+    <div class="sellers-scroll">
+      <div class="seller-card" *ngFor="let seller of sellers" [routerLink]="['/buyer-panel/seller-store', seller.id]">
+        <div class="seller-image-wrapper">
+          <img [src]="seller.avatar_url || 'assets/images/default-avatar.png'" [alt]="'Emprendimiento de ' + seller.full_name" />
+        </div>
+        <div class="seller-info">
+          <h3>{{ seller.full_name }}</h3>
+          <p class="s-category">{{ seller.business_category || 'Emprendimiento' }}</p>
+          <div class="s-meta">
+            <ng-container *ngIf="seller.rating_average">
+              <ion-icon name="star" class="star-icon"></ion-icon>
+              <span class="rating">{{ seller.rating_average | number:'1.1-1' }}</span>
+            </ng-container>
+          </div>
+        </div>
+        <ion-icon name="chevron-forward-outline" class="arrow-icon"></ion-icon>
+      </div>
+    </div>
+  </section>
 
   <!-- Productos -->
   <div class="section-title">
@@ -114,12 +116,10 @@
       <div class="product-details">
         <div class="p-header">
           <h3>{{ product.name }}</h3>
-          <ion-icon 
-            name="heart" 
-            class="heart-icon" 
-            [class.active]="isFavorite(product.id)"
-            (click)="toggleFavorite(product, $event)">
-          </ion-icon>
+          <button type="button" class="favorite-btn" (click)="toggleFavorite(product, $event)"
+                  [attr.aria-label]="(isFavorite(product.id) ? 'Quitar ' : 'Agregar ') + product.name + (isFavorite(product.id) ? ' de favoritos' : ' a favoritos')">
+            <ion-icon name="heart" class="heart-icon" [class.active]="isFavorite(product.id)"></ion-icon>
+          </button>
         </div>
         <p class="p-seller">{{ product.seller?.full_name || 'Vendedor' }}</p>
         <div class="p-meta">

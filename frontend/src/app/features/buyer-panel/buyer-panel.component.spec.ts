@@ -22,4 +22,18 @@ describe('BuyerPanelComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('delegates bottom navigation only to routerLink', () => {
+    spyOn(component, 'goTo');
+    fixture.detectChanges();
+
+    const navigationButtons = Array.from(
+      fixture.nativeElement.querySelectorAll('.bottom-navigation-figma .nav-item-figma')
+    ) as HTMLButtonElement[];
+
+    navigationButtons.forEach(button => button.click());
+
+    expect(navigationButtons.length).toBe(5);
+    expect(component.goTo).not.toHaveBeenCalled();
+  });
 });

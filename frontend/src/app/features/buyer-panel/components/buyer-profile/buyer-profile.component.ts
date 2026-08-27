@@ -111,6 +111,10 @@ export class BuyerProfileComponent implements OnInit, OnDestroy {
     this.router.navigate(['/buyer-panel/orders']);
   }
 
+  goToFavorites() {
+    this.router.navigate(['/buyer-panel/favorites']);
+  }
+
   openSellerSection() {
     if (this.profile?.role === 'emprendedor') {
       this.router.navigate(['/seller']);

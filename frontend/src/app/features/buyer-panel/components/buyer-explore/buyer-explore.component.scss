@@ -271,13 +271,24 @@ $bg: #f4f6f9;
           margin: 0 0 4px;
         }
 
-        .heart-icon {
-          color: #d1d5db; // default outline color
-          font-size: 18px;
+        .favorite-btn {
+          min-width: 44px;
+          min-height: 44px;
+          margin: -10px;
+          border: 0;
+          background: transparent;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
           cursor: pointer;
-          
-          &.active {
-            color: $primary;
+
+          .heart-icon {
+            color: #d1d5db;
+            font-size: 18px;
+
+            &.active {
+              color: $primary;
+            }
           }
         }
       }

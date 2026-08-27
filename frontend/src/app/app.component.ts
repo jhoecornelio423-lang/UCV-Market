@@ -41,10 +41,33 @@ export class AppComponent implements OnInit {
   }
 
   private updateSidebarVisibility() {
-    const path = this.currentPath || this.router.url;
+    const path = this.normalizePath(this.currentPath || this.router.url);
     const hiddenRoutes = ['/login', '/admin'];
     const isHiddenRoute = hiddenRoutes.some(route => path.startsWith(route));
-    this.showSidebar = !!this.userProfile && this.userProfile.role !== 'admin' && !isHiddenRoute;
+
+    if (!this.userProfile || this.userProfile.role === 'admin' || isHiddenRoute) {
+      this.showSidebar = false;
+      return;
+    }
+
+    if (this.userProfile.role === 'comprador') {
+      const buyerPrimaryRoutes = new Set([
+        '/buyer-panel/catalog',
+        '/buyer-panel/explore',
+        '/buyer-panel/orders',
+        '/buyer-panel/favorites',
+        '/buyer-panel/profile',
+      ]);
+      this.showSidebar = buyerPrimaryRoutes.has(path);
+      return;
+    }
+
+    this.showSidebar = true;
+  }
+
+  private normalizePath(path: string): string {
+    const cleanPath = path.split(/[?#]/, 1)[0];
+    return cleanPath.length > 1 ? cleanPath.replace(/\/+$/, '') : cleanPath;
   }
 
   // Métodos de navegación globales

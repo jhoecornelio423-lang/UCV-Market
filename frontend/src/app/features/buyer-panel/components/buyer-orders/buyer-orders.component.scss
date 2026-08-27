@@ -89,7 +89,34 @@ $bg: #f8f9fb;
   }
 }
 
-.empty-state { text-align: center; padding: 60px 20px; color: $muted; ion-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.5; } }
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: $muted;
+
+  ion-icon { font-size: 48px; margin-bottom: 10px; opacity: 0.5; }
+  h2 { margin: 0 0 8px; color: $navy; font-size: 20px; }
+  p { margin: 0 auto; max-width: 360px; line-height: 1.5; }
+
+  .empty-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    margin-top: 20px;
+    padding: 0 22px;
+    border-radius: 12px;
+    background: $primary;
+    color: white;
+    font-weight: 800;
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 3px solid rgba($primary, 0.3);
+      outline-offset: 3px;
+    }
+  }
+}
 
 /* Nav Bar Figma */
 .bottom-navigation-figma {

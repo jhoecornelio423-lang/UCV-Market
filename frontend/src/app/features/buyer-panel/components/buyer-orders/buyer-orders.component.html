@@ -23,7 +23,15 @@
     <!-- Empty State -->
     <div *ngIf="!loading && visibleOrders.length === 0" class="empty-state">
       <ion-icon name="bag-handle-outline"></ion-icon>
-      <p>No hay pedidos en esta sección</p>
+      <ng-container *ngIf="buyerFilter === 'active'; else emptyHistory">
+        <h2>Todavía no tienes pedidos activos</h2>
+        <p>Explora los productos disponibles y realiza tu primera compra.</p>
+        <a class="empty-action" routerLink="/buyer-panel/explore">Explorar productos</a>
+      </ng-container>
+      <ng-template #emptyHistory>
+        <h2>Aún no tienes compras finalizadas</h2>
+        <p>Aquí aparecerán los pedidos completados o cancelados.</p>
+      </ng-template>
     </div>
 
     <!-- Orders List -->

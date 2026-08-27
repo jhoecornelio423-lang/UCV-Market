@@ -32,6 +32,7 @@ export class AuthService {
   public isInitialized$: Observable<boolean> = this.isInitializedSubject.asObservable();
   
   private profileSubscriptionChannel: any = null;
+  private initialSessionResolved = false;
 
   constructor() {
     this.initializeSession();
@@ -43,7 +44,6 @@ export class AuthService {
    */
   private initializeSession(): void {
     const isOAuthCallback = window.location.hash.includes('access_token=') || window.location.search.includes('code=');
-    let hasSkippedInitialNull = false;
 
     // Fallback: si es callback pero no se inicializa en 3.5 segundos, forzar inicialización
     if (isOAuthCallback) {
@@ -55,56 +55,90 @@ export class AuthService {
       }, 3500);
     }
 
-    // Escuchar los cambios en el estado de autenticación (login, logout, token refresh)
+    // Mantener la sesión sincronizada después de la carga inicial.
     this.supabaseService.client.auth.onAuthStateChange((event, session) => {
       console.log('DEBUG: Evento Auth:', event, 'Sesión activa:', !!session);
 
-      if (session?.user) {
-        // Suscribirse a cambios en tiempo real del perfil para suspensión en vivo
-        const userId = session.user.id;
-        if (!this.profileSubscriptionChannel) {
-          this.profileSubscriptionChannel = this.supabaseService.client.channel(`profile-updates-${userId}`);
-          this.profileSubscriptionChannel
-            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload: any) => {
-              const updatedProfile = payload.new as Profile;
-              if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
-                 this.zone.run(() => {
-                   this.redirectUserByRole(updatedProfile);
-                 });
-              } else {
-                 this.currentProfileSubject.next(updatedProfile);
-              }
-            })
-            .subscribe();
-        }
+      // La lectura explícita con getSession es la fuente de verdad inicial.
+      if (event === 'INITIAL_SESSION' && !this.initialSessionResolved) {
+        return;
+      }
 
-        this.authRepository.getProfile(userId).pipe(
-          tap(profile => {
-            this.currentProfileSubject.next(profile);
-            this.isInitializedSubject.next(true);
-          }),
-          catchError(err => {
-            console.error('Error al recuperar el perfil del usuario:', err);
-            this.currentProfileSubject.next(null);
-            this.isInitializedSubject.next(true);
-            return of(null);
-          })
-        ).subscribe();
-      } else {
-        if (this.profileSubscriptionChannel) {
-          this.supabaseService.client.removeChannel(this.profileSubscriptionChannel);
-          this.profileSubscriptionChannel = null;
-        }
-        // Si es callback de OAuth y es el primer evento (que es null), esperamos a que se procese
-        if (isOAuthCallback && !hasSkippedInitialNull) {
-          hasSkippedInitialNull = true;
-          console.log('DEBUG: Omitiendo estado null inicial porque se detectó redirección OAuth en la URL.');
+      this.applySession(session);
+    });
+
+    // Resolver de forma determinista la sesión persistida antes de liberar los guards.
+    this.supabaseService.client.auth.getSession()
+      .then(({ data, error }) => {
+        this.initialSessionResolved = true;
+
+        if (error) {
+          console.error('Error al recuperar la sesión inicial:', error);
+          this.clearSessionState();
           return;
         }
+
+        if (data.session?.user) {
+          this.applySession(data.session);
+          return;
+        }
+
+        // Supabase todavía puede estar procesando los parámetros de un callback OAuth.
+        if (!isOAuthCallback) {
+          this.clearSessionState();
+        }
+      })
+      .catch(error => {
+        this.initialSessionResolved = true;
+        console.error('Error inesperado al inicializar la sesión:', error);
+        this.clearSessionState();
+      });
+  }
+
+  private applySession(session: any): void {
+    if (!session?.user) {
+      this.clearSessionState();
+      return;
+    }
+
+    const userId = session.user.id;
+    if (!this.profileSubscriptionChannel) {
+      this.profileSubscriptionChannel = this.supabaseService.client.channel(`profile-updates-${userId}`);
+      this.profileSubscriptionChannel
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'profiles', filter: `id=eq.${userId}` }, (payload: any) => {
+          const updatedProfile = payload.new as Profile;
+          if (updatedProfile.role === 'suspended' || updatedProfile.role === 'suspended_buyer') {
+            this.zone.run(() => {
+              this.redirectUserByRole(updatedProfile);
+            });
+          } else {
+            this.currentProfileSubject.next(updatedProfile);
+          }
+        })
+        .subscribe();
+    }
+
+    this.authRepository.getProfile(userId).pipe(
+      tap(profile => {
+        this.currentProfileSubject.next(profile);
+        this.isInitializedSubject.next(true);
+      }),
+      catchError(err => {
+        console.error('Error al recuperar el perfil del usuario:', err);
         this.currentProfileSubject.next(null);
         this.isInitializedSubject.next(true);
-      }
-    });
+        return of(null);
+      })
+    ).subscribe();
+  }
+
+  private clearSessionState(): void {
+    if (this.profileSubscriptionChannel) {
+      this.supabaseService.client.removeChannel(this.profileSubscriptionChannel);
+      this.profileSubscriptionChannel = null;
+    }
+    this.currentProfileSubject.next(null);
+    this.isInitializedSubject.next(true);
   }
 
   /**
@@ -179,15 +213,6 @@ export class AuthService {
    */
   isAuthenticated(): boolean {
     return this.currentProfileSubject.value !== null;
-  }
-
-  /**
-   * Verifica contra Supabase si existe una sesión (sin depender del perfil en memoria).
-   */
-  hasActiveSession(): Promise<boolean> {
-    return this.supabaseService.client.auth.getSession().then(({ data, error }) => {
-      return !error && !!data?.session;
-    });
   }
 
   /**

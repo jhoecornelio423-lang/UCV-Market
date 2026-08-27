@@ -22,4 +22,19 @@ describe('BuyerProfileComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('uses native controls for changing the avatar and opening profile statistics', () => {
+    fixture.detectChanges();
+
+    const cameraButton = fixture.nativeElement.querySelector('.camera-btn') as HTMLButtonElement;
+    const statControls = Array.from(
+      fixture.nativeElement.querySelectorAll('.stats-card button.stat-item')
+    ) as HTMLButtonElement[];
+
+    expect(cameraButton.getAttribute('aria-label')).toBe('Cambiar foto de perfil');
+    expect(statControls.map(button => button.textContent?.trim())).toEqual([
+      jasmine.stringMatching(/Pedidos/),
+      jasmine.stringMatching(/Favoritos/),
+    ]);
+  });
 });

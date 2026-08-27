@@ -146,6 +146,14 @@ $sidebar-width: 280px;
       }
       .back-btn {
         color: $navy;
+        min-width: 44px;
+        min-height: 44px;
+        border: 0;
+        background: transparent;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
       }
     }
   }
@@ -189,7 +197,7 @@ $sidebar-width: 280px;
       .title-row {
         display: flex; justify-content: space-between; align-items: flex-start;
         h4 { font-size: 15px; font-weight: 800; color: $navy; margin: 0; }
-        .remove-btn { background: transparent; border: none; color: #D1D5DB; font-size: 20px; padding: 0; }
+        .remove-btn { background: transparent; border: none; color: #D1D5DB; font-size: 20px; padding: 0; min-width: 44px; min-height: 44px; }
       }
       .seller { font-size: 12px; font-weight: 500; color: #9CA3AF; margin: 4px 0 12px; }
       .price-qty-row {
@@ -199,7 +207,7 @@ $sidebar-width: 280px;
           display: flex; align-items: center; gap: 8px;
           background: $primary-light; border-radius: 20px; padding: 4px 6px;
           button {
-            width: 24px; height: 24px; border-radius: 50%; background: transparent;
+            min-width: 44px; min-height: 44px; border-radius: 50%; background: transparent;
             border: none; display: flex; align-items: center; justify-content: center;
             color: $primary; font-size: 16px;
           }

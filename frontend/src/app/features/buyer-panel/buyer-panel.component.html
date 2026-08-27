@@ -5,23 +5,23 @@
 
   <!-- Bottom Navigation for Mobile / Tablet -->
   <nav *ngIf="!currentPath.includes('/buyer-panel/cart') && !currentPath.includes('/buyer-panel/notifications') && !currentPath.includes('/buyer-panel/checkout') && !currentPath.includes('/buyer-panel/product') && !currentPath.includes('/buyer-panel/order-confirmed') && !currentPath.includes('/buyer-panel/seller-store')" class="bottom-navigation-figma ion-hide-lg-up">
-    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/catalog')" routerLink="/buyer-panel/catalog" (click)="goTo('/buyer-panel/catalog')">
+    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/catalog')" routerLink="/buyer-panel/catalog">
       <ion-icon name="home-outline"></ion-icon>
       <span>Inicio</span>
     </button>
-    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/explore')" routerLink="/buyer-panel/explore" (click)="goTo('/buyer-panel/explore')">
+    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/explore')" routerLink="/buyer-panel/explore">
       <ion-icon name="compass-outline"></ion-icon>
       <span>Explorar</span>
     </button>
-    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/orders')" routerLink="/buyer-panel/orders" (click)="goTo('/buyer-panel/orders')">
+    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/orders')" routerLink="/buyer-panel/orders">
       <ion-icon name="receipt-outline"></ion-icon>
       <span>Pedidos</span>
     </button>
-    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/favorites')" routerLink="/buyer-panel/favorites" (click)="goTo('/buyer-panel/favorites')">
+    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/favorites')" routerLink="/buyer-panel/favorites">
       <ion-icon name="heart-outline"></ion-icon>
       <span>Favoritos</span>
     </button>
-    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/profile')" routerLink="/buyer-panel/profile" (click)="goTo('/buyer-panel/profile')">
+    <button type="button" class="nav-item-figma" [class.active]="currentPath.includes('/buyer-panel/profile')" routerLink="/buyer-panel/profile">
       <ion-icon name="person-outline"></ion-icon>
       <span>Perfil</span>
     </button>

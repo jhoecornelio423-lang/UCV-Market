@@ -9,15 +9,17 @@
     <div class="image-header">
       <img [src]="getProductImage()" [alt]="product.name" />
       
-      <button class="back-btn" (click)="goBack()">
+      <button type="button" class="back-btn" (click)="goBack()" aria-label="Volver al catálogo" title="Volver al catálogo">
         <ion-icon name="arrow-back-outline"></ion-icon>
       </button>
 
       <div class="top-actions">
-        <button class="action-btn" (click)="toggleFavorite()">
+        <button type="button" class="action-btn" (click)="toggleFavorite()"
+                [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'"
+                [title]="isFavorite() ? 'Quitar de favoritos' : 'Agregar a favoritos'">
           <ion-icon name="heart" [class.active]="isFavorite()"></ion-icon>
         </button>
-        <button class="action-btn" routerLink="/buyer-panel/cart">
+        <button type="button" class="action-btn" routerLink="/buyer-panel/cart" aria-label="Abrir carrito" title="Abrir carrito">
           <ion-icon name="cart-outline"></ion-icon>
         </button>
       </div>
@@ -66,11 +68,11 @@
       <div class="quantity-section" *ngIf="product.stock > 0">
         <h3>Cantidad</h3>
         <div class="qty-selector">
-          <button (click)="decreaseQty()" [disabled]="quantity <= 1">
+          <button type="button" (click)="decreaseQty()" [disabled]="quantity <= 1" aria-label="Disminuir cantidad" title="Disminuir cantidad">
             <ion-icon name="remove-outline"></ion-icon>
           </button>
           <span class="qty-value">{{ quantity }}</span>
-          <button (click)="increaseQty()" [disabled]="quantity >= product.stock" class="add">
+          <button type="button" (click)="increaseQty()" [disabled]="quantity >= product.stock" class="add" aria-label="Aumentar cantidad" title="Aumentar cantidad">
             <ion-icon name="add-outline"></ion-icon>
           </button>
         </div>

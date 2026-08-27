@@ -101,6 +101,10 @@ export class BuyerCartComponent implements OnInit, OnDestroy {
     this.router.navigate(['/buyer-panel/explore']);
   }
 
+  goToCatalog() {
+    this.router.navigate(['/buyer-panel/catalog']);
+  }
+
   goToOrders() {
     this.router.navigate(['/buyer-panel/orders']);
   }
