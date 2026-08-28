@@ -6,43 +6,43 @@
   <div class="business-scroll-area">
     <div class="business-visuals">
       <div class="banner-wrapper">
-        <img [src]="businessBannerUrl" alt="Banner" (error)="onBannerError()">
-        <button class="edit-banner-btn" type="button" (click)="bannerInput.click()">
+        <img [src]="businessBannerUrl" [alt]="'Banner de ' + (bName || 'mi negocio')" (error)="onBannerError()">
+        <button class="edit-banner-btn" type="button" aria-label="Cambiar banner del negocio" (click)="bannerInput.click()">
           <ion-icon name="camera-outline"></ion-icon>
         </button>
-        <input type="file" #bannerInput style="display: none;" (change)="onBannerSelected($event)" accept="image/*">
+        <input id="business-banner" name="businessBanner" type="file" #bannerInput style="display: none;" (change)="onBannerSelected($event)" accept="image/*">
       </div>
-      <div class="profile-pic-wrapper" (click)="avatarInput.click()">
-        <img [src]="businessAvatarUrl" alt="Perfil" (error)="onAvatarError()">
+      <label class="profile-pic-wrapper" for="business-avatar" aria-label="Cambiar foto del negocio">
+        <img [src]="businessAvatarUrl" [alt]="'Foto de ' + (bName || 'mi negocio')" (error)="onAvatarError()">
         <div class="avatar-edit-overlay">
           <ion-icon name="camera-outline"></ion-icon>
         </div>
-        <input type="file" #avatarInput style="display: none;" (change)="onAvatarSelected($event)" accept="image/*">
-      </div>
+        <input id="business-avatar" name="businessAvatar" type="file" #avatarInput style="display: none;" (change)="onAvatarSelected($event)" accept="image/*">
+      </label>
     </div>
 
     <div class="business-card-figma">
       <div class="input-group-figma">
-        <label>Nombre del negocio</label>
-        <input type="text" [(ngModel)]="bName">
+        <label for="business-name">Nombre del negocio</label>
+        <input id="business-name" name="businessName" type="text" [(ngModel)]="bName">
       </div>
       <div class="divider-line"></div>
       <div class="input-group-figma">
-        <label>Categoría</label>
-        <input type="text" [(ngModel)]="bCategory">
+        <label for="business-category">Categoría</label>
+        <input id="business-category" name="businessCategory" type="text" [(ngModel)]="bCategory">
       </div>
       <div class="divider-line"></div>
       <div class="input-group-figma">
-        <label>Descripción</label>
-        <textarea [(ngModel)]="bDescription" rows="3"></textarea>
+        <label for="business-description">Descripción</label>
+        <textarea id="business-description" name="businessDescription" [(ngModel)]="bDescription" rows="3"></textarea>
       </div>
     </div>
 
     <div class="business-card-figma">
       <div class="input-group-figma location-group">
-        <label>UBICACIÓN EN EL CAMPUS</label>
+        <label for="business-location">UBICACIÓN EN EL CAMPUS</label>
         <div class="location-input-wrapper">
-          <input type="text" [(ngModel)]="bLocation">
+          <input id="business-location" name="businessLocation" type="text" [(ngModel)]="bLocation">
           <div class="red-dot"></div>
         </div>
       </div>
@@ -51,12 +51,12 @@
         <label class="section-label">HORARIO DE ATENCIÓN</label>
         <div class="time-inputs-row">
           <div class="time-field">
-            <span>Apertura</span>
-            <input type="time" [(ngModel)]="bOpenTime">
+            <label for="business-open-time">Apertura</label>
+            <input id="business-open-time" name="businessOpenTime" type="time" [(ngModel)]="bOpenTime">
           </div>
           <div class="time-field">
-            <span>Cierre</span>
-            <input type="time" [(ngModel)]="bCloseTime">
+            <label for="business-close-time">Cierre</label>
+            <input id="business-close-time" name="businessCloseTime" type="time" [(ngModel)]="bCloseTime">
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@
           <h3>Aceptando pedidos</h3>
           <p>Los estudiantes pueden hacer pedidos</p>
         </div>
-        <ion-toggle color="danger" [(ngModel)]="bAcceptingOrders"></ion-toggle>
+        <ion-toggle id="accepting-orders" name="acceptingOrders" aria-label="Aceptar pedidos" color="danger" [(ngModel)]="bAcceptingOrders"></ion-toggle>
       </div>
 
       <div class="toggle-row">
@@ -76,20 +76,20 @@
           <h3>Notificaciones push</h3>
           <p>Recibe alertas de nuevos pedidos</p>
         </div>
-        <ion-toggle color="danger" [(ngModel)]="bPushEnabled"></ion-toggle>
+        <ion-toggle id="push-notifications" name="pushNotifications" aria-label="Notificaciones push" color="danger" [(ngModel)]="bPushEnabled"></ion-toggle>
       </div>
 
-      <div class="toggle-row support-row" (click)="contactSupport()" style="cursor: pointer;">
+      <button type="button" class="toggle-row support-row" (click)="contactSupport()">
         <div class="toggle-info">
           <h3>Contactar con Soporte</h3>
           <p>¿Problemas o sugerencias? Escríbenos</p>
         </div>
         <ion-icon name="chevron-forward-outline" color="medium" style="font-size: 20px;"></ion-icon>
-      </div>
+      </button>
     </div>
 
     <div class="footer-actions-business">
-      <button class="btn-save-business" (click)="saveBusinessInfo()">
+      <button type="button" class="btn-save-business" (click)="saveBusinessInfo()">
         Guardar cambios
       </button>
     </div>

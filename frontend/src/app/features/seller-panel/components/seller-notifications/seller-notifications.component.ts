@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { NotificationService, AppNotification } from '../../../../core/services/notification.service';
 
 @Component({
@@ -14,6 +14,7 @@ export class SellerNotificationsComponent {
   private router = inject(Router);
 
   notifications$: Observable<AppNotification[]> = this.notificationService.notifications$;
+  hasUnread$ = this.notifications$.pipe(map(notifications => notifications.some(notification => notification.unread)));
 
   markAllAsRead() {
     this.notificationService.markAllAsRead();

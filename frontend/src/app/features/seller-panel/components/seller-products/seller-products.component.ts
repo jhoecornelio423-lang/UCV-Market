@@ -21,6 +21,25 @@ export class SellerProductsComponent {
   products$ = this.sellerState.products$;
   categories$ = this.sellerState.categories$;
   loading$ = this.sellerState.loading$;
+  searchTerm = '';
+  statusFilter: 'all' | 'active' | 'inactive' = 'all';
+
+  filterProducts(products: Product[]): Product[] {
+    const term = this.searchTerm.trim().toLocaleLowerCase('es-PE');
+    return products.filter(product => {
+      const matchesName = !term || product.name.toLocaleLowerCase('es-PE').includes(term);
+      const available = product.is_active && product.stock > 0;
+      const matchesStatus = this.statusFilter === 'all'
+        || (this.statusFilter === 'active' && available)
+        || (this.statusFilter === 'inactive' && !available);
+      return matchesName && matchesStatus;
+    });
+  }
+
+  clearFilters(): void {
+    this.searchTerm = '';
+    this.statusFilter = 'all';
+  }
 
   openCreateForm() {
     this.router.navigate(['/seller/product-form']);

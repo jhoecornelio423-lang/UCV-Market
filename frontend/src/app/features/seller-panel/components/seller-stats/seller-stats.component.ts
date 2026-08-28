@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { SellerStateService } from '../../services/seller-state.service';
 import { ToastController } from '@ionic/angular';
+import { MonthlySalesPoint } from '../../services/seller-stats-calculator';
 
 @Component({
   selector: 'app-seller-stats',
@@ -24,18 +25,18 @@ export class SellerStatsComponent implements OnInit {
 
   getMaxSales(): number {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return 10;
-    const max = Math.max(...stats.salesData.map((d: any) => d.ventas));
+    if (!stats.monthlySalesData?.length) return 10;
+    const max = Math.max(...stats.monthlySalesData.map((d: MonthlySalesPoint) => d.sales));
     return max > 0 ? max : 10;
   }
 
   get svgLinePath(): string {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return '';
+    if (!stats.monthlySalesData) return '';
     const max = this.getMaxSales();
-    const points = stats.salesData.map((d: any, i: number) => {
-      const x = 50 + i * 100;
-      const y = 140 - (d.ventas / max) * 110;
+    const points = stats.monthlySalesData.map((d: MonthlySalesPoint, i: number) => {
+      const x = this.getChartPointX(i);
+      const y = 140 - (d.sales / max) * 110;
       return `${x},${y}`;
     });
     return `M ${points.join(' L ')}`;
@@ -43,19 +44,22 @@ export class SellerStatsComponent implements OnInit {
 
   get svgAreaPath(): string {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return '';
+    if (!stats.monthlySalesData) return '';
     const max = this.getMaxSales();
-    const points = stats.salesData.map((d: any, i: number) => {
-      const x = 50 + i * 100;
-      const y = 140 - (d.ventas / max) * 110;
+    const points = stats.monthlySalesData.map((d: MonthlySalesPoint, i: number) => {
+      const x = this.getChartPointX(i);
+      const y = 140 - (d.sales / max) * 110;
       return `${x},${y}`;
     });
     if (points.length === 0) return '';
-    return `M 50,140 L ${points.join(' L ')} L 650,140 Z`;
+    const firstX = this.getChartPointX(0);
+    const lastX = this.getChartPointX(points.length - 1);
+    return `M ${firstX},140 L ${points.join(' L ')} L ${lastX},140 Z`;
   }
 
   getChartPointX(index: number): number {
-    return 50 + index * 100;
+    const count = this.sellerState['statsSubject'].value.monthlySalesData?.length || 0;
+    return count <= 1 ? 350 : 50 + index * (600 / (count - 1));
   }
 
   getChartPointY(val: number): number {
@@ -63,13 +67,25 @@ export class SellerStatsComponent implements OnInit {
     return 140 - (val / max) * 110;
   }
 
-  async onChartBarClick(data: any) {
+  async onChartBarClick(data: MonthlySalesPoint) {
     const toast = await this.toastCtrl.create({
-      message: `Ventas del ${data.day}: ${data.ventas} pedidos realizados.`,
+      message: `${data.label}: S/ ${data.sales.toFixed(2)} en ${this.ordersLabel(data.orders)}.`,
       duration: 2000,
       color: 'primary',
       position: 'bottom'
     });
     await toast.present();
+  }
+
+  chartPointLabel(data: MonthlySalesPoint): string {
+    return `${data.label}: S/ ${data.sales.toFixed(2)}, ${this.ordersLabel(data.orders)}`;
+  }
+
+  ordersLabel(count: number): string {
+    return `${count} ${count === 1 ? 'pedido' : 'pedidos'}`;
+  }
+
+  unitsSoldLabel(count: number): string {
+    return `${count} ${count === 1 ? 'unidad vendida' : 'unidades vendidas'}`;
   }
 }

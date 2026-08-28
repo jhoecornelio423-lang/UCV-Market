@@ -134,14 +134,29 @@
             overflow: visible;
         }
 
-        .chart-node-circle {
+        .chart-hit-target {
             cursor: pointer;
-            transition: all 180ms ease;
-            &:hover {
-                r: 8;
-                stroke-width: 4.5px;
+            outline: none;
+
+            @media (min-width: 768px) {
+                r: 28px;
+            }
+
+            @media (min-width: 1024px) {
+                r: 46px;
+            }
+
+            &:focus-visible {
+                stroke: #07152f;
+                stroke-width: 2px;
             }
         }
+
+        .chart-node-circle {
+            transition: all 180ms ease;
+        }
+
+        g:hover .chart-node-circle { r: 8; stroke-width: 4.5px; }
 
         .chart-tooltip-group {
             opacity: 0;

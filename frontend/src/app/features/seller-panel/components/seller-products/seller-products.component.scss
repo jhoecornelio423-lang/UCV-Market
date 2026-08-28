@@ -19,6 +19,7 @@
         h1 { font-size: 24px; font-weight: 900; color: $navy; margin: 0; }
         
         .btn-new-product { 
+            min-height: 44px;
             background: $primary; 
             color: white; 
             border: none; 
@@ -42,6 +43,17 @@
                 transform: translateY(0);
             }
         }
+    }
+
+    .product-filters {
+        display: grid;
+        gap: 10px;
+        margin-bottom: 16px;
+
+        input { min-height: 44px; border: 1px solid #d1d5db; border-radius: 12px; padding: 0 14px; background: white; color: $navy; }
+        .status-filters { display: flex; gap: 8px; flex-wrap: wrap; }
+        button { min-height: 44px; border: 1px solid #d1d5db; border-radius: 999px; padding: 0 16px; background: white; color: $navy; }
+        button[aria-pressed='true'] { background: $primary; color: white; border-color: $primary; }
     }
 
     .products-grid-figma { 
@@ -109,6 +121,7 @@
                     }
 
                     .status-indicator { 
+                        min-height: 44px;
                         font-size: 11px; 
                         font-weight: 800; 
                         display: flex; 

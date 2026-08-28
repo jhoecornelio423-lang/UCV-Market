@@ -9,6 +9,7 @@ import { Product } from '../../../core/models/product.model';
 import { Category } from '../../../core/models/category.model';
 import { Profile } from '../../../core/models/profile.model';
 import { Order } from '../../../core/models/order.model';
+import { calculateSellerMonthlyStats, MonthlySalesPoint } from './seller-stats-calculator';
 
 export interface SellerStats {
   totalSalesToday: number;
@@ -20,6 +21,8 @@ export interface SellerStats {
   newCustomersCount: number;
   categoryStats: any[];
   salesData: any[];
+  weeklySalesData: any[];
+  monthlySalesData: MonthlySalesPoint[];
   salesGrowthToday: number;
   salesGrowthWeekly: number;
   ordersGrowth: number;
@@ -215,6 +218,14 @@ export class SellerStateService {
     this.calculateCategoryStats(orders, stats);
     this.calculateWeeklyStats(orders, stats);
     this.calculateAdvancedStats(orders, products, stats);
+
+    const monthlyStats = calculateSellerMonthlyStats(orders, products, this.categoriesSubject.value, new Date());
+    Object.assign(stats, monthlyStats);
+    stats.salesData = monthlyStats.monthlySalesData.map(point => ({
+      day: point.label,
+      ventas: point.sales,
+      orders: point.orders,
+    }));
 
     this.statsSubject.next(stats);
   }
@@ -432,7 +443,7 @@ export class SellerStateService {
       }
     });
 
-    stats.salesData = weekData.map(({ day, ventas }) => ({ day, ventas }));
+    stats.weeklySalesData = weekData.map(({ day, ventas }) => ({ day, ventas }));
 
     if (totalLastWeek > 0) {
       stats.salesGrowthWeekly = Math.round(((totalThisWeek - totalLastWeek) / totalLastWeek) * 100);

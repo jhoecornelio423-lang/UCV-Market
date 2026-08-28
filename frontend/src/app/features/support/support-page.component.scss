@@ -239,6 +239,12 @@
   }
 
   .ticket-card {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: 0;
+    font: inherit;
+    min-height: 44px;
     background: white;
     border-radius: 14px;
     padding: 16px;
@@ -392,8 +398,8 @@
   border-bottom: 1px solid #EEF0F4;
 
   .back-btn {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border: none;
     border-radius: 10px;
     background: white;
@@ -597,8 +603,8 @@
   }
 
   button {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border: none;
     border-radius: 12px;
     background: #E8432D;

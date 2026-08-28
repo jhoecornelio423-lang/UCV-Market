@@ -2,7 +2,7 @@
   <div class="stats-view-figma">
     <header class="stats-header-orange">
       <h1>Estadísticas</h1>
-      <p>{{ currentMonthYear | titlecase }} · {{ (userProfile$ | async)?.full_name || 'Sweet Corner' }}</p>
+      <p>{{ currentMonthYear }} · {{ (userProfile$ | async)?.full_name || 'Sweet Corner' }}</p>
     </header>
 
     <div class="stats-shell-figma">
@@ -45,8 +45,8 @@
       <!-- Ventas Diarias (SVG Area Chart) -->
       <section class="chart-section-figma">
         <div class="chart-header">
-          <h3>Ventas diarias</h3>
-          <span class="period">Esta semana</span>
+          <h3>Ventas por semana</h3>
+          <span class="period">{{ currentMonthYear }}</span>
         </div>
         <div class="chart-container-pro">
           <svg viewBox="0 0 700 180" width="100%" height="100%" class="svg-chart-pro">
@@ -73,21 +73,36 @@
             <path [attr.d]="svgLinePath" fill="none" stroke="url(#lineGradStats)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
 
             <!-- Data points -->
-            <g *ngFor="let item of (stats$ | async)?.salesData; let i = index">
+            <g *ngFor="let item of (stats$ | async)?.monthlySalesData; let i = index">
               <circle [attr.cx]="getChartPointX(i)"
-                      [attr.cy]="getChartPointY(item.ventas)"
+                      [attr.cy]="getChartPointY(item.sales)"
+                      r="65"
+                      fill="transparent"
+                      stroke="transparent"
+                      stroke-width="0"
+                      class="chart-hit-target"
+                      data-testid="monthly-chart-point"
+                      role="button"
+                      tabindex="0"
+                      [attr.aria-label]="chartPointLabel(item)"
+                      (keydown.enter)="onChartBarClick(item)"
+                      (keydown.space)="$event.preventDefault(); onChartBarClick(item)"
+                      (click)="onChartBarClick(item)">
+              </circle>
+              <circle [attr.cx]="getChartPointX(i)"
+                      [attr.cy]="getChartPointY(item.sales)"
                       r="6"
                       fill="#ffffff"
                       stroke="#E8432D"
                       stroke-width="3.5"
                       class="chart-node-circle"
-                      (click)="onChartBarClick(item)">
+                      pointer-events="none">
               </circle>
-              <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.ventas) - 20) + ')'">
+              <g class="chart-tooltip-group" [attr.transform]="'translate(' + getChartPointX(i) + ',' + (getChartPointY(item.sales) - 20) + ')'">
                 <rect x="-20" y="-18" width="40" height="20" rx="6" fill="#07152f" />
-                <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.ventas }}</text>
+                <text x="0" y="-4" fill="#ffffff" font-size="10" font-weight="900" text-anchor="middle">{{ item.orders }}</text>
               </g>
-              <text [attr.x]="getChartPointX(i)" y="165" fill="#9CA3AF" font-size="11" font-weight="800" text-anchor="middle">{{ item.day }}</text>
+              <text [attr.x]="getChartPointX(i)" y="165" fill="#6B7280" font-size="11" font-weight="800" text-anchor="middle">{{ item.label }}</text>
             </g>
 
             <!-- Y-axis -->
@@ -162,7 +177,7 @@
                 <div class="progress-bar-wrapper">
                     <div class="progress-fill" [style.width.%]="p.percent"></div>
                 </div>
-                <span class="qty">{{ p.qty }} unidades vendidas</span>
+                <span class="qty">{{ unitsSoldLabel(p.qty) }}</span>
               </div>
             </div>
           </div>
