@@ -12,8 +12,9 @@
     "deploy:web": "node generate-env.js && ng build && wrangler pages deploy www --project-name vallego --branch main",
     "generate-env": "node generate-env.js",
     "watch": "ng build --watch --configuration development",
-    "pretest": "npm run generate-env",
+    "pretest": "npm run generate-env && npm run test:env",
     "test": "ng test",
+    "test:env": "node generate-env.test.cjs",
     "prelint": "npm run generate-env",
     "lint": "ng lint"
   },

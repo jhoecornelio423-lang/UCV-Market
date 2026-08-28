@@ -48,13 +48,15 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const writeEnvFile = (target, production) => {
+  const targetPath = path.join(__dirname, target);
   const content = `export const environment = {
   production: ${production},
   supabaseUrl: '${supabaseUrl}',
   supabaseKey: '${supabaseKey}'
 };
 `;
-  fs.writeFileSync(path.join(__dirname, target), content, 'utf8');
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.writeFileSync(targetPath, content, 'utf8');
   console.log(`[generate-env] ${target} generado correctamente.`);
 };
 
