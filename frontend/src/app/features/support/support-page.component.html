@@ -6,7 +6,7 @@
       <header class="support-header ion-no-border">
         <ion-toolbar class="header-toolbar">
           <ion-buttons slot="start">
-            <ion-back-button defaultHref="{{ backHref }}" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+            <ion-back-button defaultHref="{{ backHref }}" text="" aria-label="Volver" class="back-btn" icon="arrow-back-outline"></ion-back-button>
           </ion-buttons>
           <ion-title>Centro de Soporte</ion-title>
         </ion-toolbar>
@@ -37,14 +37,15 @@
         </div>
 
         <div class="form-group">
-          <label>Asunto</label>
-          <input type="text" [(ngModel)]="newTicketSubject"
+          <label for="support-subject">Asunto</label>
+          <input id="support-subject" name="supportSubject" type="text" [(ngModel)]="newTicketSubject"
                  placeholder="Resume tu problema en una frase" />
         </div>
         <div class="form-group">
-          <label>Descripción</label>
-          <p class="field-hint">{{ selectedCategory.hint }}</p>
-          <textarea rows="4" [(ngModel)]="newTicketMessage"
+          <label for="support-description">Descripción</label>
+          <p id="support-description-hint" class="field-hint">{{ selectedCategory.hint }}</p>
+          <textarea id="support-description" name="supportDescription" rows="4" [(ngModel)]="newTicketMessage"
+                    aria-describedby="support-description-hint"
                     [placeholder]="selectedCategory.placeholder"></textarea>
         </div>
         <button type="button" class="submit-btn" (click)="submitNewTicket()"
@@ -70,7 +71,8 @@
           <p class="sub">Cuando envíes una solicitud, aparecerá aquí.</p>
         </div>
 
-        <div class="ticket-card" *ngFor="let ticket of tickets"
+        <button type="button" class="ticket-card" *ngFor="let ticket of tickets"
+             [attr.aria-label]="ticket.subject + ', ' + statusLabel(ticket.status)"
              [class.resolved]="ticket.status === 'resolved' || ticket.status === 'closed' || ticket.status === 'rejected'"
              (click)="openConversation(ticket)">
           <div class="ticket-head">
@@ -93,14 +95,14 @@
             </span>
             <span class="ticket-date">{{ ticket.created_at | date:'dd/MM/yyyy HH:mm' }}</span>
           </div>
-        </div>
+        </button>
       </div>
     </div>
 
     <!-- ============ VISTA: CONVERSACIÓN ============ -->
     <div class="conversation-shell" *ngIf="selectedTicket">
       <header class="conversation-header">
-        <button type="button" class="back-btn" (click)="backToList()">
+        <button type="button" class="back-btn" aria-label="Volver a conversaciones" (click)="backToList()">
           <ion-icon name="arrow-back-outline"></ion-icon>
         </button>
         <div class="conv-title">
@@ -161,10 +163,12 @@
 
       <div class="composer" *ngIf="canWrite">
         <input
+          aria-label="Mensaje para soporte"
+          name="supportMessage"
           [(ngModel)]="newMessage"
           (keyup.enter)="sendMessage()"
           placeholder="Escribe un mensaje para el equipo de soporte..." />
-        <button (click)="sendMessage()" [disabled]="!newMessage.trim()">
+        <button type="button" aria-label="Enviar mensaje" (click)="sendMessage()" [disabled]="!newMessage.trim()">
           <ion-icon name="send"></ion-icon>
         </button>
       </div>

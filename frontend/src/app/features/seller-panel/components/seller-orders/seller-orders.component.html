@@ -3,15 +3,15 @@
     <h1>Pedidos</h1>
 
     <div class="custom-segment">
-      <button class="segment-btn" [class.active]="currentTab === 'nuevos'" (click)="setTab('nuevos')">
+      <button type="button" class="segment-btn" [attr.aria-pressed]="currentTab === 'nuevos'" [class.active]="currentTab === 'nuevos'" (click)="setTab('nuevos')">
         Nuevos
         <span class="badge" *ngIf="(nuevosOrders$ | async)?.length">{{ (nuevosOrders$ | async)?.length }}</span>
       </button>
-      <button class="segment-btn" [class.active]="currentTab === 'activos'" (click)="setTab('activos')">
+      <button type="button" class="segment-btn" [attr.aria-pressed]="currentTab === 'activos'" [class.active]="currentTab === 'activos'" (click)="setTab('activos')">
         Activos
         <span class="badge" *ngIf="(activosOrders$ | async)?.length">{{ (activosOrders$ | async)?.length }}</span>
       </button>
-      <button class="segment-btn" [class.active]="currentTab === 'listos'" (click)="setTab('listos')">
+      <button type="button" class="segment-btn" [attr.aria-pressed]="currentTab === 'listos'" [class.active]="currentTab === 'listos'" (click)="setTab('listos')">
         Listos
         <span class="badge" *ngIf="(listosOrders$ | async)?.length">{{ (listosOrders$ | async)?.length }}</span>
       </button>
@@ -22,7 +22,7 @@
     <!-- Nuevos Orders -->
     <ng-container *ngIf="currentTab === 'nuevos'">
       <div class="empty-state" *ngIf="(nuevosOrders$ | async)?.length === 0">
-        <p>No tienes pedidos nuevos.</p>
+        <ion-icon name="bag-add-outline"></ion-icon><h2>Sin pedidos nuevos</h2><p>Los pedidos pendientes aparecerán aquí.</p>
       </div>
       <div class="order-card type-nuevos" *ngFor="let order of nuevosOrders$ | async">
         <div class="order-header">
@@ -55,7 +55,7 @@
     <!-- Activos Orders -->
     <ng-container *ngIf="currentTab === 'activos'">
       <div class="empty-state" *ngIf="(activosOrders$ | async)?.length === 0">
-        <p>No tienes pedidos activos en preparación.</p>
+        <ion-icon name="restaurant-outline"></ion-icon><h2>Sin pedidos en preparación</h2><p>Los pedidos aceptados aparecerán aquí.</p>
       </div>
       <div class="order-card type-activos" *ngFor="let order of activosOrders$ | async">
         <div class="order-header">
@@ -86,7 +86,7 @@
     <!-- Listos Orders -->
     <ng-container *ngIf="currentTab === 'listos'">
       <div class="empty-state" *ngIf="(listosOrders$ | async)?.length === 0">
-        <p>No hay pedidos listos para entregar.</p>
+        <ion-icon name="checkmark-circle-outline"></ion-icon><h2>Sin pedidos listos</h2><p>Los pedidos preparados aparecerán aquí.</p>
       </div>
       <div class="order-card type-listos" *ngFor="let order of listosOrders$ | async">
         <div class="order-header">

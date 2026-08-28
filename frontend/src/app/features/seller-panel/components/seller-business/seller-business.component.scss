@@ -75,7 +75,8 @@
                 }
             }
 
-            .profile-pic-wrapper { 
+            .profile-pic-wrapper {
+                cursor: pointer;
                 position: absolute; 
                 bottom: -30px; 
                 left: 30px; 
@@ -194,6 +195,8 @@
             padding: 24px;
 
             .toggle-row {
+                width: 100%;
+                min-height: 44px;
                 display: flex; 
                 flex-direction: row;
                 align-items: center; 
@@ -208,6 +211,13 @@
                 ion-toggle {
                     --handle-background-checked: #ffffff;
                     --background-checked: #E8432D;
+                }
+
+                &.support-row {
+                    border: 0;
+                    background: transparent;
+                    text-align: left;
+                    cursor: pointer;
                 }
             }
         }
@@ -246,6 +256,7 @@
                 } 
                 
                 input { 
+                    min-height: 44px;
                     border: none; 
                     background: transparent; 
                     font-size: 14px; 

@@ -132,16 +132,16 @@ export class SellerDashboardComponent {
 
   getMaxSales(): number {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return 10;
-    const max = Math.max(...stats.salesData.map((d: any) => d.ventas));
+    if (!stats.weeklySalesData) return 10;
+    const max = Math.max(...stats.weeklySalesData.map((d: any) => d.ventas));
     return max > 0 ? max : 10;
   }
 
   get svgLinePath(): string {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return '';
+    if (!stats.weeklySalesData) return '';
     const max = this.getMaxSales();
-    const points = stats.salesData.map((d: any, i: number) => {
+    const points = stats.weeklySalesData.map((d: any, i: number) => {
       const x = 50 + i * 100;
       const y = 140 - (d.ventas / max) * 110;
       return `${x},${y}`;
@@ -151,9 +151,9 @@ export class SellerDashboardComponent {
 
   get svgAreaPath(): string {
     const stats = this.sellerState['statsSubject'].value;
-    if (!stats.salesData) return '';
+    if (!stats.weeklySalesData) return '';
     const max = this.getMaxSales();
-    const points = stats.salesData.map((d: any, i: number) => {
+    const points = stats.weeklySalesData.map((d: any, i: number) => {
       const x = 50 + i * 100;
       const y = 140 - (d.ventas / max) * 110;
       return `${x},${y}`;

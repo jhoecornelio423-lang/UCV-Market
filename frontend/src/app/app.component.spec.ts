@@ -87,10 +87,17 @@ describe('AppComponent navigation shell', () => {
     }
   });
 
-  it('preserves the seller sidebar outside hidden routes', () => {
+  it('shows the seller sidebar only on primary routes', () => {
     profile$.next(seller);
-    navigateTo('/seller/dashboard');
 
-    expect(component.showSidebar).toBeTrue();
+    for (const path of ['/seller/dashboard', '/seller/orders?tab=nuevos', '/seller/products/', '/seller/stats', '/seller/business']) {
+      navigateTo(path);
+      expect(component.showSidebar).withContext(path).toBeTrue();
+    }
+
+    for (const path of ['/seller/product-form', '/seller/notifications', '/seller/support']) {
+      navigateTo(path);
+      expect(component.showSidebar).withContext(path).toBeFalse();
+    }
   });
 });

@@ -5,6 +5,7 @@ import { NotificationService } from './core/services/notification.service';
 import { filter } from 'rxjs/operators';
 import { Profile } from './core/models/profile.model';
 import { isBuyerPrimaryRoute, normalizeAppPath } from './core/navigation/buyer-navigation';
+import { isSellerPrimaryRoute } from './core/navigation/seller-navigation';
 
 @Component({
   selector: 'app-root',
@@ -56,7 +57,7 @@ export class AppComponent implements OnInit {
       return;
     }
 
-    this.showSidebar = true;
+    this.showSidebar = this.userProfile.role === 'emprendedor' && isSellerPrimaryRoute(path);
   }
 
   // Métodos de navegación globales

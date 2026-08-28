@@ -34,3 +34,6 @@ Thumbs.db
 # Editores
 .idea/
 *.code-workspace
+
+# Worktrees locales de Codex
+.worktrees/

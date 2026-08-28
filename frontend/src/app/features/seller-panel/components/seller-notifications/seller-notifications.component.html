@@ -4,17 +4,17 @@
       <header class="notifications-header ion-no-border">
         <ion-toolbar class="header-toolbar">
           <ion-buttons slot="start">
-            <ion-back-button defaultHref="/seller/dashboard" text="" class="back-btn" icon="arrow-back-outline"></ion-back-button>
+            <ion-back-button defaultHref="/seller/dashboard" text="" aria-label="Volver" class="back-btn" icon="arrow-back-outline"></ion-back-button>
           </ion-buttons>
           <ion-title>Notificaciones</ion-title>
           <ion-buttons slot="end">
-            <button type="button" class="mark-all-btn" (click)="markAllAsRead()">Marcar todo</button>
+            <button *ngIf="hasUnread$ | async" type="button" class="mark-all-btn" (click)="markAllAsRead()">Marcar todo</button>
           </ion-buttons>
         </ion-toolbar>
       </header>
 
       <div class="notifications-list" *ngIf="notifications$ | async as notifications">
-        <div class="notification-card" *ngFor="let notif of notifications" [class.unread]="notif.unread" (click)="onNotificationClick(notif)" style="cursor: pointer;">
+        <button type="button" class="notification-card" *ngFor="let notif of notifications" [class.unread]="notif.unread" (click)="onNotificationClick(notif)">
           <div class="unread-indicator" *ngIf="notif.unread"></div>
 
           <div class="notif-icon" [style.background]="notif.iconBg" [style.color]="notif.iconColor">
@@ -29,7 +29,7 @@
             </div>
             <p>{{ notif.body }}</p>
           </div>
-        </div>
+        </button>
 
         <div class="empty-state-figma" *ngIf="notifications.length === 0">
           <div class="empty-icon-wrapper">

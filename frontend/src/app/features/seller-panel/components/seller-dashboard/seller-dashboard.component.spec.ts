@@ -22,4 +22,13 @@ describe('SellerDashboardComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('names icon actions and uses Spanish rating copy', () => {
+    fixture.detectChanges();
+    const root: HTMLElement = fixture.nativeElement;
+    expect(root.querySelector('.notif-btn')?.getAttribute('aria-label')).toBe('Abrir notificaciones');
+    expect(root.querySelector('.profile-btn')?.getAttribute('aria-label')).toBe('Cerrar sesión');
+    expect(root.textContent).toContain('Calificación');
+    expect(root.textContent).not.toContain('Rating');
+  });
 });

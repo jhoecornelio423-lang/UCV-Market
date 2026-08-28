@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { isSellerPrimaryRoute } from '../../core/navigation/seller-navigation';
 
 @Component({
   selector: 'app-seller-panel',
@@ -11,6 +12,6 @@ export class SellerPanelComponent {
   private router = inject(Router);
 
   get showBottomNav(): boolean {
-    return !this.router.url.includes('/product-form') && !this.router.url.includes('/notifications');
+    return isSellerPrimaryRoute(this.router.url);
   }
 }

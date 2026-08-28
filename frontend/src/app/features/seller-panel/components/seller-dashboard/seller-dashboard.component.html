@@ -4,7 +4,7 @@
     <div class="header-top">
       <span class="subtitle">Dashboard vendedor</span>
       <div class="actions">
-        <button class="icon-btn notif-btn" (click)="showNotifications($event)">
+        <button type="button" class="icon-btn notif-btn" aria-label="Abrir notificaciones" (click)="showNotifications($event)">
           <ion-icon name="notifications-outline"></ion-icon>
           <span class="badge" *ngIf="(unreadCount$ | async)! > 0">{{ unreadCount$ | async }}</span>
         </button>
@@ -13,7 +13,7 @@
           <div class="dropdown-header">
             <h4>Notificaciones</h4>
             <div class="dropdown-actions">
-              <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+              <button type="button" class="mark-read-btn" *ngIf="(unreadCount$ | async)! > 0" (click)="markAllRead()">Marcar leídas</button>
             </div>
           </div>
           <div class="notif-list" *ngIf="(notifications$ | async)?.length; else emptyNotifs">
@@ -38,7 +38,7 @@
           </div>
         </div>
         
-        <button class="icon-btn profile-btn" (click)="signOut()">
+        <button type="button" class="icon-btn profile-btn" aria-label="Cerrar sesión" (click)="signOut()">
           <ion-icon name="log-out-outline"></ion-icon>
         </button>
       </div>
@@ -70,7 +70,7 @@
           <span class="title">{{ (stats$ | async)?.rating }}</span>
           <ion-icon name="star"></ion-icon>
         </div>
-        <span class="subtitle">Rating</span>
+        <span class="subtitle">Calificación</span>
         <span class="rating-label">{{ getReputationLabel((stats$ | async)?.rating || 0) }}</span>
       </div>
     </div>
@@ -127,7 +127,7 @@
       <div class="chart-container">
         <!-- Pure CSS Bar Chart -->
         <div class="bar-chart">
-          <div class="bar-wrapper" *ngFor="let data of (stats$ | async)?.salesData">
+          <div class="bar-wrapper" *ngFor="let data of (stats$ | async)?.weeklySalesData">
             <div class="bar" [style.height.%]="(data.ventas / getMaxSales()) * 100" (click)="onChartBarClick(data)"></div>
             <span class="day-label">{{ data.day }}</span>
           </div>
@@ -137,17 +137,17 @@
 
     <!-- Top Products -->
     <section class="dashboard-section top-products-section">
-      <h2>Productos top esta semana</h2>
+      <h2>Productos más vendidos este mes</h2>
       <div class="top-list">
         <div class="top-item" *ngFor="let product of (stats$ | async)?.topProducts; let i = index">
           <span class="rank">#{{ i + 1 }}</span>
           <div class="prod-img">
-            <img [src]="product.image_url || 'assets/placeholder.png'" alt="Product">
+            <img [src]="product.image_url || 'assets/placeholder.png'" [alt]="product.name">
           </div>
           <span class="prod-name">{{ product.name }}</span>
           <div class="prod-stats">
             <span class="amount">S/ {{ product.total }}</span>
-            <span class="sold">{{ product.qty }} vendidos</span>
+            <span class="sold">{{ product.qty }} {{ product.qty === 1 ? 'vendido' : 'vendidos' }}</span>
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@
       <div class="reviews-modal-content">
         <div class="modal-header">
           <h2>Opiniones de Clientes</h2>
-          <button class="close-btn" (click)="isReviewsModalOpen = false">
+          <button type="button" class="close-btn" aria-label="Cerrar opiniones" (click)="isReviewsModalOpen = false">
             <ion-icon name="close-outline"></ion-icon>
           </button>
         </div>
