@@ -3,6 +3,8 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { isBuyerPrimaryRoute } from '../../core/navigation/buyer-navigation';
+import { AuthService } from '../../core/auth/auth.service';
+import { RoleMobileNavigationConfig } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.model';
 
 @Component({
   selector: 'app-buyer-panel',
@@ -12,8 +14,21 @@ import { isBuyerPrimaryRoute } from '../../core/navigation/buyer-navigation';
 })
 export class BuyerPanelComponent implements OnInit {
   currentPath = '';
+  readonly navigationConfig: RoleMobileNavigationConfig = {
+    menuId: 'buyer-primary-menu',
+    roleLabel: 'Comprador',
+    ariaLabel: 'Navegación del comprador',
+    items: [
+      { label: 'Inicio', route: '/buyer-panel/catalog', icon: 'home-outline' },
+      { label: 'Explorar', route: '/buyer-panel/explore', icon: 'compass-outline' },
+      { label: 'Pedidos', route: '/buyer-panel/orders', icon: 'receipt-outline' },
+      { label: 'Favoritos', route: '/buyer-panel/favorites', icon: 'heart-outline' },
+      { label: 'Perfil', route: '/buyer-panel/profile', icon: 'person-outline' },
+    ],
+  };
 
   private router = inject(Router);
+  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -31,5 +46,9 @@ export class BuyerPanelComponent implements OnInit {
 
   get showPrimaryNavigation(): boolean {
     return isBuyerPrimaryRoute(this.currentPath);
+  }
+
+  signOut(): void {
+    this.authService.signOut().subscribe(() => this.router.navigate(['/login']));
   }
 }

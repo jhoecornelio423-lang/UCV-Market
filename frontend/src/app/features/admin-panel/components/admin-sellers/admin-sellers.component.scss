@@ -359,14 +359,33 @@ $bg-color: #F8FAFC;
   }
 }
 
+.mobile-seller-cards { display: none; }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767.98px) {
   .admin-page-container { padding: 16px; }
   .filters-container { flex-direction: column; align-items: stretch; }
   .search-bar { max-width: 100%; }
   .filter-pills { overflow-x: auto; padding-bottom: 8px; }
+  .filter-pills .pill,
+  .application-card .card-actions button { min-height: 44px; }
+  .table-responsive { display: none; }
+  .mobile-seller-cards { display: grid; gap: 12px; padding: 12px; }
+  .mobile-seller-card {
+    padding: 16px;
+    border: 1px solid $border-color;
+    border-radius: 14px;
+    background: white;
+
+    dl { margin: 16px 0; display: grid; gap: 8px; }
+    dl div { display: flex; justify-content: space-between; gap: 16px; }
+    dt { color: $text-muted; font-size: 12px; }
+    dd { margin: 0; color: $text-dark; font-size: 12px; font-weight: 700; text-align: right; }
+  }
+  .mobile-card-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .mobile-card-footer .action-btn { min-height: 44px; }
 }

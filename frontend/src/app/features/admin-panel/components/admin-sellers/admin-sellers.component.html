@@ -113,5 +113,27 @@
         </tbody>
       </table>
     </div>
+
+    <section class="mobile-seller-cards" aria-label="Vendedores" *ngIf="!loading && filteredSellers.length > 0">
+      <article class="mobile-seller-card" *ngFor="let seller of filteredSellers">
+        <div class="user-cell">
+          <div class="avatar" aria-hidden="true">{{ (seller.full_name || 'U')[0].toUpperCase() }}</div>
+          <div class="info"><span class="name">{{ seller.full_name }}</span></div>
+        </div>
+        <dl>
+          <div><dt>Negocio</dt><dd>{{ seller.business_name || 'No especificado' }}</dd></div>
+          <div><dt>Sede</dt><dd>{{ seller.campus || '-' }}</dd></div>
+          <div><dt>Reputación</dt><dd>★ {{ seller.rating_average || '0.0' }}</dd></div>
+        </dl>
+        <div class="mobile-card-footer">
+          <span class="status-badge" [class.active]="seller.role === 'emprendedor'" [class.suspended]="seller.role !== 'emprendedor'">
+            {{ seller.role === 'emprendedor' ? 'Activo' : 'Suspendido' }}
+          </span>
+          <button type="button" class="action-btn" [class.suspend]="seller.role === 'emprendedor'" [class.reactivate]="seller.role !== 'emprendedor'" (click)="toggleSellerStatus(seller)">
+            {{ seller.role === 'emprendedor' ? 'Suspender' : 'Reactivar' }}
+          </button>
+        </div>
+      </article>
+    </section>
   </div>
 </div>

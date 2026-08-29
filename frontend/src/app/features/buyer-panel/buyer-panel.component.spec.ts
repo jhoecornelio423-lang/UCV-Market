@@ -1,38 +1,43 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
-import { By } from '@angular/platform-browser';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { of } from 'rxjs';
 
 import { BuyerPanelComponent } from './buyer-panel.component';
+import { RoleMobileNavigationComponent } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.component';
+import { AuthService } from '../../core/auth/auth.service';
 
 describe('BuyerPanelComponent', () => {
   let component: BuyerPanelComponent;
   let fixture: ComponentFixture<BuyerPanelComponent>;
 
   beforeEach(waitForAsync(() => {
+    if (!document.getElementById('buyer-primary-content')) {
+      const content = document.createElement('div');
+      content.id = 'buyer-primary-content';
+      document.body.appendChild(content);
+    }
     TestBed.configureTestingModule({
       declarations: [ BuyerPanelComponent ],
-      imports: [IonicModule.forRoot(), RouterModule.forRoot([])]
+      imports: [IonicModule.forRoot(), RouterModule.forRoot([]), RoleMobileNavigationComponent],
+      providers: [{ provide: AuthService, useValue: { signOut: () => of(void 0) } }]
     }).compileComponents();
 
     fixture = TestBed.createComponent(BuyerPanelComponent);
     component = fixture.componentInstance;
   }));
 
+  afterAll(() => document.querySelector('body > #buyer-primary-content')?.remove());
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('links the five bottom navigation actions to their exact destinations', () => {
+  it('configures the five drawer destinations', () => {
     fixture.detectChanges();
     component.currentPath = '/buyer-panel/catalog';
     fixture.detectChanges();
-    const router = TestBed.inject(Router);
-
-    const destinations = fixture.debugElement
-      .queryAll(By.directive(RouterLink))
-      .map(element => element.injector.get(RouterLink).urlTree)
-      .map(urlTree => router.serializeUrl(urlTree!));
+    const destinations = component.navigationConfig.items.map(item => item.route);
 
     expect(destinations).toEqual([
       '/buyer-panel/catalog',
@@ -43,7 +48,7 @@ describe('BuyerPanelComponent', () => {
     ]);
   });
 
-  it('shows bottom navigation only on the five primary buyer routes', () => {
+  it('shows the mobile drawer only on the five primary buyer routes', () => {
     fixture.detectChanges();
 
     for (const path of [
@@ -55,7 +60,7 @@ describe('BuyerPanelComponent', () => {
     ]) {
       component.currentPath = path;
       fixture.detectChanges();
-      expect(fixture.nativeElement.querySelector('.bottom-navigation-figma'))
+      expect(fixture.nativeElement.querySelector('app-role-mobile-navigation'))
         .withContext(path)
         .not.toBeNull();
     }
@@ -70,7 +75,7 @@ describe('BuyerPanelComponent', () => {
     ]) {
       component.currentPath = path;
       fixture.detectChanges();
-      expect(fixture.nativeElement.querySelector('.bottom-navigation-figma'))
+      expect(fixture.nativeElement.querySelector('app-role-mobile-navigation'))
         .withContext(path)
         .toBeNull();
     }

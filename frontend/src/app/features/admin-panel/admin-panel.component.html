@@ -1,26 +1,19 @@
 <div class="admin-layout">
-  
-  <!-- Mobile Header Bar -->
-  <header class="admin-mobile-header ion-hide-md-up">
-    <div class="mobile-logo">
-      <div class="logo-circle">
-        <ion-icon name="bag-handle"></ion-icon>
-      </div>
-      <div class="logo-text">
-        <h2>VALLE-GO</h2>
-        <span>ADMIN PANEL</span>
-      </div>
-    </div>
-    <div class="header-actions">
+
+  <app-role-mobile-navigation
+    *ngIf="showPrimaryNavigation"
+    [config]="navigationConfig"
+    [contentId]="'admin-primary-content'"
+    [currentPath]="currentPath"
+    (logout)="signOut()"
+  >
+    <div navigation-actions>
       <app-admin-notifications></app-admin-notifications>
-      <button class="logout-btn" (click)="signOut()" title="Cerrar Sesión">
-        <ion-icon name="log-out-outline"></ion-icon>
-      </button>
     </div>
-  </header>
+  </app-role-mobile-navigation>
 
   <!-- Sidebar (Desktop) -->
-  <aside class="admin-sidebar ion-hide-md-down">
+  <aside class="admin-sidebar ion-hide-lg-down">
     <div class="sidebar-header">
       <div class="logo-circle">
         <ion-icon name="bag-handle"></ion-icon>
@@ -79,42 +72,7 @@
   </aside>
 
   <!-- Main Content Area -->
-  <main class="admin-main-content">
+  <main id="admin-primary-content" class="admin-main-content">
     <ion-router-outlet></ion-router-outlet>
   </main>
-
-  <!-- Bottom Navigation (Mobile) -->
-  <nav class="admin-bottom-nav ion-hide-md-up">
-    <a routerLink="/admin/dashboard" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="grid"></ion-icon>
-      <span>Inicio</span>
-    </a>
-    <a routerLink="/admin/sellers" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="storefront"></ion-icon>
-      <span>Vendedores</span>
-    </a>
-    <a routerLink="/admin/users" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="people"></ion-icon>
-      <span>Usuarios</span>
-    </a>
-    <a routerLink="/admin/products" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="cube"></ion-icon>
-      <span>Productos</span>
-    </a>
-    <a routerLink="/admin/categories" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="pricetag-outline"></ion-icon>
-      <span>Categorías</span>
-    </a>
-    <a routerLink="/admin/support" routerLinkActive="active" class="bottom-nav-item">
-      <div class="icon-wrapper">
-        <ion-icon name="chatbubble-outline"></ion-icon>
-      </div>
-      <span>Soporte</span>
-    </a>
-    <a routerLink="/admin/reports" routerLinkActive="active" class="bottom-nav-item">
-      <ion-icon name="flag-outline"></ion-icon>
-      <span>Reportes</span>
-    </a>
-  </nav>
-
 </div>

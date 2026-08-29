@@ -22,18 +22,19 @@
     </div>
 
     <div class="ticket-list" *ngIf="!loading">
-      <div class="ticket-item" *ngFor="let t of filteredTickets"
+      <button type="button" class="ticket-item" *ngFor="let t of filteredTickets"
            [class.selected]="selectedTicket?.id === t.id"
            [class.resolved]="['resolved','rejected','closed'].includes(t.status)"
+           [attr.aria-pressed]="selectedTicket?.id === t.id"
            (click)="selectTicket(t)">
-        <div class="ticket-top">
+        <span class="ticket-top">
           <span class="priority-dot" [ngClass]="t.priority || 'medio'"></span>
           <span class="ticket-code">{{ t.ticket_code || shortId(t.id) }}</span>
           <span class="status-badge" [ngClass]="t.status">{{ statusLabel(t.status) }}</span>
-        </div>
-        <h4 class="ticket-subject">{{ t.subject }}</h4>
-        <p class="ticket-preview">{{ t.message }}</p>
-        <div class="ticket-meta">
+        </span>
+        <span class="ticket-subject">{{ t.subject }}</span>
+        <span class="ticket-preview">{{ t.message }}</span>
+        <span class="ticket-meta">
           <span class="meta-line">
             <ion-icon name="person-outline"></ion-icon>
             {{ t.profiles?.full_name }} · Comprador
@@ -47,8 +48,8 @@
             {{ t.order.order_code }} · S/ {{ t.order.total_price | number:'1.2-2' }}
           </span>
           <span class="ticket-date">{{ t.created_at | date:'dd/MM/yyyy' }}</span>
-        </div>
-      </div>
+        </span>
+      </button>
       <div class="empty-filter" *ngIf="!loading && filteredTickets.length === 0 && tickets.length > 0">
         <p>Sin resultados para tu búsqueda.</p>
       </div>
@@ -73,16 +74,16 @@
         <span class="status-badge" [ngClass]="selectedTicket.status">{{ statusLabel(selectedTicket.status) }}</span>
       </div>
       <div class="header-right">
-        <select class="mini-select" [ngModel]="selectedTicket.priority || 'medio'" (ngModelChange)="onPriorityChange($event)" title="Prioridad">
+        <select class="mini-select" [ngModel]="selectedTicket.priority || 'medio'" (ngModelChange)="onPriorityChange($event)" [disabled]="isTerminalTicket" title="Prioridad">
           <option *ngFor="let p of priorityOptions" [value]="p.value">{{ p.label }}</option>
         </select>
-        <select class="mini-select" [ngModel]="selectedTicket.status" (ngModelChange)="onStatusChange($event)" title="Estado">
+        <select class="mini-select" [ngModel]="selectedTicket.status" (ngModelChange)="onStatusChange($event)" [disabled]="isTerminalTicket" title="Estado">
           <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
         </select>
-        <button class="link-btn" *ngIf="!selectedTicket.seller_id" (click)="linkSeller()">
+        <button type="button" class="link-btn" *ngIf="!selectedTicket.seller_id" [disabled]="isTerminalTicket" (click)="linkSeller()">
           <ion-icon name="link-outline"></ion-icon> Vincular vendedor
         </button>
-        <button class="link-btn" *ngIf="!selectedTicket.order_id" (click)="linkOrder()">
+        <button type="button" class="link-btn" *ngIf="!selectedTicket.order_id" [disabled]="isTerminalTicket" (click)="linkOrder()">
           <ion-icon name="receipt-outline"></ion-icon> Vincular pedido
         </button>
       </div>
@@ -182,13 +183,13 @@
     </div>
 
     <footer class="action-bar">
-      <button class="act dismiss" (click)="dismissTicket()">
+      <button type="button" class="act dismiss" (click)="dismissTicket()" [disabled]="isTerminalTicket">
         <ion-icon name="close-circle-outline"></ion-icon> Desestimar reporte
       </button>
-      <button class="act warn" (click)="warnSeller()" [disabled]="!selectedTicket.seller_id">
+      <button type="button" class="act warn" (click)="warnSeller()" [disabled]="isTerminalTicket || !selectedTicket.seller_id">
         <ion-icon name="warning-outline"></ion-icon> Advertir emprendedor
       </button>
-      <button class="act ban" (click)="banSeller()" [disabled]="!selectedTicket.seller_id">
+      <button type="button" class="act ban" (click)="banSeller()" [disabled]="isTerminalTicket || !selectedTicket.seller_id">
         <ion-icon name="ban-outline"></ion-icon> Banear emprendedor
       </button>
     </footer>

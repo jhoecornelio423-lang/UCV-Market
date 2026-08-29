@@ -101,7 +101,11 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   get canWrite(): boolean {
-    return !!this.selectedTicket && this.selectedTicket.status !== 'closed' && this.selectedTicket.status !== 'rejected';
+    return !!this.selectedTicket && !this.isTerminalTicket;
+  }
+
+  get isTerminalTicket(): boolean {
+    return !!this.selectedTicket && ['resolved', 'rejected', 'closed'].includes(this.selectedTicket.status);
   }
 
   ngOnInit() {
@@ -246,7 +250,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   onStatusChange(status: string) {
-    if (!this.selectedTicket) return;
+    if (!this.selectedTicket || this.isTerminalTicket) return;
     const ticket = this.selectedTicket;
     this.adminRepo.updateTicketStatus(ticket.id, status).subscribe({
       next: () => this.loadTickets(),
@@ -255,7 +259,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   onPriorityChange(priority: string) {
-    if (!this.selectedTicket) return;
+    if (!this.selectedTicket || this.isTerminalTicket) return;
     const ticket = this.selectedTicket;
     this.adminRepo.setTicketPriority(ticket.id, priority).subscribe({
       next: () => this.loadTickets(),
@@ -264,7 +268,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   async linkSeller() {
-    if (!this.selectedTicket) return;
+    if (!this.selectedTicket || this.isTerminalTicket) return;
     await this.ensureSellers();
     if (this.sellers.length === 0) {
       this.showToast('No hay vendedores para vincular', 'warning');
@@ -302,7 +306,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   async linkOrder() {
-    if (!this.selectedTicket) return;
+    if (!this.selectedTicket || this.isTerminalTicket) return;
     await this.ensureOrders();
     if (this.orders.length === 0) {
       this.showToast('No hay pedidos para vincular', 'warning');
@@ -340,7 +344,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
   }
 
   async dismissTicket() {
-    if (!this.selectedTicket) return;
+    if (!this.selectedTicket || this.isTerminalTicket) return;
     const alert = await this.alertCtrl.create({
       header: 'Desestimar reporte',
       message: '¿Confirma que esta disputa no procede? Se cerrará como desestimada.',
@@ -367,7 +371,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
 
   async warnSeller() {
     const ticket = this.selectedTicket;
-    if (!ticket || !ticket.seller_id) return;
+    if (!ticket || this.isTerminalTicket || !ticket.seller_id) return;
     const alert = await this.alertCtrl.create({
       header: 'Advertir al emprendedor',
       subHeader: ticket.seller?.full_name || 'Vendedor',
@@ -396,7 +400,7 @@ export class AdminSupportComponent implements OnInit, OnDestroy {
 
   async banSeller() {
     const ticket = this.selectedTicket;
-    if (!ticket || !ticket.seller_id) return;
+    if (!ticket || this.isTerminalTicket || !ticket.seller_id) return;
     const alert = await this.alertCtrl.create({
       header: 'Banear emprendedor',
       subHeader: ticket.seller?.full_name || 'Vendedor',

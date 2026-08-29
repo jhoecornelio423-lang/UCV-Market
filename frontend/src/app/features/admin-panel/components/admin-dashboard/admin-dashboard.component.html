@@ -63,10 +63,14 @@
       </div>
       <div class="canvas-container">
         <canvas baseChart
+          role="img"
+          aria-label="Gráfico de ingresos por día de la semana"
+          aria-describedby="weekly-sales-summary"
           [data]="lineChartData"
           [options]="lineChartOptions"
           [type]="lineChartType">
         </canvas>
+        <p id="weekly-sales-summary" class="sr-only">{{ weeklySalesSummary }}</p>
       </div>
     </div>
 
@@ -79,10 +83,14 @@
       </div>
       <div class="canvas-container doughnut-container">
         <canvas baseChart
+          role="img"
+          aria-label="Gráfico de ventas por categoría"
+          aria-describedby="category-sales-summary"
           [data]="doughnutChartData"
           [options]="doughnutChartOptions"
           [type]="doughnutChartType">
         </canvas>
+        <p id="category-sales-summary" class="sr-only">{{ categorySalesSummary }}</p>
       </div>
     </div>
   </div>
@@ -115,7 +123,7 @@
     <div class="list-card">
       <div class="list-header">
         <h3>Ítems Reportados</h3>
-        <span class="count-badge danger" *ngIf="reportedItems.length > 0">{{ reportedItems.length }} reportes</span>
+        <span class="count-badge danger" *ngIf="reportedItems.length > 0">{{ reportedItems.length }} {{ reportedItems.length === 1 ? 'reporte' : 'reportes' }}</span>
         <span class="count-badge pending" *ngIf="reportedItems.length === 0">Sin reportes</span>
       </div>
       
@@ -129,7 +137,7 @@
         <!-- Lista de reportes reales -->
         <div class="list-item" *ngFor="let item of reportedItems">
           <div class="item-icon img-icon">
-            <img [src]="item.product?.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" alt="Product" />
+            <img [src]="item.product?.product_images?.[0]?.image_url || 'assets/images/login-food-banner.jpg'" [alt]="'Imagen de ' + (item.product?.name || 'producto reportado')" />
           </div>
           <div class="item-details">
             <h4>{{ item.product?.name || 'Producto' }}</h4>

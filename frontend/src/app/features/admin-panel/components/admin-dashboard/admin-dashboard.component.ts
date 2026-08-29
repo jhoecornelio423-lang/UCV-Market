@@ -62,6 +62,20 @@ export class AdminDashboardComponent implements OnInit {
   private toastCtrl = inject(ToastController);
   todayDate = new Date();
 
+  get weeklySalesSummary(): string {
+    const labels = (this.lineChartData.labels || []) as string[];
+    const values = (this.lineChartData.datasets[0]?.data || []) as number[];
+    if (values.length === 0) return 'Todavía no hay datos de ventas semanales.';
+    return labels.map((label, index) => `${label}: S/ ${Number(values[index] || 0).toFixed(2)}`).join('; ');
+  }
+
+  get categorySalesSummary(): string {
+    const labels = (this.doughnutChartData.labels || []) as string[];
+    const values = (this.doughnutChartData.datasets[0]?.data || []) as number[];
+    if (values.length === 0) return 'Todavía no hay datos de ventas por categoría.';
+    return labels.map((label, index) => `${label}: ${Number(values[index] || 0)}`).join('; ');
+  }
+
   ngOnInit() {
     this.adjustChartOptions();
     this.loadStats();

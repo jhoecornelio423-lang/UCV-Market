@@ -12,6 +12,18 @@ $border-color: #F1F3F9;
   font-family: 'Inter', sans-serif;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Header */
 .dashboard-header {
   display: flex;
@@ -266,6 +278,7 @@ $border-color: #F1F3F9;
       }
 
       .action-link {
+        min-height: 44px;
         background: none;
         border: none;
         color: #F59E0B;
@@ -296,7 +309,7 @@ $border-color: #F1F3F9;
 }
 
 @media (max-width: 768px) {
-  .admin-dashboard-container { padding: 20px 16px 80px; } /* 80px for bottom nav */
+  .admin-dashboard-container { padding: 20px 16px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .stat-card { padding: 16px; h2 { font-size: 20px; } }
 }

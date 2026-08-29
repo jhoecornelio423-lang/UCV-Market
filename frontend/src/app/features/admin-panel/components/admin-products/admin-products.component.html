@@ -51,7 +51,7 @@
           </div>
           
           <div class="actions-container" style="display: flex; align-items: center; gap: 12px;">
-            <button class="delete-btn" (click)="confirmDelete(product)" title="Eliminar Producto">
+            <button type="button" class="delete-btn" (click)="confirmDelete(product)" [attr.aria-label]="'Eliminar ' + product.name" title="Eliminar producto">
               <ion-icon name="trash-outline"></ion-icon>
             </button>
             <div class="toggle-container" title="Activar/Desactivar Producto">

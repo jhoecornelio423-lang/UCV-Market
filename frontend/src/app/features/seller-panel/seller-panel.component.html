@@ -1,28 +1,13 @@
 <div class="seller-layout">
-  <div class="main-content-wrapper">
+  <app-role-mobile-navigation
+    *ngIf="showPrimaryNavigation"
+    [config]="navigationConfig"
+    [contentId]="'seller-primary-content'"
+    [currentPath]="currentPath"
+    (logout)="signOut()"
+  ></app-role-mobile-navigation>
+
+  <div id="seller-primary-content" class="main-content-wrapper">
     <ion-router-outlet></ion-router-outlet>
   </div>
-
-  <nav class="bottom-navigation-figma ion-hide-lg-up" *ngIf="showBottomNav">
-    <button type="button" class="nav-item-figma" routerLink="/seller/dashboard" routerLinkActive="active">
-      <ion-icon name="stats-chart-outline"></ion-icon>
-      <span>Dashboard</span>
-    </button>
-    <button type="button" class="nav-item-figma" routerLink="/seller/orders" routerLinkActive="active">
-      <ion-icon name="bag-handle-outline"></ion-icon>
-      <span>Pedidos</span>
-    </button>
-    <button type="button" class="nav-item-figma" routerLink="/seller/products" routerLinkActive="active">
-      <ion-icon name="pricetag-outline"></ion-icon>
-      <span>Productos</span>
-    </button>
-    <button type="button" class="nav-item-figma" routerLink="/seller/stats" routerLinkActive="active">
-      <ion-icon name="trending-up-outline"></ion-icon>
-      <span>Estadísticas</span>
-    </button>
-    <button type="button" class="nav-item-figma" routerLink="/seller/business" routerLinkActive="active">
-      <ion-icon name="business-outline"></ion-icon>
-      <span>Negocio</span>
-    </button>
-  </nav>
 </div>

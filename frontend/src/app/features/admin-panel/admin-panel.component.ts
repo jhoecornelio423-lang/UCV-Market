@@ -9,6 +9,8 @@ import { AuthService } from '../../core/auth/auth.service';
 import { Category } from '../../core/models/category.model';
 import { Profile } from '../../core/models/profile.model';
 import { AdminRepository } from '../../core/repositories/admin.repository';
+import { isAdminPrimaryRoute } from '../../core/navigation/admin-navigation';
+import { RoleMobileNavigationConfig } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.model';
 
 @Component({
   selector: 'app-admin-panel',
@@ -20,6 +22,7 @@ export class AdminPanelComponent implements OnInit {
   categories: Category[] = [];
   userProfile: Profile | null = null;
   loading = false;
+  currentPath = '';
 
   private authService = inject(AuthService);
   private alertCtrl = inject(AlertController);
@@ -39,7 +42,29 @@ export class AdminPanelComponent implements OnInit {
   openTicketsCount = 0;
   activeReportsCount = 0;
 
+  get showPrimaryNavigation(): boolean {
+    return isAdminPrimaryRoute(this.currentPath);
+  }
+
+  get navigationConfig(): RoleMobileNavigationConfig {
+    return {
+      menuId: 'admin-primary-menu',
+      roleLabel: 'Administrador',
+      ariaLabel: 'Navegación del administrador',
+      items: [
+        { label: 'Dashboard', route: '/admin/dashboard', icon: 'grid-outline' },
+        { label: 'Vendedores', route: '/admin/sellers', icon: 'storefront-outline', badge: this.pendingApplicationsCount },
+        { label: 'Usuarios', route: '/admin/users', icon: 'people-outline' },
+        { label: 'Productos', route: '/admin/products', icon: 'cube-outline' },
+        { label: 'Categorías', route: '/admin/categories', icon: 'pricetag-outline' },
+        { label: 'Soporte', route: '/admin/support', icon: 'chatbubble-outline', badge: this.openTicketsCount },
+        { label: 'Reportes', route: '/admin/reports', icon: 'flag-outline', badge: this.activeReportsCount, badgeTone: 'danger' },
+      ],
+    };
+  }
+
   ngOnInit() {
+    this.currentPath = this.router.url;
     this.authService.currentProfile$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(profile => {
       this.userProfile = profile;
     });
@@ -49,7 +74,8 @@ export class AdminPanelComponent implements OnInit {
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
+    ).subscribe((event) => {
+      this.currentPath = event.urlAfterRedirects;
       this.loadBadges();
     });
   }

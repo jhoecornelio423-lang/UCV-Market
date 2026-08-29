@@ -12,6 +12,7 @@ import { AdminUsersComponent } from './components/admin-users/admin-users.compon
 import { AdminReportsComponent } from './components/admin-reports/admin-reports.component';
 import { AdminNotificationsComponent } from './components/admin-notifications/admin-notifications.component';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { RoleMobileNavigationComponent } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.component';
 
 const routes: Routes = [
   { 
@@ -49,7 +50,8 @@ import { FormsModule } from '@angular/forms';
     IonicModule,
     FormsModule,
     BaseChartDirective,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    RoleMobileNavigationComponent
   ],
   providers: [
     provideCharts(withDefaultRegisterables())

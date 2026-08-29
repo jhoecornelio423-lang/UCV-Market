@@ -118,17 +118,6 @@ $bg: #f8f9fb;
   }
 }
 
-/* Nav Bar Figma */
-.bottom-navigation-figma {
-  height: 72px; display: flex; background: white; border-top: 1px solid #F3F4F6; padding: 0 10px; padding-bottom: env(safe-area-inset-bottom);
-  .nav-item-figma {
-    flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: transparent; border: none; color: #B0B0C0;
-    ion-icon { font-size: 22px; }
-    span { font-size: 10px; font-weight: 800; }
-    &.active { color: $primary; &::after { content: ''; width: 4px; height: 4px; background: $primary; border-radius: 50%; margin-top: 2px; } }
-  }
-}
-
 .review-modal {
   --width: 90%;
   --max-width: 440px;
@@ -306,4 +295,3 @@ $bg: #f8f9fb;
     }
   }
 }
-

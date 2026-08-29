@@ -20,6 +20,7 @@ import { BuyerSellerApplicationComponent } from './components/buyer-seller-appli
 import { BuyerSellerStoreComponent } from './components/buyer-seller-store/buyer-seller-store.component';
 import { SupportModule } from '../support/support.module';
 import { SupportPageComponent } from '../support/support-page.component';
+import { RoleMobileNavigationComponent } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { SupportPageComponent } from '../support/support-page.component';
     FormsModule,
     ReactiveFormsModule,
     BuyerPanelRoutingModule,
-    SupportModule
+    SupportModule,
+    RoleMobileNavigationComponent
   ]
 })
 export class BuyerPanelModule { }

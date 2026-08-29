@@ -1,0 +1,78 @@
+<ion-menu
+  *ngIf="menuReady"
+  class="role-mobile-menu ion-hide-lg-up"
+  side="start"
+  type="overlay"
+  [menuId]="config.menuId"
+  [attr.id]="config.menuId"
+  [contentId]="contentId"
+  (ionWillOpen)="onMenuWillOpen()"
+  (ionDidClose)="onMenuDidClose()"
+>
+  <ion-content>
+    <div class="drawer-layout">
+      <div class="drawer-brand" aria-hidden="true">
+        <span class="brand-mark"><ion-icon name="bag-handle"></ion-icon></span>
+        <span>
+          <strong class="brand-name">VALLE-GO</strong>
+          <small class="role-label">{{ config.roleLabel }}</small>
+        </span>
+      </div>
+
+      <nav class="drawer-navigation" [attr.aria-label]="config.ariaLabel">
+        <ion-menu-toggle
+          *ngFor="let item of config.items; trackBy: trackByRoute"
+          [menu]="config.menuId"
+          [autoHide]="false"
+        >
+          <a
+            class="drawer-link"
+            [class.active]="isActive(item.route)"
+            [routerLink]="item.route"
+            [attr.aria-current]="isActive(item.route) ? 'page' : null"
+          >
+            <ion-icon [name]="item.icon" aria-hidden="true"></ion-icon>
+            <span>{{ item.label }}</span>
+            <span
+              *ngIf="item.badge && item.badge > 0"
+              class="drawer-badge"
+              [class.danger]="item.badgeTone === 'danger'"
+              [attr.aria-label]="item.badge + ' pendientes'"
+            >{{ item.badge }}</span>
+          </a>
+        </ion-menu-toggle>
+      </nav>
+
+      <button type="button" class="logout-action" (click)="logout.emit()">
+        <ion-icon name="log-out-outline" aria-hidden="true"></ion-icon>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+  </ion-content>
+</ion-menu>
+
+<header class="role-mobile-header ion-hide-lg-up">
+  <button
+    #menuTrigger
+    type="button"
+    class="menu-trigger"
+    aria-label="Abrir menú de navegación"
+    [attr.aria-expanded]="isOpen"
+    [attr.aria-controls]="config.menuId"
+    (click)="openMenu()"
+  >
+    <ion-icon name="menu-outline" aria-hidden="true"></ion-icon>
+  </button>
+
+  <div class="header-brand" aria-label="VALLE-GO">
+    <span class="brand-mark" aria-hidden="true"><ion-icon name="bag-handle"></ion-icon></span>
+    <span>
+      <strong class="brand-name">VALLE-GO</strong>
+      <small class="role-label">{{ config.roleLabel }}</small>
+    </span>
+  </div>
+
+  <div class="header-actions">
+    <ng-content select="[navigation-actions]"></ng-content>
+  </div>
+</header>
