@@ -59,12 +59,19 @@ describe('RoleMobileNavigationComponent', () => {
     expect(fixture.nativeElement.querySelector('.drawer-badge')?.textContent.trim()).toBe('2');
   });
 
-  it('opens and closes its own menu', async () => {
+  it('uses the Ionic menu toggle for every navigation link', () => {
+    const toggles: NodeListOf<HTMLElement> = fixture.nativeElement.querySelectorAll('ion-menu-toggle');
+    expect(toggles.length).toBe(config.items.length);
+    toggles.forEach(toggle => {
+      const ionicToggle = toggle as HTMLElement & { menu: string; autoHide: boolean };
+      expect(ionicToggle.menu).toBe(config.menuId);
+      expect(ionicToggle.autoHide).toBeFalse();
+    });
+  });
+
+  it('opens its own menu', async () => {
     await component.openMenu();
     expect(menu.open).toHaveBeenCalledWith('test-menu');
-
-    await component.navigateFromMenu();
-    expect(menu.close).toHaveBeenCalledWith('test-menu');
   });
 
   it('emits logout from the drawer footer', () => {

@@ -38,10 +38,6 @@ export class RoleMobileNavigationComponent implements AfterViewInit {
     await this.menuController.open(this.config.menuId);
   }
 
-  async navigateFromMenu(): Promise<void> {
-    await this.menuController.close(this.config.menuId);
-  }
-
   onMenuWillOpen(): void {
     this.isOpen = true;
   }

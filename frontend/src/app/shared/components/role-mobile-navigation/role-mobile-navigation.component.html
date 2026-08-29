@@ -20,23 +20,27 @@
       </div>
 
       <nav class="drawer-navigation" [attr.aria-label]="config.ariaLabel">
-        <a
+        <ion-menu-toggle
           *ngFor="let item of config.items"
-          class="drawer-link"
-          [class.active]="isActive(item.route)"
-          [routerLink]="item.route"
-          [attr.aria-current]="isActive(item.route) ? 'page' : null"
-          (click)="navigateFromMenu()"
+          [menu]="config.menuId"
+          [autoHide]="false"
         >
-          <ion-icon [name]="item.icon" aria-hidden="true"></ion-icon>
-          <span>{{ item.label }}</span>
-          <span
-            *ngIf="item.badge && item.badge > 0"
-            class="drawer-badge"
-            [class.danger]="item.badgeTone === 'danger'"
-            [attr.aria-label]="item.badge + ' pendientes'"
-          >{{ item.badge }}</span>
-        </a>
+          <a
+            class="drawer-link"
+            [class.active]="isActive(item.route)"
+            [routerLink]="item.route"
+            [attr.aria-current]="isActive(item.route) ? 'page' : null"
+          >
+            <ion-icon [name]="item.icon" aria-hidden="true"></ion-icon>
+            <span>{{ item.label }}</span>
+            <span
+              *ngIf="item.badge && item.badge > 0"
+              class="drawer-badge"
+              [class.danger]="item.badgeTone === 'danger'"
+              [attr.aria-label]="item.badge + ' pendientes'"
+            >{{ item.badge }}</span>
+          </a>
+        </ion-menu-toggle>
       </nav>
 
       <button type="button" class="logout-action" (click)="logout.emit()">
