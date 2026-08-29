@@ -69,6 +69,24 @@ describe('RoleMobileNavigationComponent', () => {
     });
   });
 
+  it('preserves link elements when a role rebuilds its navigation config', () => {
+    const firstLinks: NodeListOf<HTMLAnchorElement> = fixture.nativeElement.querySelectorAll('.drawer-link');
+
+    component.config = {
+      ...config,
+      items: config.items.map(item => ({
+        ...item,
+        badge: item.route === '/test/alerts' ? 3 : item.badge,
+      })),
+    };
+    fixture.detectChanges();
+
+    const updatedLinks: NodeListOf<HTMLAnchorElement> = fixture.nativeElement.querySelectorAll('.drawer-link');
+    expect(updatedLinks[0]).toBe(firstLinks[0]);
+    expect(updatedLinks[1]).toBe(firstLinks[1]);
+    expect(fixture.nativeElement.querySelector('.drawer-badge')?.textContent.trim()).toBe('3');
+  });
+
   it('opens its own menu', async () => {
     await component.openMenu();
     expect(menu.open).toHaveBeenCalledWith('test-menu');

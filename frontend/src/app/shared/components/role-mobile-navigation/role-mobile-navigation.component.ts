@@ -3,7 +3,7 @@ import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, EventEmitter, 
 import { RouterModule } from '@angular/router';
 import { IonicModule, MenuController } from '@ionic/angular';
 import { normalizeAppPath } from '../../../core/navigation/buyer-navigation';
-import { RoleMobileNavigationConfig } from './role-mobile-navigation.model';
+import { RoleMobileNavigationConfig, RoleMobileNavigationItem } from './role-mobile-navigation.model';
 
 @Component({
   selector: 'app-role-mobile-navigation',
@@ -32,6 +32,10 @@ export class RoleMobileNavigationComponent implements AfterViewInit {
 
   isActive(route: string): boolean {
     return normalizeAppPath(this.currentPath) === normalizeAppPath(route);
+  }
+
+  trackByRoute(_index: number, item: RoleMobileNavigationItem): string {
+    return item.route;
   }
 
   async openMenu(): Promise<void> {

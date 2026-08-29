@@ -21,7 +21,7 @@
 
       <nav class="drawer-navigation" [attr.aria-label]="config.ariaLabel">
         <ion-menu-toggle
-          *ngFor="let item of config.items"
+          *ngFor="let item of config.items; trackBy: trackByRoute"
           [menu]="config.menuId"
           [autoHide]="false"
         >
