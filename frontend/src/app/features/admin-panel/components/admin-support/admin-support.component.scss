@@ -6,7 +6,7 @@ $border: #EEF0F4;
 
 .support-desk {
   display: flex;
-  height: calc(100vh - 64px);
+  height: 100%;
   min-height: 520px;
   background: $surface;
   overflow: hidden;
@@ -107,9 +107,15 @@ $border: #EEF0F4;
   }
 
   .ticket-item {
+    width: 100%;
+    display: block;
     padding: 14px 18px;
+    border: 0;
     border-bottom: 1px solid $border;
+    background: white;
     cursor: pointer;
+    font: inherit;
+    text-align: left;
     transition: background 0.15s;
 
     &:hover {
@@ -152,6 +158,7 @@ $border: #EEF0F4;
     }
 
     .ticket-subject {
+      display: block;
       margin: 0 0 4px;
       font-size: 14px;
       font-weight: 700;
@@ -678,8 +685,10 @@ $border: #EEF0F4;
 @media (max-width: 900px) {
   .support-desk {
     flex-direction: column;
-    height: auto;
+    height: 100%;
     min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .support-sidebar {
@@ -693,7 +702,9 @@ $border: #EEF0F4;
   }
 
   .support-main {
-    height: 560px;
+    flex: 0 0 auto;
+    min-height: 560px;
+    height: auto;
   }
 
   .dispute-header {
@@ -709,6 +720,7 @@ $border: #EEF0F4;
   }
 
   .action-bar {
+    flex-wrap: wrap;
     padding: 12px 14px;
 
     .act {

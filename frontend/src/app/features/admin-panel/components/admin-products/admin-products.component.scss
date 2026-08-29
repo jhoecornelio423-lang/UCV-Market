@@ -209,6 +209,8 @@ $bg-color: #F8FAFC;
         gap: 12px;
 
         .delete-btn {
+          min-width: 44px;
+          min-height: 44px;
           background: transparent;
           border: none;
           color: #EF4444;

@@ -5,6 +5,8 @@
 }
 
 .notif-btn {
+  min-width: 44px;
+  min-height: 44px;
   position: relative;
   background: none;
   border: none;
@@ -73,6 +75,7 @@
     }
 
     .mark-read-btn {
+      min-height: 44px;
       background: none;
       border: none;
       color: #E8432D;
@@ -88,6 +91,13 @@
     overflow-y: auto;
 
     .notif-item {
+      width: 100%;
+      border: 0;
+      background: white;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
       display: flex;
       gap: 12px;
       padding: 12px 16px;
@@ -128,7 +138,8 @@
           margin-bottom: 2px;
         }
 
-        p {
+        .notif-body {
+          display: block;
           margin: 0;
           font-size: 12px;
           color: #8F95B2;

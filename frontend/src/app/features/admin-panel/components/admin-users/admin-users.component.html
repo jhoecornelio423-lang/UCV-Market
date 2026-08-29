@@ -1,13 +1,13 @@
 <div class="admin-page-container">
   <div class="page-header">
     <div class="header-content">
-      <h2 class="page-title">Gestión de Usuarios</h2>
+      <h1 class="page-title">Gestión de Usuarios</h1>
       <p class="page-subtitle">Administra los compradores de la plataforma y mantén la comunidad segura.</p>
     </div>
     <div class="header-actions">
       <div class="stats-badge">
         <ion-icon name="people"></ion-icon>
-        <span>{{ users.length }} usuarios totales</span>
+        <span>{{ users.length }} {{ users.length === 1 ? 'usuario total' : 'usuarios totales' }}</span>
       </div>
     </div>
   </div>
@@ -87,5 +87,33 @@
         <h4>Cargando usuarios...</h4>
       </div>
     </div>
+  </div>
+
+  <section class="mobile-user-cards" aria-label="Compradores registrados" *ngIf="!loading && filteredUsers.length > 0">
+    <article class="mobile-user-card" *ngFor="let user of filteredUsers">
+      <div class="user-cell">
+        <div class="avatar" [style.background-image]="'url(' + (user.avatar_url || 'https://ionicframework.com/docs/img/demos/avatar.svg') + ')'" role="img" [attr.aria-label]="'Foto de ' + user.full_name"></div>
+        <div class="user-info">
+          <span class="name">{{ user.full_name }}</span>
+          <span class="email">{{ user.email || 'Sin correo' }}</span>
+        </div>
+      </div>
+      <dl>
+        <div><dt>Código</dt><dd>{{ user.student_code || 'N/A' }}</dd></div>
+        <div><dt>Sede</dt><dd>{{ user.campus || 'No especificada' }}</dd></div>
+        <div><dt>Registro</dt><dd>{{ user.created_at | date:'dd MMM yyyy' }}</dd></div>
+      </dl>
+      <div class="mobile-card-footer">
+        <span class="status-badge" [class.active]="user.role === 'comprador'" [class.suspended]="user.role === 'suspended_buyer'">
+          {{ user.role === 'comprador' ? 'Activo' : 'Suspendido' }}
+        </span>
+        <ion-toggle [checked]="user.role === 'comprador'" (ionChange)="toggleUserStatus(user)" mode="md" [attr.aria-label]="(user.role === 'comprador' ? 'Suspender a ' : 'Reactivar a ') + user.full_name"></ion-toggle>
+      </div>
+    </article>
+  </section>
+  <div class="mobile-user-empty empty-state glass-panel" *ngIf="!loading && filteredUsers.length === 0">
+    <ion-icon name="search-outline"></ion-icon>
+    <h4>No se encontraron usuarios</h4>
+    <p>Intenta con otros términos de búsqueda o filtros.</p>
   </div>
 </div>

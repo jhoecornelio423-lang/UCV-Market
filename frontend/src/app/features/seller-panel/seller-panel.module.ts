@@ -14,6 +14,7 @@ import { SellerOrdersComponent } from './components/seller-orders/seller-orders.
 import { SellerNotificationsComponent } from './components/seller-notifications/seller-notifications.component';
 import { SupportModule } from '../support/support.module';
 import { SupportPageComponent } from '../support/support-page.component';
+import { RoleMobileNavigationComponent } from '../../shared/components/role-mobile-navigation/role-mobile-navigation.component';
 
 const routes: Routes = [
   {
@@ -49,7 +50,8 @@ const routes: Routes = [
     IonicModule,
     FormsModule,
     RouterModule.forChild(routes),
-    SupportModule
+    SupportModule,
+    RoleMobileNavigationComponent
   ]
 })
 export class SellerPanelModule { }

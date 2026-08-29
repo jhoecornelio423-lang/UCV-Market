@@ -1,6 +1,6 @@
 <div class="notif-wrap" [class.open-up]="direction === 'up'">
-  <button type="button" class="notif-btn" (click)="toggle()" title="Notificaciones">
-    <ion-icon name="notifications-outline"></ion-icon>
+  <button type="button" class="notif-btn" (click)="toggle()" aria-label="Abrir notificaciones" [attr.aria-expanded]="showDropdown" title="Notificaciones">
+    <ion-icon name="notifications-outline" aria-hidden="true"></ion-icon>
     <span class="badge" *ngIf="(unreadCount$ | async)! > 0">{{ unreadCount$ | async }}</span>
   </button>
 
@@ -10,20 +10,20 @@
     <div class="dropdown-header">
       <h4>Notificaciones</h4>
       <div class="dropdown-actions">
-        <button class="mark-read-btn" (click)="markAllRead()">Marcar leídas</button>
+        <button type="button" class="mark-read-btn" *ngIf="(unreadCount$ | async)! > 0" (click)="markAllRead()">Marcar leídas</button>
       </div>
     </div>
     <div class="notif-list" *ngIf="(notifications$ | async)?.length; else emptyNotifs">
-      <div class="notif-item" *ngFor="let notif of (notifications$ | async)" [class.unread]="notif.unread" (click)="onNotificationClick(notif)" style="cursor: pointer;">
-        <div class="notif-icon" [style.color]="notif.iconColor" [style.background]="notif.iconBg">
+      <button type="button" class="notif-item" *ngFor="let notif of (notifications$ | async)" [class.unread]="notif.unread" (click)="onNotificationClick(notif)">
+        <span class="notif-icon" [style.color]="notif.iconColor" [style.background]="notif.iconBg">
           <ion-icon [name]="notif.icon"></ion-icon>
-        </div>
-        <div class="notif-content">
+        </span>
+        <span class="notif-content">
           <strong>{{ notif.title }}</strong>
-          <p>{{ notif.body }}</p>
+          <span class="notif-body">{{ notif.body }}</span>
           <span class="time">{{ notif.time }}</span>
-        </div>
-      </div>
+        </span>
+      </button>
     </div>
     <ng-template #emptyNotifs>
       <div class="empty-notifs">

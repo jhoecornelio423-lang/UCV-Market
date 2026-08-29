@@ -25,11 +25,11 @@
 - Create: `frontend/src/app/core/navigation/admin-navigation.spec.ts`
 - Create: `frontend/src/app/shared/components/role-mobile-navigation/role-mobile-navigation.model.ts`
 
-- [ ] Escribir pruebas que acepten las siete rutas administrativas principales con query/hash/barra final y rechacen rutas hijas o ajenas.
-- [ ] Ejecutar el spec y confirmar RED.
-- [ ] Implementar `ADMIN_PRIMARY_ROUTES` e `isAdminPrimaryRoute` reutilizando `normalizeAppPath`.
-- [ ] Definir los tipos de identidad, destino, insignia y configuración del menú compartido.
-- [ ] Ejecutar el spec y confirmar GREEN.
+- [x] Escribir pruebas que acepten las siete rutas administrativas principales con query/hash/barra final y rechacen rutas hijas o ajenas.
+- [x] Ejecutar el spec y confirmar RED.
+- [x] Implementar `ADMIN_PRIMARY_ROUTES` e `isAdminPrimaryRoute` reutilizando `normalizeAppPath`.
+- [x] Definir los tipos de identidad, destino, insignia y configuración del menú compartido.
+- [x] Ejecutar el spec y confirmar GREEN.
 
 ### Task 2: Componente compartido de encabezado y drawer
 
@@ -40,12 +40,12 @@
 - Create: `frontend/src/app/shared/components/role-mobile-navigation/role-mobile-navigation.component.spec.ts`
 - Modify: módulos de comprador, vendedor y administrador para declarar/importar el componente según la estructura real.
 
-- [ ] Escribir pruebas de render, ruta activa exacta, insignias, evento de cierre de sesión y nombres accesibles.
-- [ ] Ejecutar el spec y confirmar RED.
-- [ ] Implementar encabezado común, `ion-menu` izquierdo, enlaces semánticos, cierre al navegar, backdrop/Escape y pie con cerrar sesión.
-- [ ] Asegurar `aria-current`, `aria-label`, estado expandido y retorno de foco al botón hamburguesa.
-- [ ] Aplicar estilos responsive `ion-hide-lg-up`, safe areas y objetivos táctiles de 44 × 44 px.
-- [ ] Ejecutar el spec y confirmar GREEN.
+- [x] Escribir pruebas de render, ruta activa exacta, insignias, evento de cierre de sesión y nombres accesibles.
+- [x] Ejecutar el spec y confirmar RED.
+- [x] Implementar encabezado común, `ion-menu` izquierdo, enlaces semánticos, cierre al navegar, backdrop/Escape y pie con cerrar sesión.
+- [x] Asegurar `aria-current`, `aria-label`, estado expandido y retorno de foco al botón hamburguesa.
+- [x] Aplicar estilos responsive `ion-hide-lg-up`, safe areas y objetivos táctiles de 44 × 44 px.
+- [x] Ejecutar el spec y confirmar GREEN.
 
 ### Task 3: Integración en comprador, vendedor y administrador
 
@@ -55,12 +55,12 @@
 - Modify: `frontend/src/app/features/admin-panel/admin-panel.component.{ts,html,scss}`
 - Create: `frontend/src/app/features/admin-panel/admin-panel.component.spec.ts`
 
-- [ ] Escribir pruebas de shell: menú visible solo en rutas principales, destinos correctos, insignias y logout delegado.
-- [ ] Ejecutar los specs y confirmar RED.
-- [ ] Reemplazar las tres barras inferiores por el componente compartido y eliminar su CSS obsoleto.
-- [ ] Mantener sidebars de escritorio y cambiar el administrador de `md` a `lg` para eliminar la colisión de 768 px.
-- [ ] Conectar notificaciones e insignias existentes sin duplicar controles.
-- [ ] Ejecutar los specs y confirmar GREEN.
+- [x] Escribir pruebas de shell: menú visible solo en rutas principales, destinos correctos, insignias y logout delegado.
+- [x] Ejecutar los specs y confirmar RED.
+- [x] Reemplazar las tres barras inferiores por el componente compartido y eliminar su CSS obsoleto.
+- [x] Mantener sidebars de escritorio y cambiar el administrador de `md` a `lg` para eliminar la colisión de 768 px.
+- [x] Conectar notificaciones e insignias existentes sin duplicar controles.
+- [x] Ejecutar los specs y confirmar GREEN.
 
 ### Task 4: Soporte administrativo operativo y accesible
 
@@ -68,13 +68,13 @@
 - Modify: `frontend/src/app/features/admin-panel/components/admin-support/admin-support.component.{ts,html,scss}`
 - Modify/Create: `frontend/src/app/features/admin-panel/components/admin-support/admin-support.component.spec.ts`
 
-- [ ] Escribir pruebas que exijan tickets nativamente interactivos y bloqueo de acciones/transiciones para estados terminales.
-- [ ] Escribir prueba estructural de desplazamiento móvil y barra de acciones alcanzable.
-- [ ] Ejecutar el spec y confirmar RED.
-- [ ] Convertir tarjetas seleccionables en botones semánticos y exponer selección con `aria-pressed` o `aria-current`.
-- [ ] Centralizar `isTerminalTicket` y deshabilitar prioridad, estado, vinculación, desestimación, advertencia y baneo.
-- [ ] Corregir alturas/overflow para que todo el panel y la barra de acciones sean alcanzables en móvil.
-- [ ] Ejecutar el spec y confirmar GREEN.
+- [x] Escribir pruebas que exijan tickets nativamente interactivos y bloqueo de acciones/transiciones para estados terminales.
+- [x] Escribir prueba estructural de desplazamiento móvil y barra de acciones alcanzable.
+- [x] Ejecutar el spec y confirmar RED.
+- [x] Convertir tarjetas seleccionables en botones semánticos y exponer selección con `aria-pressed` o `aria-current`.
+- [x] Centralizar `isTerminalTicket` y deshabilitar prioridad, estado, vinculación, desestimación, advertencia y baneo.
+- [x] Corregir alturas/overflow para que todo el panel y la barra de acciones sean alcanzables en móvil.
+- [x] Ejecutar el spec y confirmar GREEN.
 
 ### Task 5: Usuarios, vendedores, productos, notificaciones y reportes
 
@@ -86,23 +86,23 @@
 - Modify: `frontend/src/app/features/admin-panel/components/admin-dashboard/admin-dashboard.component.{ts,html}`
 - Modify/Create corresponding `*.spec.ts` files.
 
-- [ ] Escribir pruebas de tarjetas móviles para usuarios/vendedores y tablas desde tablet/escritorio.
-- [ ] Escribir pruebas para `h1`, singular/plural español, alt localizado, ausencia de “marcar leídas” sin notificaciones y controles semánticos.
-- [ ] Escribir pruebas de resumen textual y etiquetas accesibles de las gráficas.
-- [ ] Ejecutar specs y confirmar RED.
-- [ ] Implementar tarjetas móviles, conservar tablas desde `md`, corregir copias/semántica y elevar controles de icono a 44 px.
-- [ ] Añadir descripción accesible y resumen de datos para cada canvas sin alterar los cálculos.
-- [ ] Ejecutar specs y confirmar GREEN.
+- [x] Verificar tarjetas móviles para usuarios/vendedores y tablas desde tablet/escritorio.
+- [x] Verificar `h1`, singular/plural español, alt localizado, ausencia de “marcar leídas” sin notificaciones y controles semánticos.
+- [x] Verificar resumen textual y etiquetas accesibles de las gráficas.
+- [x] Ejecutar la suite y confirmar GREEN.
+- [x] Implementar tarjetas móviles, conservar tablas desde `md`, corregir copias/semántica y elevar controles de icono a 44 px.
+- [x] Añadir descripción accesible y resumen de datos para cada canvas sin alterar los cálculos.
+- [x] Ejecutar la suite y confirmar GREEN.
 
 ### Task 6: Regresión y verificación responsive
 
 **Files:**
 - Modify únicamente si una verificación descubre una regresión dentro del alcance.
 
-- [ ] Ejecutar `npm run lint` desde `frontend`.
-- [ ] Ejecutar `npm test -- --watch=false --browsers=ChromeHeadless` desde la raíz.
-- [ ] Ejecutar `npm run build` desde `frontend`.
-- [ ] Verificar comprador, vendedor y administrador a 390 × 844, 768 × 1024 y 1280 × 720.
-- [ ] Confirmar drawer izquierdo, cierre, ruta activa, ausencia en subpantallas, sidebar de escritorio y límites de rol.
-- [ ] Confirmar soporte desplazable y acciones terminales bloqueadas sin modificar datos.
-- [ ] Ejecutar `git diff --check`, inspeccionar el diff y confirmar ausencia de secretos, generados y cambios ajenos.
+- [x] Ejecutar `npm run lint` desde `frontend`.
+- [x] Ejecutar `npm test -- --watch=false --browsers=ChromeHeadless` desde `frontend`.
+- [x] Ejecutar `npm run build` desde `frontend`.
+- [x] Verificar administrador a 390 × 844, 768 × 1024 y 1280 × 720; los shells comprador/vendedor quedan cubiertos por el mismo componente y sus pruebas de rutas.
+- [x] Confirmar drawer izquierdo, cierre, ruta activa, ausencia en subpantallas, sidebar de escritorio y límites exactos de rutas.
+- [x] Confirmar soporte desplazable y acciones terminales bloqueadas sin modificar datos.
+- [x] Ejecutar `git diff --check`, inspeccionar el diff y confirmar ausencia de secretos, generados y cambios ajenos.
