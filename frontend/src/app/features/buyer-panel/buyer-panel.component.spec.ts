@@ -12,9 +12,11 @@ describe('BuyerPanelComponent', () => {
   let fixture: ComponentFixture<BuyerPanelComponent>;
 
   beforeEach(waitForAsync(() => {
-    const content = document.createElement('div');
-    content.id = 'buyer-primary-content';
-    document.body.appendChild(content);
+    if (!document.getElementById('buyer-primary-content')) {
+      const content = document.createElement('div');
+      content.id = 'buyer-primary-content';
+      document.body.appendChild(content);
+    }
     TestBed.configureTestingModule({
       declarations: [ BuyerPanelComponent ],
       imports: [IonicModule.forRoot(), RouterModule.forRoot([]), RoleMobileNavigationComponent],
@@ -25,7 +27,7 @@ describe('BuyerPanelComponent', () => {
     component = fixture.componentInstance;
   }));
 
-  afterEach(() => document.querySelector('body > #buyer-primary-content')?.remove());
+  afterAll(() => document.querySelector('body > #buyer-primary-content')?.remove());
 
   it('should create', () => {
     expect(component).toBeTruthy();

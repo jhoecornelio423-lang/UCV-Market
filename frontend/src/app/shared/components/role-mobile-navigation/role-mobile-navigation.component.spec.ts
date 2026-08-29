@@ -20,9 +20,11 @@ describe('RoleMobileNavigationComponent', () => {
   };
 
   beforeEach(async () => {
-    const content = document.createElement('div');
-    content.id = 'test-content';
-    document.body.appendChild(content);
+    if (!document.getElementById('test-content')) {
+      const content = document.createElement('div');
+      content.id = 'test-content';
+      document.body.appendChild(content);
+    }
     menu = jasmine.createSpyObj<MenuController>('MenuController', ['open', 'close']);
     menu.open.and.resolveTo(true);
     menu.close.and.resolveTo(true);
@@ -40,7 +42,7 @@ describe('RoleMobileNavigationComponent', () => {
     fixture.detectChanges();
   });
 
-  afterEach(() => document.getElementById('test-content')?.remove());
+  afterAll(() => document.getElementById('test-content')?.remove());
 
   it('renders the common identity and accessible menu trigger', () => {
     expect(fixture.nativeElement.querySelector('.brand-name')?.textContent).toContain('VALLE-GO');
